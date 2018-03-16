@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.5"
+  - "3.6"
+
+notifications:
+  email: false
+
+install:
+  - pip install -e .[testing]
+  - pip install coveralls
+
+script: nosetests --with-coverage --cover-package=wilson
+
+after_success: coveralls
