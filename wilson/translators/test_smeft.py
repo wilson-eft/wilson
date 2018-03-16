@@ -1,10 +1,9 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-import yaml
-import json
 import pkgutil
 import wcxf
+import wilson
 
 np.random.seed(89)
 
@@ -65,7 +64,7 @@ class TestIO(unittest.TestCase):
         smeft.load_initial((wcout,))
         d_wcxf = wcxf.translators.smeft.arrays2wcxf(smeft.C_in)
         C_out = wcxf.translators.smeft.wcxf2arrays(d_wcxf)
-        C_out = smeftrunner.definitions.symmetrize(C_out)
+        C_out = wilson.util.smeftutil.symmetrize(C_out)
         for k, v in smeft.C_in.items():
             npt.assert_array_equal(v, C_out[k],
                                    err_msg="Arrays are not equal for {}".format(k))

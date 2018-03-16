@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from wilson.smeftrunner import beta, rge, SMEFT, io, definitions
+from wilson.smeftrunner import beta, rge, definitions
+from wilson.util import smeftutil
 import json
 import pkgutil
 import pylha
@@ -23,9 +24,9 @@ C["Theta"] = C["Thetap"] = 0
 C["Thetas"] = 0
 HIGHSCALE = 1000
 
-C0 = definitions.WC_keys_0f
-C2 = definitions.WC_keys_2f
-C4 = definitions.WC_keys_4f
+C0 = smeftutil.WC_keys_0f
+C2 = smeftutil.WC_keys_2f
+C4 = smeftutil.WC_keys_4f
 
 # construct numerical values of Cs
 for i, n in enumerate(C0):
@@ -87,8 +88,8 @@ class TestBeta(unittest.TestCase):
     def test_sm(self):
         beta_np = beta.beta(C,  HIGHSCALE)
         beta_sm = beta.beta(C,  HIGHSCALE, newphys=False)
-        for k in definitions.C_keys:
-            if k in definitions.SM_keys:
+        for k in smeftutil.C_keys:
+            if k in smeftutil.SM_keys:
                 npt.assert_array_equal(beta_np[k], beta_sm[k])
             else:
                 self.assertEqual(np.asarray(beta_np[k]).shape, np.asarray(beta_sm[k]).shape)

@@ -10,6 +10,8 @@ from collections import OrderedDict
 from math import sqrt
 import numpy as np
 import ckmutil.phases, ckmutil.diag
+from wilson.util import smeftutil
+
 
 class SMEFT(object):
     """Parameter point in the Standard Model Effective Field Theory."""
@@ -43,7 +45,7 @@ class SMEFT(object):
         C = io.wc_lha2dict(d)
         sm = io.sm_lha2dict(d)
         C.update(sm)
-        C = definitions.symmetrize(C)
+        C = smeftutil.symmetrize(C)
         self.C_in = C
 
     def set_initial_wcxf(self, wc, scale_high=None, get_smpar=False):
@@ -79,7 +81,7 @@ class SMEFT(object):
             self.scale_high = wc.scale
         C = wcxf.translators.smeft.wcxf2arrays(wc.dict)
         keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(definitions.WC_keys_0f + definitions.WC_keys_2f + definitions.WC_keys_4f) - set(keys_dim5))
+        keys_dim6 = list(set(smeftutil.WC_keys_0f + smeftutil.WC_keys_2f + smeftutil.WC_keys_4f) - set(keys_dim5))
         self.scale_in = wc.scale
         for k in keys_dim5:
             if k in C:
@@ -87,10 +89,10 @@ class SMEFT(object):
         for k in keys_dim6:
             if k in C:
                 C[k] = C[k]*self.scale_high**2
-        C = definitions.symmetrize(C)
+        C = smeftutil.symmetrize(C)
         # fill in zeros for missing WCs
-        for k, s in definitions.C_keys_shape.items():
-            if k not in C and k not in definitions.SM_keys:
+        for k, s in smeftutil.C_keys_shape.items():
+            if k not in C and k not in smeftutil.SM_keys:
                 if s == 1:
                     C[k] = 0
                 else:
@@ -143,8 +145,8 @@ class SMEFT(object):
         basis = wcxf.Basis['SMEFT', 'Warsaw']
         d = {k: v for k, v in d.items() if k in basis.all_wcs and v != 0}
         keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(definitions.WC_keys_0f + definitions.WC_keys_2f
-                             + definitions.WC_keys_4f) - set(keys_dim5))
+        keys_dim6 = list(set(smeftutil.WC_keys_0f + smeftutil.WC_keys_2f
+                             + smeftutil.WC_keys_4f) - set(keys_dim5))
         for k in d:
             if k.split('_')[0] in keys_dim5:
                 d[k] = d[k] / self.scale_high
@@ -229,7 +231,7 @@ class SMEFT(object):
         C_in_sm = beta.C_array2dict(np.zeros(9999))
         # set the SM parameters to the values obtained from smpar.smeftpar
         C_SM = smpar.smeftpar(scale_sm, self.scale_high, C_out, basis='Warsaw')
-        C_SM = {k: v for k, v in C_SM.items() if k in definitions.SM_keys}
+        C_SM = {k: v for k, v in C_SM.items() if k in smeftutil.SM_keys}
         # set the Wilson coefficients at the EW scale to C_out
         C_in_sm.update(C_out)
         C_in_sm.update(C_SM)
@@ -237,7 +239,7 @@ class SMEFT(object):
         # run up (with 1% relative precision, ignore running of Wilson coefficients)
         C_SM_high = smeft_sm.rgevolve(self.scale_in, newphys=False, rtol=0.01, atol=1)
         C_SM_high = self.rotate_defaultbasis(C_SM_high)
-        return {k: v for k, v in C_SM_high.items() if k in definitions.SM_keys}
+        return {k: v for k, v in C_SM_high.items() if k in smeftutil.SM_keys}
 
     def _get_sm_scale_in(self, scale_sm=91.1876):
         """Get an estimate of the SM parameters at the input scale by running

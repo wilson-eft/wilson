@@ -1,10 +1,11 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from wilson.smeftrunner import SMEFT, io, definitions
+from wilson.smeftrunner import SMEFT, io
+from wilson.util import smeftutil
 import pkgutil
 import pylha
-import wcxf
+
 
 class TestIO(unittest.TestCase):
     def test_lhamatrix(self):
@@ -27,9 +28,9 @@ class TestIO(unittest.TestCase):
         smeft = SMEFT()
         smeft.load_initial((wcout,))
         for k in C:
-            npt.assert_array_equal(definitions.symmetrize(C)[k], smeft.C_in[k], err_msg="Failed for {}".format(k))
+            npt.assert_array_equal(smeftutil.symmetrize(C)[k], smeft.C_in[k], err_msg="Failed for {}".format(k))
         for k in CSM:
-            npt.assert_array_equal(definitions.symmetrize(CSM)[k], smeft.C_in[k], err_msg="Failed for {}".format(k))
+            npt.assert_array_equal(smeftutil.symmetrize(CSM)[k], smeft.C_in[k], err_msg="Failed for {}".format(k))
         CSM2 = io.sm_lha2dict(io.sm_dict2lha(CSM))
         for k in CSM:
             npt.assert_array_equal(CSM[k], CSM2[k], err_msg="Failed for {}".format(k))
@@ -64,7 +65,7 @@ class TestIO(unittest.TestCase):
         wcyaml = smeft.dump_wcxf(smeft.C_in, 160, default_flow_style=False)
         # new instance: first load SM parameters in Md,l diag basis
         smeft2 = SMEFT()
-        C_ini = {k: v for k, v in smeft.C_in.items() if k in definitions.SM_keys}
+        C_ini = {k: v for k, v in smeft.C_in.items() if k in smeftutil.SM_keys}
         smeft2.set_initial(C_ini, scale_in=160, scale_high=10000)
         # now load back in the WCxf-YAML
         smeft2.load_wcxf(wcyaml, get_smpar=False)
@@ -72,13 +73,13 @@ class TestIO(unittest.TestCase):
         for k in smeft.C_in:
             if np.all(np.round(smeft.C_in[k], 6) == 0):
                 continue # zero values are omitted in output
-            if k in definitions.WC_keys_2f + definitions.WC_keys_4f:
+            if k in smeftutil.WC_keys_2f + smeftutil.WC_keys_4f:
                 # compare matrices for fermionic op.s
                 npt.assert_array_almost_equal(
                                  smeft.C_in[k], smeft2.C_in[k],
                                  err_msg="Failed for {}".format(k),
                                  decimal=1)
-            if k in definitions.WC_keys_0f:
+            if k in smeftutil.WC_keys_0f:
                 # compare numbers for bosonic op.s
                 self.assertAlmostEqual(
                                  smeft.C_in[k], smeft2.C_in[k],

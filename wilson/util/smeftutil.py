@@ -106,9 +106,9 @@ C_keys_shape = {
 # names of Wilson coefficients with the same fermionic symmetry properties
 C_symm_keys = {}
 # 0 0F scalar object
-C_symm_keys[0] = WC_keys_0f
+C_symm_keys[0] = WC_keys_0f + ['g', 'gp', 'gs', 'Lambda', 'm2', 'Theta', 'Thetap', 'Thetas']
 # 1 2F general 3x3 matrix
-C_symm_keys[1] = ["uphi", "dphi", "ephi", "eW", "eB", "uG", "uW", "uB", "dG", "dW", "dB", "phiud"]
+C_symm_keys[1] = ["uphi", "dphi", "ephi", "eW", "eB", "uG", "uW", "uB", "dG", "dW", "dB", "phiud"] + ['Gu', 'Gd', 'Ge']
 # 2 2F Hermitian matrix
 C_symm_keys[2] = ["phil1", "phil3", "phie", "phiq1", "phiq3", "phiu", "phid",]
 # 3 4F general 3x3x3x3 object

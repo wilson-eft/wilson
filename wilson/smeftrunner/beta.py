@@ -4,7 +4,8 @@ import numpy as np
 from collections import OrderedDict
 from functools import reduce
 import operator
-from .definitions import I3, C_keys, C_keys_shape
+from wilson.util.smeftutil import C_keys, C_keys_shape
+from .definitions import I3
 from functools import lru_cache
 
 
