@@ -1,7 +1,12 @@
 from setuptools import setup, find_packages
 
+
+with open('wilson/_version.py') as f:
+    exec(f.read())
+
+
 setup(name='wilson',
-      version='0.1',
+      version=__version__,
       author='Jason Aebischer, David M. Straub',
       author_email='jason.aebischer@tum.de, david.straub@tum.de',
       url='https://github.com/wilsoneft/wilson',
