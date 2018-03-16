@@ -1,7 +1,7 @@
 import unittest
 import wcxf
 import numpy as np
-from smeftrunner import smpar, SMEFT
+from wilson.smeftrunner import smpar, SMEFT
 from math import sqrt, pi
 import ckmutil
 

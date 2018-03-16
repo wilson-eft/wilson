@@ -1,8 +1,8 @@
 import wcxf
-from wcxf.parameters import p as default_parameters
+from wilson.parameters import p as default_parameters
 import ckmutil.ckm
 import ckmutil.diag
-from wcxf.util import smeftutil
+from wilson.util import smeftutil
 import numpy as np
 from collections import OrderedDict
 

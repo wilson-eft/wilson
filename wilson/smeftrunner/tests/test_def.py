@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from smeftrunner import definitions, beta
+from wilson.smeftrunner import definitions, beta
 import test_beta
 
 C = test_beta.C.copy()

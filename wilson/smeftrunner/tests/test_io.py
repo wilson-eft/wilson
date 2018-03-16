@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from smeftrunner import SMEFT, io, definitions
+from wilson.smeftrunner import SMEFT, io, definitions
 import pkgutil
 import pylha
 import wcxf
@@ -14,9 +14,9 @@ class TestIO(unittest.TestCase):
         npt.assert_array_equal(M, M2)
 
     def test_load(self):
-        sm = pkgutil.get_data('smeftrunner', 'tests/data/SMInput-CPV.dat').decode('utf-8')
-        wc = pkgutil.get_data('smeftrunner', 'tests/data/WCsInput-CPV-SMEFT.dat').decode('utf-8')
-        wcout = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        sm = pkgutil.get_data('wilson', 'smeftrunner/tests/data/SMInput-CPV.dat').decode('utf-8')
+        wc = pkgutil.get_data('wilson', 'smeftrunner/tests/data/WCsInput-CPV-SMEFT.dat').decode('utf-8')
+        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
         io.sm_lha2dict(pylha.load(sm))
         io.wc_lha2dict(pylha.load(wc))
         CSM = io.sm_lha2dict(pylha.load(wcout))
@@ -35,7 +35,7 @@ class TestIO(unittest.TestCase):
             npt.assert_array_equal(CSM[k], CSM2[k], err_msg="Failed for {}".format(k))
 
     def test_dump(self):
-        wcout = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
         smeft = SMEFT()
         smeft.load_initial((wcout,))
         smeft.scale_in = 1000
@@ -49,7 +49,7 @@ class TestIO(unittest.TestCase):
 
     def test_wcxf(self):
         # load example output file with SM par & WCs
-        wcout = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
         smeft = SMEFT()
         smeft.load_initial((wcout,))
         smeft.C_in['uphi'] = np.zeros((3,3))

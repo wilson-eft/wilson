@@ -23,7 +23,7 @@ python3 -m pip install smeftrunner
 The main interface is the `SMEFT` class that corresponds to a point in SMEFT parameter space and can be instantiated as
 
 ```python
-from smeftrunner import SMEFT
+from wilson.smeftrunner import SMEFT
 smeft = SMEFT()
 ```
 

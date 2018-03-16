@@ -4,6 +4,7 @@ import numpy.testing as npt
 import wcxf
 from . import wet
 from math import sqrt
+import wilson
 
 np.random.seed(87)
 
@@ -270,7 +271,7 @@ class TestBern2flavio(unittest.TestCase):
         flavio_wc.validate()
         # the output WC instance should contain only one as well
         self.assertEqual(list(flavio_wc.dict.keys()), ['CVLL_bsbs'])
-        GF = wcxf.parameters.p['GF']
+        GF = wilson.parameters.p['GF']
         pre = 4*GF/sqrt(2)
         self.assertAlmostEqual(flavio_wc.dict['CVLL_bsbs'], -1j * pre)
 
@@ -322,7 +323,7 @@ class Testflavio2Bern(unittest.TestCase):
         bern_wc.validate()
         # the output WC instance should contain only one as well
         self.assertEqual(list(bern_wc.dict.keys()), ['1sbsb'])
-        GF = wcxf.parameters.p['GF']
+        GF = wilson.parameters.p['GF']
         pre = 4*GF/sqrt(2)
         self.assertAlmostEqual(bern_wc.dict['1sbsb'], -1e-6j / pre)
 
@@ -367,7 +368,7 @@ class TestBern2flavioWET3(unittest.TestCase):
         flavio_wc.validate()
         # the output WC instance should contain only one as well
         self.assertEqual(list(flavio_wc.dict.keys()), ['CVLL_sdsd'])
-        GF = wcxf.parameters.p['GF']
+        GF = wilson.parameters.p['GF']
         pre = 4*GF/sqrt(2)
         self.assertAlmostEqual(flavio_wc.dict['CVLL_sdsd'], -1j * pre)
 
@@ -419,7 +420,7 @@ class Testflavio2BernWET3(unittest.TestCase):
         bern_wc.validate()
         # the output WC instance should contain only one as well
         self.assertEqual(list(bern_wc.dict.keys()), ['1dsds'])
-        GF = wcxf.parameters.p['GF']
+        GF = wilson.parameters.p['GF']
         pre = 4*GF/sqrt(2)
         self.assertAlmostEqual(bern_wc.dict['1dsds'], -1e-6j / pre)
 

@@ -1,6 +1,6 @@
 """Compare to 1-loop flavio QCD running as of flavio v0.25"""
 
-import wetrunner
+from wilson import wetrunner
 import wcxf
 import pkgutil
 import unittest
@@ -10,9 +10,9 @@ class TestFlavio(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        _f = pkgutil.get_data('wetrunner', 'tests/data/flavio_wc_random_150.json')
+        _f = pkgutil.get_data('wilson', 'wetrunner/tests/data/flavio_wc_random_150.json')
         cls.wc_in = wcxf.WC.load(_f.decode('utf-8'))
-        _f = pkgutil.get_data('wetrunner', 'tests/data/flavio_wc_random_5.json')
+        _f = pkgutil.get_data('wilson', 'wetrunner/tests/data/flavio_wc_random_5.json')
         cls.wc_out = wcxf.WC.load(_f.decode('utf-8'))
 
     def test_validate(self):

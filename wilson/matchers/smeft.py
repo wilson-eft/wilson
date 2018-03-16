@@ -1,8 +1,8 @@
 import numpy as np
 from math import sqrt, pi
 import wcxf
-from wcxf.parameters import p as default_parameters
-from wcxf.util import smeftutil
+from wilson.parameters import p as default_parameters
+from wilson.util import smeftutil
 
 # Based on arXiv:1709.04486
 

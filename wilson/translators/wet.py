@@ -1,7 +1,7 @@
 from math import pi, sqrt
 import numpy as np
-from wcxf.parameters import p as default_parameters
-from wcxf.util.qcd import alpha_s, m_b, m_s, m_c
+from wilson.parameters import p as default_parameters
+from wilson.util.qcd import alpha_s, m_b, m_s, m_c
 import ckmutil.ckm, ckmutil.diag
 import wcxf
 import pkgutil

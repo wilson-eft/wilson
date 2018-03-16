@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import wcxf
-
+import wilson
 
 np.random.seed(321)
 

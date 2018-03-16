@@ -1,5 +1,5 @@
 import unittest
-from wcxf.util.qcd import alpha_s, m_b, m_c, m_s
+from wilson.util.qcd import alpha_s, m_b, m_c, m_s
 
 # All numbers compared to Mathemetica version of RunDec
 

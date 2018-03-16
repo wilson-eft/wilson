@@ -1,9 +1,9 @@
 import unittest
-import wetrunner
+from wilson import wetrunner
 import wcxf
 import numpy as np
 import numpy.testing as npt
-from wetrunner import rge
+from wilson.wetrunner import rge
 
 np.random.seed(112)
 

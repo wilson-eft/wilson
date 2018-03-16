@@ -1,5 +1,5 @@
 import numpy as np
-from smeftrunner import beta, definitions
+from wilson.smeftrunner import beta, definitions
 from collections import OrderedDict, defaultdict
 import pylha
 import json

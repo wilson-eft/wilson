@@ -3,15 +3,15 @@ from collections import OrderedDict, defaultdict
 import numpy as np
 import numpy.testing as npt
 import pylha
-from smeftrunner import SMEFT
+from wilson.smeftrunner import SMEFT
 import pkgutil
 
 smeft = SMEFT()
 smeft.scale_in = 1e4
 smeft.scale_high = 1e4
 
-f1 = pkgutil.get_data('smeftrunner', 'tests/data/SMInput-CPV.dat').decode('utf-8')
-f2 = pkgutil.get_data('smeftrunner', 'tests/data/WCsInput-CPV-SMEFT.dat').decode('utf-8')
+f1 = pkgutil.get_data('wilson', 'smeftrunner/tests/data/SMInput-CPV.dat').decode('utf-8')
+f2 = pkgutil.get_data('wilson', 'smeftrunner/tests/data/WCsInput-CPV-SMEFT.dat').decode('utf-8')
 smeft.load_initial((f1, f2,))
 
 C_out = smeft.rgevolve(scale_out=160)
@@ -28,7 +28,7 @@ def BLOCKdict(streams):
 
 py_results = BLOCKdict((smeft.dump(C_out),))
 
-f = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+f = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
 ma_results = BLOCKdict((f,))
 
 

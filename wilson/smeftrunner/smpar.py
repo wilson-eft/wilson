@@ -4,7 +4,7 @@ import ckmutil
 import ckmutil.ckm
 import scipy.optimize
 from cmath import phase
-import smeftrunner
+from wilson import smeftrunner
 
 
 # Default values for SM parameters: MSbar parameters at M_Z (except GF)

@@ -1,6 +1,6 @@
 """Compare evolution matrices to v0.1 numerics"""
 
-import wetrunner
+from wilson import wetrunner
 import unittest
 from pkg_resources import resource_filename
 import numpy as np
@@ -19,8 +19,8 @@ def getUe_new(classname):
 
 class TestEvMat(unittest.TestCase):
     def test_evmat(self):
-        Usold = dict(np.load(resource_filename('wetrunner', 'tests/data/evmat_s_old.npz')))
-        Ueold = dict(np.load(resource_filename('wetrunner', 'tests/data/evmat_e_old.npz')))
+        Usold = dict(np.load(resource_filename('wilson', 'wetrunner/tests/data/evmat_s_old.npz')))
+        Ueold = dict(np.load(resource_filename('wilson', 'wetrunner/tests/data/evmat_e_old.npz')))
         Usnew = {k: getUs_new(k) for k in ['I', 'II', 'III', 'IV', 'Vb']}
         Uenew = {k: getUe_new(k) for k in ['I', 'II', 'III', 'IV', 'Vb']}
         Usnew['V'] = getUs_new('Vsb')

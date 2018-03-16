@@ -3,9 +3,9 @@ package."""
 
 
 import wcxf
-from wcxf.util import qcd
-from wetrunner import rge, definitions
-from wetrunner.parameters import p as default_parameters
+from wilson.util import qcd
+from wilson.wetrunner import rge, definitions
+from wilson.wetrunner.parameters import p as default_parameters
 from collections import OrderedDict
 
 

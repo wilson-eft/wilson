@@ -59,8 +59,8 @@ class TestWarsawUp(unittest.TestCase):
 class TestIO(unittest.TestCase):
     def test_arrays2wcxf(self):
         """Test the functions needed for WCxf IO."""
-        import smeftrunner
-        wcout = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        from wilson import smeftrunner
+        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
         smeft = smeftrunner.SMEFT()
         smeft.load_initial((wcout,))
         d_wcxf = wcxf.translators.smeft.arrays2wcxf(smeft.C_in)

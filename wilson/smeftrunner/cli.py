@@ -1,5 +1,5 @@
 import argparse
-from smeftrunner import SMEFT
+from wilson.smeftrunner import SMEFT
 
 def main():
     parser = argparse.ArgumentParser(description="Command line interface "

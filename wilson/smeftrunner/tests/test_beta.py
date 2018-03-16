@@ -1,16 +1,16 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from smeftrunner import beta, rge, SMEFT, io, definitions
+from wilson.smeftrunner import beta, rge, SMEFT, io, definitions
 import json
 import pkgutil
 import pylha
 
 # read in JSON files with numerical input & output of Mathematica code
-rpar = json.loads(pkgutil.get_data('smeftrunner', 'tests/data/random_par.json').decode('utf-8'))
-rC = json.loads(pkgutil.get_data('smeftrunner', 'tests/data/random_wc.json').decode('utf-8'))
-betas_re = json.loads(pkgutil.get_data('smeftrunner', 'tests/data/betas_re.json').decode('utf-8'))
-betas_im = json.loads(pkgutil.get_data('smeftrunner', 'tests/data/betas_im.json').decode('utf-8'))
+rpar = json.loads(pkgutil.get_data('wilson', 'smeftrunner/tests/data/random_par.json').decode('utf-8'))
+rC = json.loads(pkgutil.get_data('wilson', 'smeftrunner/tests/data/random_wc.json').decode('utf-8'))
+betas_re = json.loads(pkgutil.get_data('wilson', 'smeftrunner/tests/data/betas_re.json').decode('utf-8'))
+betas_im = json.loads(pkgutil.get_data('wilson', 'smeftrunner/tests/data/betas_im.json').decode('utf-8'))
 
 
 # reconstruct SM parameters

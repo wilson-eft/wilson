@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from smeftrunner import SMEFT, definitions
+from wilson.smeftrunner import SMEFT, definitions
 from test_beta import C
 import pkgutil
 
@@ -21,7 +21,7 @@ class TestClasses(unittest.TestCase):
         smeft.rgevolve_leadinglog(scale_out=900)
 
     def test_rotation(self):
-        wcout = pkgutil.get_data('smeftrunner', 'tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
         smeft = SMEFT()
         smeft.load_initial((wcout,))
         smeft.scale_in = 1000
