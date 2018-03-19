@@ -59,7 +59,7 @@ class TestBeta(unittest.TestCase):
         my_beta = beta.beta_array(C, HIGHSCALE)
         n_op = len(C0) + len(C2)*9 + len(C4)*81
         # shape is no. of op.s + no. of SM parameters
-        self.assertEqual(my_beta.shape, (n_op + 5 + 3*9 + 3,))
+        self.assertEqual(my_beta.shape, (n_op + 5 + 3*9,))
 
     def test_array2dict(self):
         d1 = beta.C_array2dict(beta.beta_array(C,  HIGHSCALE))

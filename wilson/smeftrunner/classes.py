@@ -1,12 +1,9 @@
 """Defines the SMEFT class that provides the main API to smeftrunner."""
 
 from . import rge
-from . import io
 from . import definitions
 from . import beta
 from . import smpar
-import pylha
-from collections import OrderedDict
 from math import sqrt
 import numpy as np
 import ckmutil.phases, ckmutil.diag
