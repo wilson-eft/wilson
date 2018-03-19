@@ -1,14 +1,8 @@
-'Ge''Ge'"""Definitions of auxiliary objects and operator properties."""
+"""Definitions of auxiliary objects and operator properties."""
 
 import numpy as np
 from wilson.util import smeftutil
 
-
-I3 = np.identity(3)
-
-
-def argdet(U):
-    return np.angle(np.linalg.det(U))
 
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue, sm_parameters=True):
     """Gauge-invariant $U(3)^5$ flavor rotation of all Wilson coefficients and

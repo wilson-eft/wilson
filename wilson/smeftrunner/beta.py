@@ -5,8 +5,10 @@ from collections import OrderedDict
 from functools import reduce
 import operator
 from wilson.util.smeftutil import C_keys, C_keys_shape
-from .definitions import I3
 from functools import lru_cache
+
+
+I3 = np.identity(3)
 
 
 class HashableArray(np.ndarray):

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from wilson.smeftrunner import SMEFT, definitions
+from wilson.smeftrunner import SMEFT
 from test_beta import C
 import pkgutil
 
