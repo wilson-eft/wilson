@@ -16,39 +16,15 @@ from wilson.util import smeftutil
 class SMEFT(object):
     """Parameter point in the Standard Model Effective Field Theory."""
 
-    def __init__(self):
+    def __init__(self, wc):
         """Initialize the SMEFT instance."""
-        self.C_in = None
+        self.wc = wc
         self.scale_in = None
         self.scale_high = None
+        self.C_in = None
+        self._set_initial_wcxf(self, wc)
 
-    def set_initial(self, C_in, scale_in, scale_high):
-        r"""Set the initial values for parameters and Wilson coefficients at
-        the scale `scale_in`, setting the new physics scale $\Lambda$ to
-        `scale_high`."""
-        self.C_in = C_in
-        self.scale_in = scale_in
-        self.scale_high = scale_high
-
-    def load_initial(self, streams):
-        """Load the initial values for parameters and Wilson coefficients from
-        one or several files.
-
-        `streams` should be a tuple of file-like objects strings."""
-        d = {}
-        for stream in streams:
-            s = io.load(stream)
-            if 'BLOCK' not in s:
-                raise ValueError("No BLOCK found")
-            d.update(s['BLOCK'])
-        d = {'BLOCK': d}
-        C = io.wc_lha2dict(d)
-        sm = io.sm_lha2dict(d)
-        C.update(sm)
-        C = smeftutil.symmetrize(C)
-        self.C_in = C
-
-    def set_initial_wcxf(self, wc, scale_high=None, get_smpar=False):
+    def _set_initial_wcxf(self, wc, scale_high=None, get_smpar=True):
         """Load the initial values for Wilson coefficients from a
         wcxf.WC instance.
 
@@ -104,36 +80,8 @@ class SMEFT(object):
         if get_smpar:
             self.C_in.update(self._get_sm_scale_in())
 
-    def load_wcxf(self, stream, get_smpar=True):
-        """Load the initial values for Wilson coefficients from
-        a file-like object or a string in WCxf format.
 
-        Note that Standard Model parameters have to be provided separately
-        and are assumed to be in the weak basis used for the Warsaw basis as
-        defined in WCxf, i.e. in the basis where the down-type and charged
-        lepton mass matrices are diagonal."""
-        import wcxf
-        wc = wcxf.WC.load(stream)
-        self.set_initial_wcxf(wc, get_smpar=get_smpar)
-
-    def dump(self, C_out, scale_out=None, stream=None, fmt='lha', skip_redundant=True):
-        """Return a string representation of the parameters and Wilson
-        coefficients `C_out` in DSixTools output format. If `stream` is
-        specified, export it to a file. `fmt` defaults to `lha` (the SLHA-like
-        DSixTools format), but can also be `json` or `yaml` (see the
-        pylha documentation)."""
-        C = OrderedDict()
-        if scale_out is not None:
-            C['SCALES'] = {'values': [[1, self.scale_high], [2, scale_out]]}
-        else:
-            C['SCALES'] = {'values': [[1, self.scale_high]]}
-        sm = io.sm_dict2lha(C_out)['BLOCK']
-        C.update(sm)
-        wc = io.wc_dict2lha(C_out, skip_redundant=skip_redundant)['BLOCK']
-        C.update(wc)
-        return pylha.dump({'BLOCK': C}, fmt=fmt, stream=stream)
-
-    def get_wcxf(self, C_out, scale_out):
+    def _to_wcxf(self, C_out, scale_out):
         """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
 
         Note that the Wilson coefficients are rotated into the Warsaw basis
@@ -157,17 +105,6 @@ class SMEFT(object):
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('SMEFT', 'Warsaw', scale_out, d)
         return wc
-
-    def dump_wcxf(self, C_out, scale_out, fmt='yaml', stream=None, **kwargs):
-        """Return a string representation of the Wilson coefficients `C_out`
-        in WCxf format. If `stream` is specified, export it to a file.
-        `fmt` defaults to `yaml`, but can also be `json`.
-
-        Note that the Wilson coefficients are rotated into the Warsaw basis
-        as defined in WCxf, i.e. to the basis where the down-type and charged
-        lepton mass matrices are diagonal."""
-        wc = self.get_wcxf(C_out, scale_out)
-        return wc.dump(fmt=fmt, stream=stream, **kwargs)
 
     def rgevolve(self, scale_out, **kwargs):
         """Solve the SMEFT RGEs from the initial scale to `scale_out`.

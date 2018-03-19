@@ -20,8 +20,6 @@ C["g"], C["gp"], C["gs"], C["Lambda"], C["m2"] = rpar[:5]
 C["Gu"] = np.array(rpar[5]) + 1j*np.array(rpar[6])
 C["Gd"] = np.array(rpar[7]) + 1j*np.array(rpar[8])
 C["Ge"] = np.array(rpar[9]) + 1j*np.array(rpar[10])
-C["Theta"] = C["Thetap"] = 0
-C["Thetas"] = 0
 HIGHSCALE = 1000
 
 C0 = smeftutil.WC_keys_0f

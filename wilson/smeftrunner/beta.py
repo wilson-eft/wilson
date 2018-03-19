@@ -160,12 +160,6 @@ def beta(C, HIGHSCALE, newphys=True):
       + 3*my_einsum("rspt,tp", C["ledq"], Gd) \
       - 3*my_einsum("rspt,pt", C["lequ1"], np.conj(Gu)))
 
-    Beta["Theta"] = -128*np.pi**2/g**2*m2/HIGHSCALE**2*C["phiWtilde"]
-
-    Beta["Thetap"] = -128*np.pi**2/gp**2*m2/HIGHSCALE**2*C["phiBtilde"]
-
-    Beta["Thetas"] = -128*np.pi**2/gs**2*m2/HIGHSCALE**2*C["phiGtilde"]
-
     if not newphys:
         # if there is no new physics, generate a dictionary with zero
         # Wilson coefficients (i.e. zero beta functions)

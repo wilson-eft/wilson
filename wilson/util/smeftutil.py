@@ -4,8 +4,7 @@ import numpy as np
 
 
 # names of SM parameters
-SM_keys = ['g', 'gp', 'gs', 'Lambda', 'm2', 'Gu', 'Gd', 'Ge',
-           'Theta', 'Thetap', 'Thetas']
+SM_keys = ['g', 'gp', 'gs', 'Lambda', 'm2', 'Gu', 'Gd', 'Ge',]
 
 
 # names of WCs with 0, 2, or 4 fermions (i.e. scalars, 3x3 matrices,
