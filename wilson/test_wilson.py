@@ -75,3 +75,16 @@ class TestWilson(unittest.TestCase):
             ww = wilson.Wilson(wc)
             wc_out = ww.match_run(eft[1], 'flavio', eft[3])
             wc_out.validate()
+
+
+class TestRGsolution(unittest.TestCase):
+    def test_rgsolution_smeft(self):
+        wc = wcxf.WC('SMEFT', 'Warsaw', 1e5, {'qu1_1233': 1e-7})
+        wc.validate()
+        smeft = wilson.run.smeft.SMEFT(wc)
+        sol = smeft.run_continuous(160)
+        x, y = sol.plotdata('qu1_1233')
+        self.assertTupleEqual(x.shape, (50,))
+        self.assertTupleEqual(y.shape, (50,))
+        self.assertEqual(x.dtype, float)
+        self.assertEqual(y.dtype, float)

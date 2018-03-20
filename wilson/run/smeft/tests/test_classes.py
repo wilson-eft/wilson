@@ -60,16 +60,3 @@ class TestSMEFT(unittest.TestCase):
     #         # now all the WCs & parameters should be rotation invariant!
     #         npt.assert_array_almost_equal(C_rot2[k], C_rot[k],
     #                                err_msg="Failed for {}".format(k))
-
-
-class TestRGSolution(unittest.TestCase):
-    def test_rgsolution(self):
-        wc = wcxf.WC('SMEFT', 'Warsaw', 1e5, {'qu1_1233': 1e-7})
-        wc.validate()
-        smeft = SMEFT(wc)
-        sol = smeft.run_continuous(160)
-        x, y = sol.plotdata('qu1_1233')
-        self.assertTupleEqual(x.shape, (50,))
-        self.assertTupleEqual(y.shape, (50,))
-        self.assertEqual(x.dtype, float)
-        self.assertEqual(y.dtype, float)
