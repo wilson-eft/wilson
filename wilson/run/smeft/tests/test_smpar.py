@@ -77,10 +77,10 @@ class TestMh2v(unittest.TestCase):
 class TestSMpar(unittest.TestCase):
     def test_smeftpar_small(self):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)
-        smeft = SMEFT()
+        smeft = SMEFT(wc=None)
         smeft.scale_in = 160
         smeft.scale_high = 1e12
-        smeft.set_initial_wcxf(wc, get_smpar=False)
+        smeft._set_initial_wcxf(wc, get_smpar=False)
         with self.assertRaises(ValueError):
             smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'flavio')
         CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
@@ -108,10 +108,10 @@ class TestSMpar(unittest.TestCase):
 
     def test_smpar_small(self):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)
-        smeft = SMEFT()
+        smeft = SMEFT(wc=None)
         smeft.scale_in = 160
         smeft.scale_high = 1e12
-        smeft.set_initial_wcxf(wc, get_smpar=False)
+        smeft._set_initial_wcxf(wc, get_smpar=False)
         CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
         Cboth = CSM.copy()
         Cboth.update(smeft.C_in)
@@ -124,10 +124,10 @@ class TestSMpar(unittest.TestCase):
 
     def test_smpar_roundtrip(self):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-6)
-        smeft = SMEFT()
+        smeft = SMEFT(wc=None)
         smeft.scale_in = 160
         smeft.scale_high = 500
-        smeft.set_initial_wcxf(wc, get_smpar=False)
+        smeft._set_initial_wcxf(wc, get_smpar=False)
         CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
         Cboth = CSM.copy()
         Cboth.update(smeft.C_in)
@@ -149,9 +149,8 @@ class TestSMpar(unittest.TestCase):
 class TestGetSMpar(unittest.TestCase):
     def test_wcxf_smpar(self):
         wc = get_random_wc('SMEFT', 'Warsaw', 1e5, 1e-11)
-        smeft = SMEFT()
-        smeft.set_initial_wcxf(wc, get_smpar=True)
-        C_out = smeft.rgevolve(91.1876)
+        smeft = SMEFT(wc)
+        C_out = smeft._rgevolve(91.1876)
         p_out = smpar.smpar(wc.scale, C_out)
         for k in p_out:
             self.assertAlmostEqual(p_out[k] / smpar.p[k], 1,
@@ -160,6 +159,5 @@ class TestGetSMpar(unittest.TestCase):
 
     def test_wcxf_smpar_incomplete(self):
         wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'qd1_1111': {'Im': 1e-6}})
-        smeft = SMEFT()
-        smeft.set_initial_wcxf(wc, get_smpar=True)
-        smeft.rgevolve(91.1876)
+        smeft = SMEFT(wc)
+        smeft.run(91.1876)

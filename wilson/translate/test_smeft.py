@@ -1,7 +1,5 @@
 import unittest
 import numpy as np
-import numpy.testing as npt
-import pkgutil
 import wcxf
 import wilson
 
@@ -58,13 +56,9 @@ class TestWarsawUp(unittest.TestCase):
 class TestIO(unittest.TestCase):
     def test_arrays2wcxf(self):
         """Test the functions needed for WCxf IO."""
-        from wilson.run import smeft
-        wcout = pkgutil.get_data('wilson', 'run/smeft/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
-        smeft = smeft.SMEFT()
-        smeft.load_initial((wcout,))
-        d_wcxf = wilson.translate.smeft.arrays2wcxf(smeft.C_in)
-        C_out = wilson.translate.smeft.wcxf2arrays(d_wcxf)
-        C_out = wilson.util.smeftutil.symmetrize(C_out)
-        for k, v in smeft.C_in.items():
-            npt.assert_array_equal(v, C_out[k],
-                                   err_msg="Arrays are not equal for {}".format(k))
+        wc = wc_Warsaw_random
+        C_arr = wilson.translate.smeft.wcxf2arrays(wc.dict)
+        C_wcxf = wilson.translate.smeft.arrays2wcxf(C_arr)
+        for k, v in wc.dict.items():
+            self.assertEqual(v, C_wcxf[k],
+                             msg="Failed for {}".format(k))
