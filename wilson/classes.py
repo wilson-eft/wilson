@@ -39,24 +39,31 @@ class Wilson(object):
         else:
             raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
         if eft == wet.eft:  # just run
-            return wet.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet.run(scale, sectors=sectors).translate(basis)
+            self._set_cache(sectors, scale, eft, basis, wc_out)
+            return wc_out
         elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'Bern')
             wet4 = WETrunner(wc_mb)
-            return wet4.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet4.run(scale, sectors=sectors).translate(basis)
+            self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
+            return wc_out
         elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
             wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'Bern')
             wet3 = WETrunner(wc_mc)
-            return wet3.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet3.run(scale, sectors=sectors).translate(basis)
+            return wc_out
+            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'Bern')
             wet4 = WETrunner(wc_mb)
-            wc_mc = wet4.run(scale, sectors=sectors).match('WET-3', 'Bern')
+            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'Bern')
             wet3 = WETrunner(wc_mc)
-            return wet3.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet3.run(scale, sectors=sectors).translate(basis)
+            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
+            return wc_out
         else:
             raise ValueError("Running from {} to {} not implemented".format(wet.eft, eft))
-        self._set_cache(wcxf_sector, scale, eft, basis, wc_out_dict)
 
     def _get_from_cache(self, sector, scale, eft, basis):
         """Try to load a set of Wilson coefficients from the cache, else return
