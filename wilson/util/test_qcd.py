@@ -60,7 +60,7 @@ class TestAlphas(unittest.TestCase):
             alpha_s(0, 6)
         with self.assertRaises(ValueError):
             alpha_s(-1, 6)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             alpha_s("1.0", 6)
 
     def test_alphas_5(self):

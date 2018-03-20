@@ -4,9 +4,9 @@ from functools import lru_cache
 
 def _sane(scale, f):
     """Check if scale and no. of flavours are sane"""
-    if not isinstance(scale, (float, int)) or scale <= 0:
+    if scale <= 0:
         raise ValueError("Scale must be a positive number")
-    if not isinstance(f, int) and 3 <= f <= 6:
+    if not 3 <= f <= 6:
         raise ValueError("f must be an integer between 3 and 6")
 
 
