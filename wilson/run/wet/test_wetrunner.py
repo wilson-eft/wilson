@@ -1,9 +1,9 @@
 import unittest
-from wilson import wetrunner
+from wilson.run import wet
 import wcxf
 import numpy as np
 import numpy.testing as npt
-from wilson.wetrunner import rge
+from wilson.run.wet import rge
 
 np.random.seed(112)
 
@@ -23,7 +23,7 @@ def get_random_wc(eft, basis, scale, cmax=1e-2):
 class TestDef(unittest.TestCase):
 
     def test_sectors(self):
-        for sname, sdict in wetrunner.definitions.sectors.items():
+        for sname, sdict in wet.definitions.sectors.items():
             # there should only be one class per sector
             self.assertEqual(len(list(sdict.keys())), 1)
             self.assertIn(sname, wcxf.Basis['WET', 'Bern'].sectors.keys())
@@ -39,14 +39,14 @@ class TestClass(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.wc = get_random_wc('WET', 'Bern', 160)
-        cls.wet = wetrunner.WETrunner(cls.wc)
+        cls.wet = wet.WETrunner(cls.wc)
 
     def test_init(self):
         with self.assertRaises(AssertionError):
-            wetrunner.WETrunner(0)  # argument is not a WC instance
+            wet.WETrunner(0)  # argument is not a WC instance
         wcf = get_random_wc('WET', 'flavio', 160)  # wrong basis
         with self.assertRaises(AssertionError):
-            wetrunner.WETrunner(wcf)
+            wet.WETrunner(wcf)
 
     def test_attr(self):
         self.assertEqual(self.wet.scale_in, 160)
@@ -80,7 +80,7 @@ class TestClassWET4(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.wc = get_random_wc('WET-4', 'Bern', 4)
-        cls.wet = wetrunner.WETrunner(cls.wc)
+        cls.wet = wet.WETrunner(cls.wc)
 
     def test_wcxf(self):
         wc = self.wet.run(1.2)

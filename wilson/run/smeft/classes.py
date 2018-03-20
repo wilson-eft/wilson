@@ -1,4 +1,4 @@
-"""Defines the SMEFT class that provides the main API to smeftrunner."""
+"""Defines the SMEFT class that provides the main API to smeft."""
 
 from . import rge
 from . import definitions
@@ -7,6 +7,7 @@ from . import smpar
 from math import sqrt
 import numpy as np
 import ckmutil.phases, ckmutil.diag
+import wilson
 from wilson.util import smeftutil
 
 
@@ -28,7 +29,7 @@ class SMEFT(object):
         Parameters:
 
         - `scale_high`: since Wilson coefficients are dimensionless in
-          smeftrunner but not in WCxf, the high scale in GeV has to be provided.
+          smeft but not in WCxf, the high scale in GeV has to be provided.
           If this parameter is None (default), either a previously defined
           value will be used, or the scale attribute of the WC instance will
           be used.
@@ -52,7 +53,7 @@ class SMEFT(object):
             self.scale_high = scale_high
         elif self.scale_high is None:
             self.scale_high = wc.scale
-        C = wcxf.translators.smeft.wcxf2arrays(wc.dict)
+        C = wilson.translate.smeft.wcxf2arrays(wc.dict)
         keys_dim5 = ['llphiphi']
         keys_dim6 = list(set(smeftutil.WC_keys_0f + smeftutil.WC_keys_2f + smeftutil.WC_keys_4f) - set(keys_dim5))
         self.scale_in = wc.scale
@@ -86,7 +87,7 @@ class SMEFT(object):
         lepton mass matrices are diagonal."""
         import wcxf
         C = self.rotate_defaultbasis(C_out)
-        d = wcxf.translators.smeft.arrays2wcxf(C)
+        d = wilson.translate.smeft.arrays2wcxf(C)
         basis = wcxf.Basis['SMEFT', 'Warsaw']
         d = {k: v for k, v in d.items() if k in basis.all_wcs and v != 0}
         keys_dim5 = ['llphiphi']

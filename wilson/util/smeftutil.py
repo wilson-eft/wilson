@@ -1,4 +1,4 @@
-"""Utility functoins for SMEFT, taken from python-smeftrunner"""
+"""Utility functoins for SMEFT, taken from python-smeft"""
 
 import numpy as np
 

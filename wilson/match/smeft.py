@@ -1,6 +1,7 @@
 import numpy as np
 from math import sqrt, pi
 import wcxf
+import wilson
 from wilson.parameters import p as default_parameters
 from wilson.util import smeftutil
 
@@ -221,13 +222,13 @@ def match_all(d_SMEFT, parameters=None):
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
-    C = wcxf.translators.smeft.wcxf2arrays(d_SMEFT)
+    C = wilson.translate.smeft.wcxf2arrays(d_SMEFT)
     C = smeftutil.symmetrize(C)
     C = smeftutil.add_missing(C)
     C['vT'] = 246.22
     C_WET = match_all_array(C, p)
-    C_WET = wcxf.translators.wet.rotate_down(C_WET, p)
-    d_WET = wcxf.translators.smeft.arrays2wcxf(C_WET)
+    C_WET = wilson.translate.wet.rotate_down(C_WET, p)
+    d_WET = wilson.translate.smeft.arrays2wcxf(C_WET)
     basis = wcxf.Basis['WET', 'JMS']
     keys = set(d_WET.keys()) & set(basis.all_wcs)
     d_WET = {k: d_WET[k] for k in keys}

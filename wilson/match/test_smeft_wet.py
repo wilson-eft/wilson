@@ -1,10 +1,7 @@
 import unittest
 import numpy as np
-import numpy.testing as npt
-import yaml
-import json
-import pkgutil
 import wcxf
+import wilson
 
 np.random.seed(89)
 

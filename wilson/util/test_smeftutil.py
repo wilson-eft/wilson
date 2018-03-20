@@ -1,9 +1,9 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from wilson.smeftrunner import beta
+from wilson.run.smeft import beta
 from wilson.util import smeftutil
-from wilson.smeftrunner.tests import test_beta
+from wilson.run.smeft.tests import test_beta
 
 C = test_beta.C.copy()
 for i in C:

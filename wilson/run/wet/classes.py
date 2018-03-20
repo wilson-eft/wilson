@@ -1,11 +1,11 @@
-"""Defines the `WET` class that provides the main interface to the wetrunner
+"""Defines the `WET` class that provides the main interface to the run.wet
 package."""
 
 
 import wcxf
 from wilson.util import qcd
-from wilson.wetrunner import rge, definitions
-from wilson.wetrunner.parameters import p as default_parameters
+from wilson.run.wet import rge, definitions
+from wilson.run.wet.parameters import p as default_parameters
 from collections import OrderedDict
 
 
@@ -26,7 +26,7 @@ class WETrunner(object):
           at a given (input) scale. The EFT must be one of `WET`, `WET-4`,
           or `WET-3`; the basis must be `Bern`.
         - parameters: optional. If provided, must be a dictionary containing
-          values for the input parameters as defined in `wetrunner.parameters`.
+          values for the input parameters as defined in `run.wet.parameters`.
           Default values are used for all parameters not provided.
         """
         assert isinstance(wc, wcxf.WC)

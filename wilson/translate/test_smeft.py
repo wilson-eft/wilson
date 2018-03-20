@@ -58,12 +58,12 @@ class TestWarsawUp(unittest.TestCase):
 class TestIO(unittest.TestCase):
     def test_arrays2wcxf(self):
         """Test the functions needed for WCxf IO."""
-        from wilson import smeftrunner
-        wcout = pkgutil.get_data('wilson', 'smeftrunner/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
-        smeft = smeftrunner.SMEFT()
+        from wilson.run import smeft
+        wcout = pkgutil.get_data('wilson', 'run/smeft/tests/data/Output_SMEFTrunner.dat').decode('utf-8')
+        smeft = smeft.SMEFT()
         smeft.load_initial((wcout,))
-        d_wcxf = wcxf.translators.smeft.arrays2wcxf(smeft.C_in)
-        C_out = wcxf.translators.smeft.wcxf2arrays(d_wcxf)
+        d_wcxf = wilson.translate.smeft.arrays2wcxf(smeft.C_in)
+        C_out = wilson.translate.smeft.wcxf2arrays(d_wcxf)
         C_out = wilson.util.smeftutil.symmetrize(C_out)
         for k, v in smeft.C_in.items():
             npt.assert_array_equal(v, C_out[k],

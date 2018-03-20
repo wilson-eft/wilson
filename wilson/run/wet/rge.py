@@ -2,11 +2,11 @@
 sector."""
 
 
-from wilson.wetrunner.definitions import sectors
+from wilson.run.wet.definitions import sectors
 from collections import OrderedDict
 import numpy as np
 from functools import lru_cache
-from wilson.wetrunner import adm
+from wilson.run.wet import adm
 from math import log
 
 
