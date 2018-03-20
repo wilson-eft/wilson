@@ -31,30 +31,22 @@ class SMEFT(object):
         """
         self.wc = wc
         self.scale_in = None
-        self.scale_high = None
         self.C_in = None
         if wc is not None:
             self._set_initial_wcxf(wc, get_smpar=get_smpar)
 
-    def _set_initial(self, C_in, scale_in, scale_high):
+    def _set_initial(self, C_in, scale_in):
         r"""Set the initial values for parameters and Wilson coefficients at
-        the scale `scale_in`, setting the new physics scale $\Lambda$ to
-        `scale_high`."""
+        the scale `scale_in`."""
         self.C_in = C_in
         self.scale_in = scale_in
-        self.scale_high = scale_high
 
-    def _set_initial_wcxf(self, wc, scale_high=None, get_smpar=True):
+    def _set_initial_wcxf(self, wc, get_smpar=True):
         """Load the initial values for Wilson coefficients from a
         wcxf.WC instance.
 
         Parameters:
 
-        - `scale_high`: since Wilson coefficients are dimensionless in
-          smeft but not in WCxf, the high scale in GeV has to be provided.
-          If this parameter is None (default), either a previously defined
-          value will be used, or the scale attribute of the WC instance will
-          be used.
         - `get_smpar`: boolean, optional, defaults to True. If True, an attempt
           is made to determine the SM parameters from the requirement of
           reproducing the correct SM masses and mixings at the electroweak
@@ -70,20 +62,8 @@ class SMEFT(object):
             raise ValueError("Wilson coefficients use wrong EFT.")
         if wc.basis != 'Warsaw':
             raise ValueError("Wilson coefficients use wrong basis.")
-        if scale_high is not None:
-            self.scale_high = scale_high
-        elif self.scale_high is None:
-            self.scale_high = wc.scale
         C = wilson.translate.smeft.wcxf2arrays(wc.dict)
-        keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(smeftutil.WC_keys_0f + smeftutil.WC_keys_2f + smeftutil.WC_keys_4f) - set(keys_dim5))
         self.scale_in = wc.scale
-        for k in keys_dim5:
-            if k in C:
-                C[k] = C[k]*self.scale_high
-        for k in keys_dim6:
-            if k in C:
-                C[k] = C[k]*self.scale_high**2
         C = smeftutil.symmetrize(C)
         # fill in zeros for missing WCs
         for k, s in smeftutil.C_keys_shape.items():
@@ -110,16 +90,6 @@ class SMEFT(object):
         d = wilson.translate.smeft.arrays2wcxf(C)
         basis = wcxf.Basis['SMEFT', 'Warsaw']
         d = {k: v for k, v in d.items() if k in basis.all_wcs and v != 0}
-        keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(smeftutil.WC_keys_0f + smeftutil.WC_keys_2f
-                             + smeftutil.WC_keys_4f) - set(keys_dim5))
-        for k in d:
-            if k.split('_')[0] in keys_dim5:
-                d[k] = d[k] / self.scale_high
-        for k in d:
-            if k.split('_')[0] in keys_dim6:
-                d[k] = d[k] / self.scale_high**2
-        # d = {k: v for k, v in d.items() if v != 0}
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('SMEFT', 'Warsaw', scale_out, d)
         return wc
@@ -131,7 +101,6 @@ class SMEFT(object):
         the ODE solver `scipy.integrate.odeint`."""
         self._check_initial()
         return rge.smeft_evolve(C_in=self.C_in,
-                            scale_high=self.scale_high,
                             scale_in=self.scale_in,
                             scale_out=scale_out,
                             **kwargs)
@@ -144,7 +113,6 @@ class SMEFT(object):
         """
         self._check_initial()
         return rge.smeft_evolve_leadinglog(C_in=self.C_in,
-                            scale_high=self.scale_high,
                             scale_in=self.scale_in,
                             scale_out=scale_out)
 
@@ -155,8 +123,6 @@ class SMEFT(object):
             raise Exception("You have to specify the initial conditions first.")
         if self.scale_in is None:
             raise Exception("You have to specify the initial scale first.")
-        if self.scale_high is None:
-            raise Exception("You have to specify the high scale first.")
 
     def _rotate_defaultbasis(self, C):
         """Rotate all parameters to the basis where the running down-type quark
@@ -165,9 +131,9 @@ class SMEFT(object):
         diagonal, and where the CKM and PMNS matrices have the standard
         phase convention."""
         v = sqrt(2*C['m2'].real/C['Lambda'].real)
-        Mep = v/sqrt(2) * (C['Ge'] - C['ephi'] * v**2/self.scale_high**2/2)
-        Mup = v/sqrt(2) * (C['Gu'] - C['uphi'] * v**2/self.scale_high**2/2)
-        Mdp = v/sqrt(2) * (C['Gd'] - C['dphi'] * v**2/self.scale_high**2/2)
+        Mep = v/sqrt(2) * (C['Ge'] - C['ephi'] * v**2/2)
+        Mup = v/sqrt(2) * (C['Gu'] - C['uphi'] * v**2/2)
+        Mdp = v/sqrt(2) * (C['Gd'] - C['dphi'] * v**2/2)
         Mnup = -v**2 * C['llphiphi']
         UeL, Me, UeR = ckmutil.diag.msvd(Mep)
         UuL, Mu, UuR = ckmutil.diag.msvd(Mup)
@@ -185,12 +151,12 @@ class SMEFT(object):
         smeft_sm = SMEFT(wc=None)
         C_in_sm = beta.C_array2dict(np.zeros(9999))
         # set the SM parameters to the values obtained from smpar.smeftpar
-        C_SM = smpar.smeftpar(scale_sm, self.scale_high, C_out, basis='Warsaw')
+        C_SM = smpar.smeftpar(scale_sm, C_out, basis='Warsaw')
         C_SM = {k: v for k, v in C_SM.items() if k in smeftutil.SM_keys}
         # set the Wilson coefficients at the EW scale to C_out
         C_in_sm.update(C_out)
         C_in_sm.update(C_SM)
-        smeft_sm._set_initial(C_in_sm, scale_sm, scale_high=self.scale_high)
+        smeft_sm._set_initial(C_in_sm, scale_sm)
         # run up (with 1% relative precision, ignore running of Wilson coefficients)
         C_SM_high = smeft_sm._rgevolve(self.scale_in, newphys=False, rtol=0.01, atol=1)
         C_SM_high = self._rotate_defaultbasis(C_SM_high)

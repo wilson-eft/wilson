@@ -24,17 +24,16 @@ def get_random_wc(eft, basis, scale=160, cmax=1e-2):
 
 class Testgpbar(unittest.TestCase):
     def test_sm(self):
-        gp = smpar.get_gpbar(0.3, 0.6, 246, {'phiWB': 0, 'phiB': 0}, 1)
+        gp = smpar.get_gpbar(0.3, 0.6, 246, {'phiWB': 0, 'phiB': 0})
         self.assertEqual(gp, 0.3*0.6/sqrt(-0.3**2+0.6**2))
 
     def test_general(self):
-        C = {'phiWB': np.random.rand(), 'phiB': np.random.rand()}
+        C = {'phiWB': np.random.rand() / 200**2, 'phiB': np.random.rand() / 200**2}
         v = 246
-        scale_high = 200
-        gp = smpar.get_gpbar(0.3, 0.6, v, C, scale_high)
-        gpb = gp / (1 - C['phiB'] * (v**2 / scale_high**2))
+        gp = smpar.get_gpbar(0.3, 0.6, v, C)
+        gpb = gp / (1 - C['phiB'] * (v**2))
         gb = 0.6
-        eps = C['phiWB'] * (v**2 / scale_high**2)
+        eps = C['phiWB'] * (v**2)
         eb = (gb * gpb / sqrt(gb**2 + gpb**2) *
               (1 - eps * gb * gpb / (gb**2 + gpb**2)))
         self.assertAlmostEqual(eb, 0.3)
@@ -44,33 +43,30 @@ class TestMh2v(unittest.TestCase):
     def test_sm(self):
         v = 246
         Mh2 = 125**2
-        scale_high = 500
         d = smpar._vMh2_to_m2Lambda_SM(v, Mh2)
         self.assertAlmostEqual(d['m2'], Mh2/2)
         self.assertAlmostEqual(d['Lambda'], Mh2/v**2)
         C = {k: 0 for k in ['phi', 'phiBox', 'phiD']}
-        d = smpar.vMh2_to_m2Lambda(v, Mh2, C, scale_high)
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C)
         self.assertAlmostEqual(d['m2'], Mh2/2)
         self.assertAlmostEqual(d['Lambda'], Mh2/v**2)
 
     def test_Cphi0(self):
         v = 246
         Mh2 = 125**2
-        scale_high = 500
-        C = {k: np.random.rand() for k in ['phiBox', 'phiD']}
+        C = {k: np.random.rand() / 500**2 for k in ['phiBox', 'phiD']}
         C['phi'] = 0
-        d = smpar.vMh2_to_m2Lambda(v, Mh2, C, scale_high)
-        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C, scale_high)
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C)
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
         self.assertAlmostEqual(d2['v'], v)
         self.assertAlmostEqual(d2['Mh2'], Mh2)
 
     def test_general(self):
         v = 246
         Mh2 = 125**2
-        scale_high = 500
-        C = {k: np.random.rand() for k in ['phi', 'phiBox', 'phiD']}
-        d = smpar.vMh2_to_m2Lambda(v, Mh2, C, scale_high)
-        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C, scale_high)
+        C = {k: np.random.rand() / 500**2 for k in ['phi', 'phiBox', 'phiD']}
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C)
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
         self.assertAlmostEqual(d2['v'], v, places=6)
         self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
 
@@ -79,11 +75,10 @@ class TestSMpar(unittest.TestCase):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)
         smeft = SMEFT(wc=None)
         smeft.scale_in = 160
-        smeft.scale_high = 1e12
         smeft._set_initial_wcxf(wc, get_smpar=False)
         with self.assertRaises(ValueError):
-            smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'flavio')
-        CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
+            smpar.smeftpar(smeft.scale_in, smeft.C_in, 'flavio')
+        CSM = smpar.smeftpar(smeft.scale_in, smeft.C_in, 'Warsaw')
         p = smpar.p
         self.assertAlmostEqual(CSM['m2'], p['m_h']**2/2)
         v = sqrt(1 / sqrt(2) / p['GF'])
@@ -110,12 +105,11 @@ class TestSMpar(unittest.TestCase):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)
         smeft = SMEFT(wc=None)
         smeft.scale_in = 160
-        smeft.scale_high = 1e12
         smeft._set_initial_wcxf(wc, get_smpar=False)
-        CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
+        CSM = smpar.smeftpar(smeft.scale_in, smeft.C_in, 'Warsaw')
         Cboth = CSM.copy()
         Cboth.update(smeft.C_in)
-        Cback = smpar.smpar(smeft.scale_high, Cboth)
+        Cback = smpar.smpar(Cboth)
         for k in smpar.p:
             if k not in ['m_Z', 'gamma']:
                 self.assertAlmostEqual(smpar.p[k], Cback[k],
@@ -126,12 +120,11 @@ class TestSMpar(unittest.TestCase):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-6)
         smeft = SMEFT(wc=None)
         smeft.scale_in = 160
-        smeft.scale_high = 500
         smeft._set_initial_wcxf(wc, get_smpar=False)
-        CSM = smpar.smeftpar(smeft.scale_in, smeft.scale_high, smeft.C_in, 'Warsaw')
+        CSM = smpar.smeftpar(smeft.scale_in, smeft.C_in, 'Warsaw')
         Cboth = CSM.copy()
         Cboth.update(smeft.C_in)
-        Cback = smpar.smpar(smeft.scale_high, Cboth)
+        Cback = smpar.smpar(Cboth)
         for k in smpar.p:
             if k in ['m_Z']:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
@@ -151,7 +144,7 @@ class TestGetSMpar(unittest.TestCase):
         wc = get_random_wc('SMEFT', 'Warsaw', 1e5, 1e-11)
         smeft = SMEFT(wc)
         C_out = smeft._rgevolve(91.1876)
-        p_out = smpar.smpar(wc.scale, C_out)
+        p_out = smpar.smpar(C_out)
         for k in p_out:
             self.assertAlmostEqual(p_out[k] / smpar.p[k], 1,
                                    delta=0.05,

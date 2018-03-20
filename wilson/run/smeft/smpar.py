@@ -31,16 +31,16 @@ p['m_Z'] = 91.46
 p['m_h'] = 130.6
 
 
-def m2Lambda_to_vMh2(m2, Lambda, C, scale_high):
+def m2Lambda_to_vMh2(m2, Lambda, C):
     """Function to numerically determine the  physical Higgs VEV and mass
     given the parameters of the Higgs potential."""
     try:
         v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-             (sqrt(2) * Lambda**(5 / 2)) * C['phi'] / scale_high**2)
+             (sqrt(2) * Lambda**(5 / 2)) * C['phi'])
     except ValueError:
         v = 0
     Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'] - 4 * Lambda * C['phiBox'] +
-                                        Lambda * C['phiD'])/scale_high**2)
+                                        Lambda * C['phiD']))
     return {'v': v, 'Mh2': Mh2}
 
 def _vMh2_to_m2Lambda_SM(v, Mh2):
@@ -48,7 +48,7 @@ def _vMh2_to_m2Lambda_SM(v, Mh2):
     Lambda = 2 * m2 / v**2
     return {'m2': m2, 'Lambda': Lambda}
 
-def vMh2_to_m2Lambda(v, Mh2, C, scale_high):
+def vMh2_to_m2Lambda(v, Mh2, C):
     """Function to numerically determine the parameters of the Higgs potential
     given the physical Higgs VEV and mass."""
     if C['phi'] == 0 and C['phiBox'] == 0 and C['phiD'] == 0:
@@ -57,7 +57,7 @@ def vMh2_to_m2Lambda(v, Mh2, C, scale_high):
         def f0(x):  # we want the root of this function
             m2, Lambda = x
             d = m2Lambda_to_vMh2(m2=m2.real, Lambda=Lambda.real,
-                                 C=C, scale_high=scale_high)
+                                 C=C)
             return np.array([d['v'] - v, d['Mh2'] - Mh2])
         dSM = _vMh2_to_m2Lambda_SM(v, Mh2)
         x0 = np.array([dSM['m2'], dSM['Lambda']])
@@ -68,7 +68,7 @@ def vMh2_to_m2Lambda(v, Mh2, C, scale_high):
         return {'m2': xres[0], 'Lambda': xres[1]}
 
 
-def get_gpbar(ebar, gbar, v, C, scale_high):
+def get_gpbar(ebar, gbar, v, C):
     r"""Function to numerically determine the hypercharge gauge coupling
     in terms of $\bar e$, $\bar g$, v, and the Wilson coefficients."""
     if C['phiWB'] == 0:  # this is the trivial case
@@ -77,15 +77,15 @@ def get_gpbar(ebar, gbar, v, C, scale_high):
         def f0(x):  # we want the root of this function
             gpb = x
             gb = gbar
-            eps = C['phiWB'] * (v**2 / scale_high**2)
+            eps = C['phiWB'] * (v**2)
             ebar_calc = (gb * gpb / sqrt(gb**2 + gpb**2) *
                         (1 - eps * gb * gpb / (gb**2 + gpb**2)))
             return (ebar_calc - ebar).real
         gpbar = scipy.optimize.brentq(f0, 0, 3)
-    return gpbar * (1 - C['phiB'] * (v**2 / scale_high**2))
+    return gpbar * (1 - C['phiB'] * (v**2))
 
 
-def smeftpar(scale, scale_high, C, basis):
+def smeftpar(scale, C, basis):
     # start with a zero dict and update it with the input values
     MW = p['m_W']
     # MZ = p['m_Z']
@@ -93,15 +93,15 @@ def smeftpar(scale, scale_high, C, basis):
     Mh = p['m_h']
     vb = sqrt(1 / sqrt(2) / GF)
     v = vb  # TODO
-    _d = vMh2_to_m2Lambda(v=v, Mh2=Mh**2, C=C, scale_high=scale_high)
+    _d = vMh2_to_m2Lambda(v=v, Mh2=Mh**2, C=C)
     m2 = _d['m2'].real
     Lambda = _d['Lambda'].real
     gsbar = sqrt(4 * pi * p['alpha_s'])
-    gs = (1 - C['phiG'] * (v**2 / scale_high**2)) * gsbar
+    gs = (1 - C['phiG'] * (v**2)) * gsbar
     gbar = 2 * MW / v
-    g = gbar * (1 - C['phiW'] * (v**2 / scale_high**2))
+    g = gbar * (1 - C['phiW'] * (v**2))
     ebar = sqrt(4 * pi * p['alpha_e'])
-    gp = get_gpbar(ebar, gbar, v, C, scale_high)
+    gp = get_gpbar(ebar, gbar, v, C)
     c = {}
     c['m2'] = m2
     c['Lambda'] = Lambda
@@ -118,32 +118,32 @@ def smeftpar(scale, scale_high, C, basis):
     else:
         raise ValueError("Basis '{}' not supported".format(basis))
     Me = np.diag([p['m_e'], p['m_mu'], p['m_tau']])
-    c['Gd'] = Md / (v / sqrt(2)) + C['dphi'] * (v**2 / scale_high**2) / 2
-    c['Gu'] = Mu / (v / sqrt(2)) + C['uphi'] * (v**2 / scale_high**2) / 2
-    c['Ge'] = Me / (v / sqrt(2)) + C['ephi'] * (v**2 / scale_high**2) / 2
+    c['Gd'] = Md / (v / sqrt(2)) + C['dphi'] * (v**2) / 2
+    c['Gu'] = Mu / (v / sqrt(2)) + C['uphi'] * (v**2) / 2
+    c['Ge'] = Me / (v / sqrt(2)) + C['ephi'] * (v**2) / 2
     return c
 
 
-def smpar(scale_high, C):
+def smpar(C):
     m2 = C['m2'].real
     Lambda = C['Lambda'].real
     v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-         (sqrt(2) * Lambda**(5 / 2)) * C['phi'] / scale_high**2)
+         (sqrt(2) * Lambda**(5 / 2)) * C['phi'])
     GF = 1 / (sqrt(2) * v**2)  # TODO
     Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'] - 4 * Lambda * C['phiBox'] +
-                                       Lambda * C['phiD'])/scale_high**2)
-    eps = C['phiWB'] * (v**2 / scale_high**2)
-    gb = (C['g'] / (1 - C['phiW'] * (v**2 / scale_high**2))).real
-    gpb = (C['gp'] / (1 - C['phiB'] * (v**2 / scale_high**2))).real
-    gsb = (C['gs'] / (1 - C['phiG'] * (v**2 / scale_high**2))).real
+                                       Lambda * C['phiD']))
+    eps = C['phiWB'] * (v**2)
+    gb = (C['g'] / (1 - C['phiW'] * (v**2))).real
+    gpb = (C['gp'] / (1 - C['phiB'] * (v**2))).real
+    gsb = (C['gs'] / (1 - C['phiG'] * (v**2))).real
     MW = gb * v / 2
-    ZG0 = 1 + C['phiD'] * (v**2 / scale_high**2) / 4
+    ZG0 = 1 + C['phiD'] * (v**2) / 4
     MZ = (sqrt(gb**2 + gpb**2) / 2 * v
           * (1 + eps * gb * gpb / (gb**2 + gpb**2)) * ZG0)
-    Mnup = -(v**2 / scale_high) * C['llphiphi']
-    Mep = v / sqrt(2) * (C['Ge'] - C['ephi'] * (v**2 / scale_high**2) / 2)
-    Mup = v / sqrt(2) * (C['Gu'] - C['uphi'] * (v**2 / scale_high**2) / 2)
-    Mdp = v / sqrt(2) * (C['Gd'] - C['dphi'] * (v**2 / scale_high**2) / 2)
+    Mnup = -(v**2) * C['llphiphi']
+    Mep = v / sqrt(2) * (C['Ge'] - C['ephi'] * (v**2) / 2)
+    Mup = v / sqrt(2) * (C['Gu'] - C['uphi'] * (v**2) / 2)
+    Mdp = v / sqrt(2) * (C['Gd'] - C['dphi'] * (v**2) / 2)
     UeL, Me, UeR = ckmutil.diag.msvd(Mep)
     UuL, Mu, UuR = ckmutil.diag.msvd(Mup)
     UdL, Md, UdR = ckmutil.diag.msvd(Mdp)

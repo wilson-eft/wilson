@@ -36,7 +36,7 @@ def _cached_einsum(indices, *args):
     return np.einsum(indices, *args)
 
 
-def beta(C, HIGHSCALE, newphys=True):
+def beta(C, HIGHSCALE=1, newphys=True):
     """Return the beta functions of all SM parameters and SMEFT Wilson
     coefficients."""
 
@@ -1817,7 +1817,7 @@ def beta(C, HIGHSCALE, newphys=True):
 
     return Beta
 
-def beta_array(C, HIGHSCALE, *args, **kwargs):
+def beta_array(C, HIGHSCALE=1, *args, **kwargs):
     """Return the beta functions of all SM parameters and SMEFT Wilson
     coefficients as a 1D numpy array."""
     beta_odict = beta(C, HIGHSCALE, *args, **kwargs)
