@@ -1118,7 +1118,7 @@ def _Bern_to_Flavio_VII(C, parameters):
     """From Bern to flavio basis for class VII, i.e. flavour blind operators
     mixing with the quark EDMs and CEDMs."""
     d = {}
-    dtrans = json.loads(pkgutil.get_data('wcxf', 'data/bern_flavio_vii.json').decode('utf8'))
+    dtrans = json.loads(pkgutil.get_data('wilson', 'data/bern_flavio_vii.json').decode('utf8'))
     for cb, cf in dtrans.items():
         d[cf] = C.get(cb, 0)
     gs = sqrt(4 * pi * parameters['alpha_s'])
@@ -1144,7 +1144,7 @@ def _Flavio_to_Bern_VII(C, parameters):
     """From flavio to Bern basis for class VII, i.e. flavour blind operators
     mixing with the quark EDMs and CEDMs."""
     d = {}
-    dtrans = json.loads(pkgutil.get_data('wcxf', 'data/bern_flavio_vii.json').decode('utf8'))
+    dtrans = json.loads(pkgutil.get_data('wilson', 'data/bern_flavio_vii.json').decode('utf8'))
     for cb, cf in dtrans.items():
         d[cb] = C.get(cf, 0)
     gs = sqrt(4 * pi * parameters['alpha_s'])
@@ -1568,8 +1568,8 @@ def JMS_to_Bern(Cflat, scale, parameters=None):
 
 def FlavorKit_to_JMS(C, scale, parameters=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    d = json.loads(pkgutil.get_data('wcxf', 'data/flavorkit_jms.json').decode('utf8'))
-    d_conj = json.loads(pkgutil.get_data('wcxf', 'data/flavorkit_jms_conj.json').decode('utf8'))
+    d = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms.json').decode('utf8'))
+    d_conj = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms_conj.json').decode('utf8'))
     C_out = {}
     for k, v in C.items():
         if k in d:
@@ -1597,9 +1597,9 @@ def FlavorKit_to_JMS(C, scale, parameters=None):
 
 def JMS_to_FlavorKit(C, scale, parameters=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    d = json.loads(pkgutil.get_data('wcxf', 'data/flavorkit_jms.json').decode('utf8'))
+    d = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms.json').decode('utf8'))
     d = {v: k for k, v in d.items()}  # revert dict
-    d_conj = json.loads(pkgutil.get_data('wcxf', 'data/flavorkit_jms_conj.json').decode('utf8'))
+    d_conj = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms_conj.json').decode('utf8'))
     d_conj = {v: k for k, v in d_conj.items()}  # revert dict
     C_out = {}
     for k, v in C.items():
