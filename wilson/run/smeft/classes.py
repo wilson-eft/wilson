@@ -130,7 +130,7 @@ class SMEFT(object):
         up-type quark mass matrix has the form V.S, with V unitary and S real
         diagonal, and where the CKM and PMNS matrices have the standard
         phase convention."""
-        v = sqrt(2*C['m2'].real/C['Lambda'].real)
+        v = 246.22
         Mep = v/sqrt(2) * (C['Ge'] - C['ephi'] * v**2/2)
         Mup = v/sqrt(2) * (C['Gu'] - C['uphi'] * v**2/2)
         Mdp = v/sqrt(2) * (C['Gd'] - C['dphi'] * v**2/2)
@@ -158,7 +158,7 @@ class SMEFT(object):
         C_in_sm.update(C_SM)
         smeft_sm._set_initial(C_in_sm, scale_sm)
         # run up (with 1% relative precision, ignore running of Wilson coefficients)
-        C_SM_high = smeft_sm._rgevolve(self.scale_in, newphys=False, rtol=0.01, atol=1)
+        C_SM_high = smeft_sm._rgevolve(self.scale_in, newphys=False, rtol=0.001, atol=1)
         C_SM_high = self._rotate_defaultbasis(C_SM_high)
         return {k: v for k, v in C_SM_high.items() if k in smeftutil.SM_keys}
 
