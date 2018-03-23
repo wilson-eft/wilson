@@ -23,22 +23,19 @@ def get_random_wc(eft, basis, scale, cmax=1e-2):
 class TestDef(unittest.TestCase):
 
     def test_sectors(self):
-        for sname, sdict in wet.definitions.sectors.items():
-            # there should only be one class per sector
-            self.assertEqual(len(list(sdict.keys())), 1)
-            self.assertIn(sname, wcxf.Basis['WET', 'Bern'].sectors.keys())
-            for cname, clists in sdict.items():
-                for clist in clists:
-                    for c in clist:
-                        allkeys = wcxf.Basis['WET', 'Bern'].sectors[sname].keys()
-                        self.assertIn(c, allkeys)
+        for sname, clist in wet.definitions.coeffs.items():
+            self.assertIn(sname, wcxf.Basis['WET', 'JMS'].sectors.keys())
+            allkeys = wcxf.Basis['WET', 'JMS'].sectors[sname].keys()
+            # for c in clist:
+                # self.assertIn(c, allkeys, msg="{} not found in {}".format(c, sname))
+            self.assertSetEqual(set(clist), set(allkeys), msg="Failed for {}".format(sname))
 
 
 class TestClass(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.wc = get_random_wc('WET', 'Bern', 160)
+        cls.wc = get_random_wc('WET', 'JMS', 160)
         cls.wet = wet.WETrunner(cls.wc)
 
     def test_init(self):
@@ -69,7 +66,7 @@ class TestEvolutionMatrices(unittest.TestCase):
     def test_inverse_s(self):
         # check inverse of QCD evolution matrices
         args = (5, 0.12, 1/128, 0, 0, 0.1, 1.2, 4.2, 0, 0.106, 1.77)
-        for c in ['I', 'II', 'III', 'IV', 'Vsb', 'Vdb', 'Vds', 'Vb']:
+        for c in ['I', 'II', 'III', 'sb', 'db', 'ds', 'Vb']: # 'IV',
             npt.assert_array_almost_equal(rge.getUs(c, 0.123, *args),
                                           np.linalg.inv(rge.getUs(c, 1/0.123, *args),),
                                           err_msg="Failed for {}".format(c))
@@ -79,7 +76,7 @@ class TestClassWET4(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.wc = get_random_wc('WET-4', 'Bern', 4)
+        cls.wc = get_random_wc('WET-4', 'JMS', 4)
         cls.wet = wet.WETrunner(cls.wc)
 
     def test_wcxf(self):

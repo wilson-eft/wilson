@@ -14,13 +14,12 @@ MZ = 91.1876
 
 
 @lru_cache(32)
-def alpha_s(scale, f, alphasMZ=0.1185):
+def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
     """3-loop cumputation of alpha_s for f flavours
     with initial condition alpha_s(MZ) = 0.1185"""
     if scale == MZ and f == 5:
         return alphasMZ  # nothing to do
     _sane(scale, f)
-    loop = 3
     crd = rundec.CRunDec()
     if f == 5:
         return crd.AlphasExact(alphasMZ, MZ, scale, f, loop)
@@ -49,13 +48,12 @@ def alpha_s(scale, f, alphasMZ=0.1185):
 
 
 @lru_cache(32)
-def m_b(mbmb, scale, f, alphasMZ=0.1185):
+def m_b(mbmb, scale, f, alphasMZ=0.1185, loop=3):
     r"""Get running b quark mass in the MSbar scheme at the scale `scale`
     in the theory with `f` dynamical quark flavours starting from $m_b(m_b)$"""
     if scale == mbmb and f == 5:
         return mbmb  # nothing to do
     _sane(scale, f)
-    loop = 3
     alphas_mb = alpha_s(mbmb, 5, alphasMZ=alphasMZ)
     crd = rundec.CRunDec()
     if f == 5:
@@ -87,13 +85,12 @@ def m_b(mbmb, scale, f, alphasMZ=0.1185):
 
 
 @lru_cache(32)
-def m_c(mcmc, scale, f, alphasMZ=0.1185):
+def m_c(mcmc, scale, f, alphasMZ=0.1185, loop=3):
     r"""Get running c quark mass in the MSbar scheme at the scale `scale`
     in the theory with `f` dynamical quark flavours starting from $m_c(m_c)$"""
     if scale == mcmc:
         return mcmc  # nothing to do
     _sane(scale, f)
-    loop = 3
     crd = rundec.CRunDec()
     alphas_mc = alpha_s(mcmc, 4, alphasMZ=alphasMZ)
     if f == 4:

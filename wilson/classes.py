@@ -34,10 +34,10 @@ class Wilson(object):
                 return smeft.run(scale)
             else:
                 # if SMEFT -> WET-x: match to WET at the EW scale
-                wc_ew = smeft.run(scale_ew).match('WET', 'Bern')
+                wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
                 wet = WETrunner(wc_ew)
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
-            wet = WETrunner(self.wc.translate('Bern'))
+            wet = WETrunner(self.wc.translate('JMS'))
         else:
             raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
         if eft == wet.eft:  # just run
@@ -45,21 +45,21 @@ class Wilson(object):
             self._set_cache(sectors, scale, eft, basis, wc_out)
             return wc_out
         elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'Bern')
+            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS')
             wet4 = WETrunner(wc_mb)
             wc_out = wet4.run(scale, sectors=sectors).translate(basis)
             self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
             return wc_out
         elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
-            wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'Bern')
+            wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS')
             wet3 = WETrunner(wc_mc)
             wc_out = wet3.run(scale, sectors=sectors).translate(basis)
             return wc_out
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'Bern')
+            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS')
             wet4 = WETrunner(wc_mb)
-            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'Bern')
+            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS')
             wet3 = WETrunner(wc_mc)
             wc_out = wet3.run(scale, sectors=sectors).translate(basis)
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)

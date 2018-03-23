@@ -2,12 +2,12 @@
 sector."""
 
 
-from wilson.run.wet.definitions import sectors
+from wilson.run.wet.definitions import sectors, coeffs
 from collections import OrderedDict
 import numpy as np
 from functools import lru_cache
 from wilson.run.wet import adm
-from math import log
+from math import log, sqrt, pi
 
 
 # new ADM functions
@@ -50,22 +50,55 @@ def getUe(classname, eta_s, f, alpha_s, alpha_e, m_u, m_d, m_s, m_c, m_b, m_e, m
     return -alpha_e / (2 * b0s * alpha_s) * v @ K @ np.linalg.inv(v)
 
 
-def run_sector(sector, C_in, eta_s, f, p):
+qG = ['uG', 'dG']
+qgamma = ['ugamma', 'dgamma']
+lgamma = ['egamma', 'nugamma']
+G3 = ['G', 'Gtilde']
+
+
+def get_m(dipole_key):
+    ind = dipole_key.split('_')[-1]
+    gen = int(max(ind))
+    if dipole_key[:2] == 'nu':
+        return 0
+    elif dipole_key[0] == 'e':
+        return ['m_e', 'm_mu', 'm_tau'][gen - 1]
+    elif dipole_key[0] == 'u':
+        return ['m_u', 'm_c', 'm_t'][gen - 1]
+    elif dipole_key[0] == 'd':
+        return ['m_d', 'm_s', 'm_b'][gen - 1]
+
+
+def scale_C(key, p):
+    g = sqrt(4 * pi * p['alpha_s'])
+    e = sqrt(4 * pi * p['alpha_e'])
+    name = key.split('_')[0]
+    if  name in qG:
+        m = p[get_m(key)]
+        return g / m
+    elif  name in qgamma + lgamma:
+        m = p[get_m(key)]
+        return g**2 / e / m
+    elif key in G3:
+        return g
+    else:
+        return 1
+
+
+def run_sector(sector, C_in, eta_s, f, p_in, p_out):
     Cdictout = OrderedDict()
-    for classname, C_lists in sectors[sector].items():
-        for i, keylist in enumerate(C_lists):
-            C_input = np.array([C_in.get(key, 0) for key in keylist])
-            if np.count_nonzero(C_input) == 0 or classname == 'Vnu':
-                # nothing to do for SM-like WCs or qqnunu operators
-                C_result = C_input
-            else:
-                Us = getUs(classname, eta_s, f, **p)
-                try:
-                    Ue = getUe(classname, eta_s, f, **p)
-                except AttributeError:
-                    # Ue not implemented!
-                    Ue = 0 * Us
-                C_result = (Us + Ue) @ C_input
-            for j in range(len(C_result)):
-                Cdictout[keylist[j]] = C_result[j]
+    classname = sectors[sector]
+    keylist = coeffs[sector]
+    C_input = np.array([C_in.get(key, 0) for key in keylist])
+    if np.count_nonzero(C_input) == 0 or classname == 'inv':
+        # nothing to do for SM-like WCs or RG invariant operators
+        C_result = C_input
+    else:
+        Us = getUs(classname, eta_s, f, **p_in)
+        Ue = getUe(classname, eta_s, f, **p_in)
+        C_scaled = [C_input[i] * scale_C(key, p_in) for i, key in enumerate(keylist)]
+        C_out = (Us + Ue) @ C_scaled
+        C_result = [C_out[i] / scale_C(key, p_out) for i, key in enumerate(keylist)]
+    for j in range(len(C_result)):
+        Cdictout[keylist[j]] = C_result[j]
     return Cdictout

@@ -56,8 +56,8 @@ class TestWilson(unittest.TestCase):
             wc = wcxf.WC(eft, 'flavio', 120, {'CVLL_sdsd': {'Im': 1}})
             ww = wilson.Wilson(wc)
             self.assertEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
-            pf = 4 * par['GF'] / np.sqrt(2)
-            wc = wcxf.WC(eft, 'Bern', 120, {'1dsds': {'Im': 1/pf}})
+            wc = wcxf.WC(eft, 'JMS', 120, {'VddLL_1212': {'Im': 1}})
+            wc.validate()
             ww = wilson.Wilson(wc)
             self.assertAlmostEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
 

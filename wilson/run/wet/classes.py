@@ -26,14 +26,14 @@ class WETrunner(object):
 
         - wc: instance of `wcxf.WC` representing Wilson coefficient values
           at a given (input) scale. The EFT must be one of `WET`, `WET-4`,
-          or `WET-3`; the basis must be `Bern`.
+          or `WET-3`; the basis must be `JMS`.
         - parameters: optional. If provided, must be a dictionary containing
           values for the input parameters as defined in `run.wet.parameters`.
           Default values are used for all parameters not provided.
         """
         assert isinstance(wc, wcxf.WC)
-        assert wc.basis == 'Bern', \
-            "Wilson coefficients must be given in the 'Bern' basis"
+        assert wc.basis == 'JMS', \
+            "Wilson coefficients must be given in the 'JMS' basis"
         self.eft = wc.eft
         # number of quark flavours
         if self.eft == 'WET':
@@ -48,16 +48,16 @@ class WETrunner(object):
         if parameters is not None:
             self.parameters.update(parameters)
 
-    def _get_running_parameters(self, scale, f):
+    def _get_running_parameters(self, scale, f, loop=3):
         """Get the running parameters (e.g. quark masses and the strong
         coupling at a given scale."""
         p = {}
-        p['alpha_s'] = qcd.alpha_s(scale, self.f, self.parameters['alpha_s'])
-        p['m_b'] = qcd.m_b(self.parameters['m_b'], scale, self.f, self.parameters['alpha_s'])
-        p['m_c'] = qcd.m_c(self.parameters['m_c'], scale, self.f, self.parameters['alpha_s'])
-        p['m_s'] = qcd.m_s(self.parameters['m_s'], scale, self.f, self.parameters['alpha_s'])
-        p['m_u'] = qcd.m_s(self.parameters['m_u'], scale, self.f, self.parameters['alpha_s'])
-        p['m_d'] = qcd.m_s(self.parameters['m_d'], scale, self.f, self.parameters['alpha_s'])
+        p['alpha_s'] = qcd.alpha_s(scale, self.f, self.parameters['alpha_s'], loop=loop)
+        p['m_b'] = qcd.m_b(self.parameters['m_b'], scale, self.f, self.parameters['alpha_s'], loop=loop)
+        p['m_c'] = qcd.m_c(self.parameters['m_c'], scale, self.f, self.parameters['alpha_s'], loop=loop)
+        p['m_s'] = qcd.m_s(self.parameters['m_s'], scale, self.f, self.parameters['alpha_s'], loop=loop)
+        p['m_u'] = qcd.m_s(self.parameters['m_u'], scale, self.f, self.parameters['alpha_s'], loop=loop)
+        p['m_d'] = qcd.m_s(self.parameters['m_d'], scale, self.f, self.parameters['alpha_s'], loop=loop)
         # running ignored for alpha_e and lepton mass
         p['alpha_e'] = self.parameters['alpha_e']
         p['m_e'] = self.parameters['m_e']
@@ -74,7 +74,7 @@ class WETrunner(object):
             if sector in definitions.sectors:
                 if sectors == 'all' or sector in sectors:
                     C_out.update(rge.run_sector(sector, self.C_in,
-                                                Etas, self.f, p_i))
+                                                Etas, self.f, p_i, p_o))
         return C_out
 
     def run(self, scale_out, sectors='all'):
@@ -91,8 +91,8 @@ class WETrunner(object):
         """
         C_out = self._run_dict(scale_out, sectors=sectors)
         C_out = {k: v for k, v in C_out.items()
-                 if v != 0 and k in wcxf.Basis[self.eft, 'Bern'].all_wcs}
-        return wcxf.WC(eft=self.eft, basis='Bern',
+                 if v != 0 and k in wcxf.Basis[self.eft, 'JMS'].all_wcs}
+        return wcxf.WC(eft=self.eft, basis='JMS',
                        scale=scale_out,
                        values=wcxf.WC.dict2values(C_out))
 
