@@ -62,7 +62,7 @@ def _JMS_to_Bern_I(C, qq):
             '3p' + 2 * qq : C["S8uuRR"][ij + ij] / 2
                 }
     else:
-        return "not in Bern_I"
+        raise ValueError("not in Bern_I: ".format(qq))
 
 
 def _BernI_to_Flavio_I(C, qq):
@@ -81,7 +81,7 @@ def _BernI_to_Flavio_I(C, qq):
             'CSLR_' + 2*qqf: C["4" + 2*qq]
             }
     else:
-        return "not in Flavio_I"
+        raise ValueError("not in Flavio_I: ".format(qq))
 
 
 def _FlavioI_to_Bern_I(C, qq):
@@ -100,7 +100,7 @@ def _FlavioI_to_Bern_I(C, qq):
             '3p' + 2*qqb: -8 * C["CTRR_" + 2*qq],
             }
     else:
-        return "not in Bern_I"
+        raise ValueError("not in Bern_I: ".format(qq))
 
 
 def _BernI_to_FormFlavor_I(C, qq):
