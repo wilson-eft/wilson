@@ -13,7 +13,7 @@ import glob
 import wcxf
 
 _root = os.path.abspath(os.path.dirname(__file__))
-all_bases = glob.glob(os.path.join(_root, 'data/bases', '*.basis.json'))
+all_bases = glob.glob(os.path.join(_root, 'data/bases', '*.basis.yml'))
 
 
 for basis in all_bases:
