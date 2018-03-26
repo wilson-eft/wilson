@@ -29,7 +29,7 @@ def _JMS_to_Bern_I(C, qq):
     """From JMS to BernI basis (= traditional SUSY basis in this case)
     for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'cu'"""
-    if qq  in ['sb', 'db', 'ds']:
+    if qq in ['sb', 'db', 'ds']:
         dd = 'dd'
         ij = tuple(dflav[q] for q in qq)
     elif qq == 'cu':
@@ -57,7 +57,7 @@ def _JMS_to_Bern_I(C, qq):
 def _Bern_to_JMS_I(C, qq):
     """From Bern to JMS basis for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'cu'"""
-    if qq  in ['sb', 'db', 'ds']:
+    if qq in ['sb', 'db', 'ds']:
         dd = 'dd'
         ij = '{}{}'.format(dflav[qq[0]] + 1, dflav[qq[1]] + 1)
     elif qq == 'cu':
@@ -167,6 +167,24 @@ def _JMS_to_Bern_II(C, udlnu):
         '1p' + ind : C["VnueduLR"][lp, l, d, u].conj(),
         '5p' + ind : C["SnueduRR"][lp, l, d, u].conj(),
         '7p' + ind : C["TnueduRR"][lp, l, d, u].conj()
+        }
+
+
+def _Bern_to_JMS_II(C, udlnu):
+    """From BernII to JMS basis for charged current process semileptonic
+    operators. `udlnu` should be of the form 'udl_enu_tau', 'cbl_munu_e' etc."""
+    u = uflav[udlnu[0]]
+    d = dflav[udlnu[1]]
+    l = lflav[udlnu[4:udlnu.find('n')]]
+    lp = lflav[udlnu[udlnu.find('_',5)+1:len(udlnu)]]
+    ind = udlnu[0]+udlnu[1]+udlnu[4:udlnu.find('n')]+udlnu[udlnu.find('_',5)+1
+                                                                    :len(udlnu)]
+    return {
+        "VnueduLL_{}{}{}{}".format(lp + 1, l + 1, d + 1, u + 1): C['1' + ind].conjugate(),
+        "SnueduRL_{}{}{}{}".format(lp + 1, l + 1, d + 1, u + 1): C['5' + ind].conjugate(),
+        "VnueduLR_{}{}{}{}".format(lp + 1, l + 1, d + 1, u + 1): C['1p' + ind].conjugate(),
+        "SnueduRR_{}{}{}{}".format(lp + 1, l + 1, d + 1, u + 1): C['5p' + ind].conjugate(),
+        "TnueduRR_{}{}{}{}".format(lp + 1, l + 1, d + 1, u + 1): C['7p' + ind].conjugate()
         }
 
 
@@ -1593,6 +1611,12 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
     # Class I
     for qq in ['sb', 'db', 'ds', 'cu']:
         d.update(_Bern_to_JMS_I(C, qq))
+
+    # Class II
+    for l in lflav.keys():
+        for lp in lflav.keys():
+            for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
+                d.update(_Bern_to_JMS_II(C, qq+'l_'+l+'nu_'+lp))
 
     prefactor = 4 * p['GF'] / sqrt(2)
     return {k: prefactor * v for k,v in d.items()}

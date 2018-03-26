@@ -117,7 +117,9 @@ class TestBern2JMS(unittest.TestCase):
         cls.from_wc = get_random_wc('WET', 'Bern')
         cls.to_wc = cls.from_wc.translate('JMS')
         # TODO!
-        cls.sectors_implemented = ['sbsb', 'dbdb', 'sdsd', 'cucu']
+        cls.classes_implemented = ['I', 'Iu', 'II',]
+        cls.sectors_implemented = [s for ci in cls.classes_implemented
+                                   for s in wilson.run.wet.definitions.classes[ci]]
 
     def test_validate(self):
         self.to_wc.validate()
@@ -148,7 +150,9 @@ class TestFlavio2JMS(unittest.TestCase):
         cls.from_wc = get_random_wc('WET', 'flavio')
         cls.to_wc = cls.from_wc.translate('JMS')
         # TODO!
-        cls.sectors_implemented = ['sbsb', 'dbdb', 'sdsd', 'cucu']
+        cls.classes_implemented = ['I', 'Iu', 'II',]
+        cls.sectors_implemented = [s for ci in cls.classes_implemented
+                                   for s in wilson.run.wet.definitions.classes[ci]]
 
     def test_validate(self):
         self.to_wc.validate()
