@@ -1426,6 +1426,12 @@ def JMS_to_flavio(Cflat, scale, parameters=None):
     # Class VII
     d.update(_Bern_to_Flavio_VII(_JMS_to_Bern_VII(Cflat, p), p))
 
+    # LFV
+    dlfv = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
+    for jkey, fkey in dlfv.items():
+        if jkey in Cflat:
+            d[fkey] = Cflat[jkey]
+
     return d
 
 
@@ -1653,6 +1659,12 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
         d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, qq, p), qq))
+
+    # LFV
+    dlfv = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
+    for jkey, fkey in dlfv.items():
+        if fkey in C:
+            d[jkey] = C[fkey]
 
     return {k: v for k,v in d.items()}
 

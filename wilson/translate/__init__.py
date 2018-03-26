@@ -23,6 +23,16 @@ def flavio_to_JMS(C, scale, parameters):
     return wet.flavio_to_JMS(C, scale, parameters)
 
 
+@wcxf.translator('WET-4', 'flavio', 'JMS')
+def flavio_to_JMS_wet4(C, scale, parameters):
+    return wet.flavio_to_JMS(C, scale, parameters)
+
+
+@wcxf.translator('WET-3', 'flavio', 'JMS')
+def flavio_to_JMS_wet3(C, scale, parameters):
+    return wet.flavio_to_JMS(C, scale, parameters)
+
+
 @wcxf.translator('WET', 'JMS', 'flavio')
 def JMS_to_flavio(C, scale, parameters):
     return wet.JMS_to_flavio(C, scale, parameters)

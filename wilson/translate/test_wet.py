@@ -6,6 +6,7 @@ from . import wet
 from math import sqrt
 import wilson
 
+
 np.random.seed(87)
 
 def get_random_wc(eft, basis, cmax=1e-2):
@@ -150,7 +151,7 @@ class TestFlavio2JMS(unittest.TestCase):
         cls.from_wc = get_random_wc('WET', 'flavio')
         cls.to_wc = cls.from_wc.translate('JMS')
         # TODO!
-        cls.classes_implemented = ['I', 'Iu', 'II',]
+        cls.classes_implemented = ['I', 'Iu', 'II', 'mue', 'mutau', 'taue']
         cls.sectors_implemented = [s for ci in cls.classes_implemented
                                    for s in wilson.run.wet.definitions.classes[ci]]
 
@@ -326,9 +327,10 @@ class TestBern2flavio(unittest.TestCase):
         jms_direct = jms_wc.translate('flavio')
         jms_indirect = jms_wc.translate('Bern').translate('flavio')
         for k, v in jms_direct.dict.items():
-            self.assertAlmostEqual(v, jms_indirect.dict[k],
-                                   delta=1e-6,
-                                   msg="Failed for {}".format(k))
+            if k in jms_indirect.dict:
+                self.assertAlmostEqual(v, jms_indirect.dict[k],
+                                       delta=1e-6,
+                                       msg="Failed for {}".format(k))
 
     def test_incomplete_input(self):
         # generate and input WC instance with just 1 non-zero coeff.
@@ -343,8 +345,9 @@ class TestBern2flavio(unittest.TestCase):
 
     def test_missing(self):
         fkeys = set(self.to_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET', 'flavio'].sectors.values()
-                         for k in s])
+        fkeys_all = set([k for sname, s in wcxf.Basis['WET', 'flavio'].sectors.items()
+                         for k in s
+                         if sname not in ['mue', 'mutau', 'taue']])  # LFV not in Bern
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2Bern(unittest.TestCase):
@@ -423,9 +426,10 @@ class TestBern2flavioWET3(unittest.TestCase):
         jms_direct = jms_wc.translate('flavio')
         jms_indirect = jms_wc.translate('Bern').translate('flavio')
         for k, v in jms_direct.dict.items():
-            self.assertAlmostEqual(v, jms_indirect.dict[k],
-                                   delta=1e-6,
-                                   msg="Failed for {}".format(k))
+            if k in jms_indirect.dict:
+                self.assertAlmostEqual(v, jms_indirect.dict[k],
+                                       delta=1e-6,
+                                       msg="Failed for {}".format(k))
 
     def test_incomplete_input(self):
         # generate and input WC instance with just 1 non-zero coeff.
@@ -440,8 +444,9 @@ class TestBern2flavioWET3(unittest.TestCase):
 
     def test_missing(self):
         fkeys = set(self.to_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET-3', 'flavio'].sectors.values()
-                         for k in s])
+        fkeys_all = set([k for sname, s in wcxf.Basis['WET-3', 'flavio'].sectors.items()
+                         for k in s
+                         if sname not in ['mue', 'taumu', 'etau']])
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2BernWET3(unittest.TestCase):
