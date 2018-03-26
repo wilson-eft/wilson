@@ -9,13 +9,13 @@ classes = {
 
 'II': ['ubenu', 'ubmunu', 'ubtaunu', 'cbenu', 'cbmunu', 'cbtaunu', 'usenu', 'usmunu', 'ustaunu', 'csenu', 'csmunu', 'cstaunu', 'udenu', 'udmunu', 'udtaunu', 'cdenu', 'cdmunu', 'cdtaunu'],
 'III': ['sbuc', 'sbcu', 'dbuc', 'dbcu', 'sduc', 'sdcu'],
-# 'IV': ['sbsd', 'dbsb', 'dbds'],
+'IV': ['sbsd', 'dbsb', 'dbds'],
 
 'Vb': ['sbemu', 'sbmue', 'sbetau', 'sbtaue', 'sbmutau', 'sbtaumu', 'dbemu', 'dbmue', 'dbetau', 'dbtaue', 'dbmutau', 'dbtaumu', 'sdemu', 'sdmue', 'sdetau', 'sdtaue', 'sdmutau', 'sdtaumu'],
 
 'Vb_c': ['cuemu', 'cumue', 'cuetau', 'cutaue', 'cumutau', 'cutaumu'],
 
-'IVe': ['muemutau', 'tauetaumu'], # ['muemutau', 'etauemu', 'tauetaumu'],
+'IVe': ['muemutau', 'etauemu', 'tauetaumu'],
 
 'inv': ['sbnunu', 'dbnunu', 'sdnunu', 'cununu', 'nunuemu', 'nunumue', 'nunutaumu', 'nunumutau', 'nunutaue', 'nunuetau', 'nunununu'],
 

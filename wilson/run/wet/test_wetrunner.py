@@ -66,7 +66,7 @@ class TestEvolutionMatrices(unittest.TestCase):
     def test_inverse_s(self):
         # check inverse of QCD evolution matrices
         args = (5, 0.12, 1/128, 0, 0, 0.1, 1.2, 4.2, 0, 0.106, 1.77)
-        for c in ['I', 'II', 'III', 'sb', 'db', 'ds', 'Vb']: # 'IV',
+        for c in ['I', 'II', 'III', 'IV', 'IVe', 'sb', 'db', 'sd', 'mue', 'cu', 'Vb']:
             npt.assert_array_almost_equal(rge.getUs(c, 0.123, *args),
                                           np.linalg.inv(rge.getUs(c, 1/0.123, *args),),
                                           err_msg="Failed for {}".format(c))
