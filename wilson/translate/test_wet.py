@@ -110,6 +110,68 @@ class TestJMS2Bern(unittest.TestCase):
         self.assertSetEqual(bkeys_all - bkeys, set(), msg="Missing coefficients")
 
 
+class TestBern2JMS(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.from_wc = get_random_wc('WET', 'Bern')
+        cls.to_wc = cls.from_wc.translate('JMS')
+        # TODO!
+        cls.sectors_implemented = ['sbsb', 'dbdb', 'sdsd', 'cucu']
+
+    def test_validate(self):
+        self.to_wc.validate()
+
+    def test_nan(self):
+        for k, v in self.to_wc.dict.items():
+            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+
+    def test_missing(self):
+        to_keys = set(self.to_wc.values.keys())
+        to_keys_all = set([k for s in wcxf.Basis['WET', 'Bern'].sectors.values()
+                         for k in s
+                         if s in self.sectors_implemented])
+        self.assertSetEqual(to_keys_all - to_keys, set(), msg="Missing coefficients")
+
+    def test_roundtrip(self):
+        round_wc = self.to_wc.translate('Bern')
+        for k, v in round_wc.dict.items():
+            self.assertAlmostEqual(v, self.from_wc.dict[k],
+                                   delta=1e-12,
+                                   msg="Failed for {}".format(k))
+
+
+class TestFlavio2JMS(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.from_wc = get_random_wc('WET', 'flavio')
+        cls.to_wc = cls.from_wc.translate('JMS')
+        # TODO!
+        cls.sectors_implemented = ['sbsb', 'dbdb', 'sdsd', 'cucu']
+
+    def test_validate(self):
+        self.to_wc.validate()
+
+    def test_nan(self):
+        for k, v in self.to_wc.dict.items():
+            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+
+    def test_missing(self):
+        to_keys = set(self.to_wc.values.keys())
+        to_keys_all = set([k for s in wcxf.Basis['WET', 'flavio'].sectors.values()
+                         for k in s
+                         if s in self.sectors_implemented])
+        self.assertSetEqual(to_keys_all - to_keys, set(), msg="Missing coefficients")
+
+    def test_roundtrip(self):
+        round_wc = self.to_wc.translate('flavio')
+        for k, v in round_wc.dict.items():
+            self.assertAlmostEqual(v, self.from_wc.dict[k],
+                                   delta=1e-12,
+                                   msg="Failed for {}".format(k))
+
+
 class TestJMS2BernWET3(unittest.TestCase):
 
     @classmethod

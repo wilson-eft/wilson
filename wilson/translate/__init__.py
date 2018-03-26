@@ -18,6 +18,11 @@ def warsaw_up_to_warsaw(C, scale, parameters):
     return smeft.warsaw_up_to_warsaw(C)
 
 
+@wcxf.translator('WET', 'flavio', 'JMS')
+def flavio_to_JMS(C, scale, parameters):
+    return wet.flavio_to_JMS(C, scale, parameters)
+
+
 @wcxf.translator('WET', 'JMS', 'flavio')
 def JMS_to_flavio(C, scale, parameters):
     return wet.JMS_to_flavio(C, scale, parameters)
@@ -81,6 +86,11 @@ def JMS_to_Bern_wet4(C, scale, parameters):
 @wcxf.translator('WET-3', 'JMS', 'Bern')
 def JMS_to_Bern_wet3(C, scale, parameters):
     return wet.JMS_to_Bern(C, scale, parameters)
+
+
+@wcxf.translator('WET', 'Bern', 'JMS')
+def Bern_to_JMS(C, scale, parameters):
+    return wet.Bern_to_JMS(C, scale, parameters)
 
 
 @wcxf.translator('WET', 'JMS', 'formflavor')

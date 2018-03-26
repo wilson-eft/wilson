@@ -38,7 +38,7 @@ def _JMS_to_Bern_I(C, qq):
     else:
         raise ValueError("not in Bern_I: ".format(qq))
     ji = (ij[1], ij[0])
-    return {
+    d = {
         '1' + 2 * qq : C["V{}LL".format(dd)][ij + ij],
         '2' + 2 * qq : C["S1{}RR".format(dd)][ji + ji].conj()
                        - C["S8{}RR".format(dd)][ji + ji].conj() / (2 * Nc),
@@ -51,6 +51,35 @@ def _JMS_to_Bern_I(C, qq):
                        - C["S8{}RR".format(dd)][ij + ij] / (2 * Nc),
         '3p' + 2 * qq : C["S8{}RR".format(dd)][ij + ij] / 2
             }
+    return d
+
+
+def _Bern_to_JMS_I(C, qq):
+    """From Bern to JMS basis for $\Delta F=2$ operators.
+    `qq` should be 'sb', 'db', 'ds' or 'cu'"""
+    if qq  in ['sb', 'db', 'ds']:
+        dd = 'dd'
+        ij = '{}{}'.format(dflav[qq[0]] + 1, dflav[qq[1]] + 1)
+    elif qq == 'cu':
+        dd = 'uu'
+        ij = '{}{}'.format(uflav[qq[0]] + 1, uflav[qq[1]] + 1)
+    else:
+        raise ValueError("not in Bern_I: ".format(qq))
+    ji = ij[1] + ij[0]
+    d = {"V{}LL_{}{}".format(dd, ij, ij): C['1' + 2 * qq],
+         "S1{}RR_{}{}".format(dd, ji, ji): C['2' + 2 * qq].conjugate() + C['3' + 2 * qq].conjugate() / 3,
+         "S8{}RR_{}{}".format(dd, ji, ji): 2 * C['3' + 2 * qq].conjugate(),
+         "V1{}LR_{}{}".format(dd, ij, ij): -C['4' + 2 * qq] / 6 - C['5' + 2 * qq] / 2,
+         "V8{}LR_{}{}".format(dd, ij, ij): -C['4' + 2 * qq],
+         "V{}RR_{}{}".format(dd, ij, ij): C['1p' + 2 * qq],
+         "S1{}RR_{}{}".format(dd, ij, ij): C['2p' + 2 * qq] + C['3p' + 2 * qq] / 3,
+         "S8{}RR_{}{}".format(dd, ij, ij): 2 * C['3p' + 2 * qq],
+         }
+    if qq == 'cu':
+        # here we need to convert some operators that are not in the basis
+        for VXY in ['VuuRR', 'V1uuLR', 'V8uuLR', 'VuuLL']:
+            d[VXY + '_1212'] = d.pop(VXY + '_2121').conjugate()
+    return d
 
 
 def _BernI_to_Flavio_I(C, qq):
@@ -1553,6 +1582,35 @@ def JMS_to_Bern(Cflat, scale, parameters=None):
     prefactor = sqrt(2)/p['GF']/4
     return {k: prefactor * v for k,v in d.items()}
 
+
+def Bern_to_JMS(C_incomplete, scale, parameters=None):
+    p = get_parameters(scale, f=5, input_parameters=parameters)
+    # fill in zeros for missing coefficients
+    wc_keys = wcxf.Basis['WET', 'Bern'].all_wcs
+    C = {k: C_incomplete.get(k, 0) for k in wc_keys}
+    d = {}
+
+    # Class I
+    for qq in ['sb', 'db', 'ds', 'cu']:
+        d.update(_Bern_to_JMS_I(C, qq))
+
+    prefactor = 4 * p['GF'] / sqrt(2)
+    return {k: prefactor * v for k,v in d.items()}
+
+
+def flavio_to_JMS(C_incomplete, scale, parameters=None):
+    p = get_parameters(scale, f=5, input_parameters=parameters)
+    # fill in zeros for missing coefficients
+    wc_keys = wcxf.Basis['WET', 'flavio'].all_wcs
+    C = {k: C_incomplete.get(k, 0) for k in wc_keys}
+    d = {}
+
+    # Class I
+    for qq in ['bs', 'bd', 'sd', 'uc']:
+        qqr = qq[::-1]
+        d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
+
+    return {k: v for k,v in d.items()}
 
 def FlavorKit_to_JMS(C, scale, parameters=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
