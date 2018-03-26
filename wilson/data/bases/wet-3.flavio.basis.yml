@@ -367,3 +367,104 @@ sectors:
       tex: \frac{4G_F}{\sqrt{2}} (\bar u_L T^A d_R) (\bar d_L T^A u_R)
     CS8RR_ussu:
       tex: \frac{4G_F}{\sqrt{2}} (\bar u_L T^A s_R) (\bar s_L T^A u_R)
+  mue:
+    Cgamma_mue:
+      tex: \bar e_L \sigma^{\mu \nu} \mu_R\, F_{\mu \nu}
+    Cgamma_emu:
+      tex: \bar \mu_L \sigma^{\mu \nu} e_R\, F_{\mu \nu}
+    CVLL_eemue:
+      tex: (\bar e_L \gamma^\mu e_L)(\bar e_L \gamma_\mu \mu_L)
+    CVLL_muemumu:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar \mu_L \gamma_\mu \mu_L)
+    CVLL_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_mueuu:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar u_L \gamma_\mu u_L)
+    CVLL_muedd:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar d_L \gamma_\mu d_L)
+    CVLL_muess:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar s_L \gamma_\mu s_L)
+    CVRR_eemue:
+      tex: (\bar e_R \gamma^\mu e_R)(\bar e_R \gamma_\mu \mu_R)
+    CVRR_muemumu:
+      tex: (\bar e_R \gamma^\mu \mu_R)(\bar \mu_R \gamma_\mu \mu_R)
+    CVRR_mueuu:
+      tex: (\bar e_R \gamma^\mu \mu_R)(\bar u_R \gamma_\mu u_R)
+    CVRR_muedd:
+      tex: (\bar e_R \gamma^\mu \mu_R) (\bar d_R \gamma_\mu d_R)
+    CVRR_muess:
+      tex: (\bar e_R \gamma^\mu \mu_R) (\bar s_R \gamma_\mu s_R)
+    CVLR_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_eemue:
+      tex: (\bar e_L \gamma^\mu e_L)(\bar e_R \gamma_\mu \mu_R)
+    CVLR_mueee:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar e_R \gamma_\mu e_R)
+    CVLR_muemumu:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar \mu_R \gamma_\mu \mu_R)
+    CVLR_mumumue:
+      tex: (\bar \mu_L \gamma^\mu \mu_L)(\bar e_R \gamma_\mu \mu_R)
+    CVLR_mueuu:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar u_R \gamma_\mu u_R)
+    CVLR_muedd:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar d_R \gamma_\mu d_R)
+    CVLR_muess:
+      tex: (\bar e_L \gamma^\mu \mu_L)(\bar s_R \gamma_\mu s_R)
+    CVLR_uumue:
+      tex: (\bar u_L \gamma^\mu u_L)(\bar e_R \gamma_\mu \mu_R)
+    CVLR_ddmue:
+      tex: (\bar d_L \gamma^\mu d_L) (\bar e_R \gamma_\mu \mu_R)
+    CVLR_ssmue:
+      tex: (\bar s_L \gamma^\mu s_L) (\bar e_R \gamma_\mu \mu_R)
+    CSRL_mueuu:
+      tex: (\bar e_L \mu_R) (\bar u_R u_L)
+    CSRL_emuuu:
+      tex: (\bar \mu_L e_R) (\bar u_R u_L)
+    CSRL_muedd:
+      tex: (\bar e_L \mu_R) (\bar d_R d_L)
+    CSRL_muess:
+      tex: (\bar e_L \mu_R) (\bar s_R s_L)
+    CSRL_emudd:
+      tex: (\bar \mu_L e_R) (\bar d_R d_L)
+    CSRL_emuss:
+      tex: (\bar \mu_L e_R) (\bar s_R s_L)
+    CSRR_eemue:
+      tex: (\bar e_L e_R) (\bar e_L \mu_R)
+    CSRR_eeemu:
+      tex: (\bar e_L e_R) (\bar \mu_L e_R)
+    CSRR_muemumu:
+      tex: (\bar e_L \mu_R) (\bar \mu_L \mu_R)
+    CSRR_emumumu:
+      tex: (\bar \mu_L e_R) (\bar \mu_L \mu_R)
+    CSRR_mueuu:
+      tex: (\bar e_L \mu_R) (\bar u_L u_R)
+    CSRR_emuuu:
+      tex: (\bar \mu_L e_R) (\bar u_L u_R)
+    CTRR_mueuu:
+      tex: (\bar e_L \sigma^{\mu \nu} \mu_R) (\bar u_L \sigma_{\mu \nu} u_R)
+    CTRR_emuuu:
+      tex: (\bar \mu_L \sigma^{\mu \nu} e_R) (\bar u_L \sigma_{\mu \nu} u_R)
+    CSRR_muedd:
+      tex: (\bar e_L \mu_R)(\bar d_L d_R)
+    CSRR_muess:
+      tex: (\bar e_L \mu_R)(\bar s_L s_R)
+    CSRR_emudd:
+      tex: (\bar \mu_L e_R)(\bar d_L d_R)
+    CSRR_emuss:
+      tex: (\bar \mu_L e_R)(\bar s_L s_R)
+    CTRR_muedd:
+      tex: (\bar e_L \sigma^{\mu \nu} \mu_R) (\bar d_L \sigma_{\mu \nu} d_R)
+    CTRR_muess:
+      tex: (\bar e_L \sigma^{\mu \nu} \mu_R) (\bar s_L \sigma_{\mu \nu} s_R)
+    CTRR_emudd:
+      tex: (\bar \mu_L \sigma^{\mu \nu} e_R) (\bar d_L \sigma_{\mu \nu} d_R)
+    CTRR_emuss:
+      tex: (\bar \mu_L \sigma^{\mu \nu} e_R) (\bar s_L \sigma_{\mu \nu} s_R)
