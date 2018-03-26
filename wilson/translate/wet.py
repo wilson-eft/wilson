@@ -962,6 +962,18 @@ def JMS_to_Fierz_chrom(C, dd):
                 }
 
 
+def Fierz_to_JMS_chrom(C, dd):
+    """From chromomagnetic Fierz to JMS basis for Class V.
+    qq should be of the form 'sb', 'ds' etc."""
+    s = dflav[dd[0]] + 1
+    b = dflav[dd[1]] + 1
+    return {'dgamma_{}{}'.format(s, b): C['F7gamma' + dd],
+            'dG_{}{}'.format(s, b): C['F8g' + dd],
+            'dgamma_{}{}'.format(b, s): C['F7pgamma' + dd].conjugate(),
+            'dG_{}{}'.format(b, s): C['F8pg' + dd].conjugate(),
+            }
+
+
 def Fierz_to_Bern_chrom(C, dd, parameters):
     """From Fierz to chromomagnetic Bern basis for Class V.
     dd should be of the form 'sb', 'ds' etc."""
@@ -1618,6 +1630,10 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
                 d.update(_Bern_to_JMS_II(C, qq+'l_'+l+'nu_'+lp))
 
+    # Class V chromomagnetic
+    for qq in ['sb', 'db', 'ds']:
+        d.update(Fierz_to_JMS_chrom(Bern_to_Fierz_chrom(C, qq, p), qq))
+
     prefactor = 4 * p['GF'] / sqrt(2)
     return {k: prefactor * v for k,v in d.items()}
 
@@ -1633,6 +1649,10 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
     for qq in ['bs', 'bd', 'sd', 'uc']:
         qqr = qq[::-1]
         d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
+
+    # Class V chromomagnetic
+    for qq in ['sb', 'db', 'ds']:
+        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, qq, p), qq))
 
     return {k: v for k,v in d.items()}
 
