@@ -29,40 +29,28 @@ def _JMS_to_Bern_I(C, qq):
     """From JMS to BernI basis (= traditional SUSY basis in this case)
     for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'cu'"""
-    if qq in ['sb', 'db', 'ds']:
+    if qq  in ['sb', 'db', 'ds']:
+        dd = 'dd'
         ij = tuple(dflav[q] for q in qq)
-        ji = (ij[1], ij[0])
-        return {
-            '1' + 2 * qq : C["VddLL"][ij + ij],
-            '2' + 2 * qq : C["S1ddRR"][ji + ji].conj()
-                           - C["S8ddRR"][ji + ji].conj() / (2 * Nc),
-            '3' + 2 * qq : C["S8ddRR"][ji + ji].conj() / 2,
-            '4' + 2 * qq : -C["V8ddLR"][ij + ij],
-            '5' + 2 * qq : -2 * C["V1ddLR"][ij + ij]
-                           + C["V8ddLR"][ij + ij] / Nc,
-            '1p' + 2 * qq : C["VddRR"][ij + ij],
-            '2p' + 2 * qq : C["S1ddRR"][ij + ij]
-                           - C["S8ddRR"][ij + ij] / (2 * Nc),
-            '3p' + 2 * qq : C["S8ddRR"][ij + ij] / 2
-                }
     elif qq == 'cu':
+        dd = 'uu'
         ij = tuple(uflav[q] for q in qq)
-        ji = (ij[1], ij[0])
-        return {
-            '1' + 2 * qq : C["VuuLL"][ij + ij],
-            '2' + 2 * qq : C["S1uuRR"][ji + ji].conj()
-                           - C["S8uuRR"][ji + ji].conj() / (2 * Nc),
-            '3' + 2 * qq : C["S8uuRR"][ji + ji].conj() / 2,
-            '4' + 2 * qq : -C["V8uuLR"][ij + ij],
-            '5' + 2 * qq : -2 * C["V1uuLR"][ij + ij]
-                           + C["V8uuLR"][ij + ij] / Nc,
-            '1p' + 2 * qq : C["VuuRR"][ij + ij],
-            '2p' + 2 * qq : C["S1uuRR"][ij + ij]
-                            - C["S8uuRR"][ij + ij]/(2 * Nc),
-            '3p' + 2 * qq : C["S8uuRR"][ij + ij] / 2
-                }
     else:
         raise ValueError("not in Bern_I: ".format(qq))
+    ji = (ij[1], ij[0])
+    return {
+        '1' + 2 * qq : C["V{}LL".format(dd)][ij + ij],
+        '2' + 2 * qq : C["S1{}RR".format(dd)][ji + ji].conj()
+                       - C["S8{}RR".format(dd)][ji + ji].conj() / (2 * Nc),
+        '3' + 2 * qq : C["S8{}RR".format(dd)][ji + ji].conj() / 2,
+        '4' + 2 * qq : -C["V8{}LR".format(dd)][ij + ij],
+        '5' + 2 * qq : -2 * C["V1{}LR".format(dd)][ij + ij]
+                       + C["V8{}LR".format(dd)][ij + ij] / Nc,
+        '1p' + 2 * qq : C["V{}RR".format(dd)][ij + ij],
+        '2p' + 2 * qq : C["S1{}RR".format(dd)][ij + ij]
+                       - C["S8{}RR".format(dd)][ij + ij] / (2 * Nc),
+        '3p' + 2 * qq : C["S8{}RR".format(dd)][ij + ij] / 2
+            }
 
 
 def _BernI_to_Flavio_I(C, qq):
