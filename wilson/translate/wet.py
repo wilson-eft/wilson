@@ -765,6 +765,28 @@ def JMS_to_Fierz_lep(C, ddll):
         }
 
 
+def Fierz_to_JMS_lep(C, ddll):
+    """From Fierz to semileptonic JMS basis for Class V.
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    s = dflav[ddll[0]]
+    b = dflav[ddll[1]]
+    l = lflav[ddll[4:ddll.find('n')]]
+    lp = lflav[ddll[ddll.find('_',5)+1:len(ddll)]]
+    ind = ddll.replace('l_','').replace('nu_','')
+    return {"VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
+            "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
+            "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
+            "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conj() + C['F' + ind + 'S'].conj(),
+            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conj() - C['F' + ind + 'T5'].conj(),
+            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
+            "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
+            "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
+            "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
+            "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conj() + C['F' + ind + 'Sp'].conj(),
+            "VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
+            "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
+
+
 def Fierz_to_Bern_lep(C, ddll, include_charged=True):
     """From semileptonic Fierz basis to Bern semileptonic basis for Class V.
     C should be the corresponding leptonic Fierz basis and
