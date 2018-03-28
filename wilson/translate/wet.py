@@ -768,21 +768,21 @@ def JMS_to_Fierz_lep(C, ddll):
 def Fierz_to_JMS_lep(C, ddll):
     """From Fierz to semileptonic JMS basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
-    s = dflav[ddll[0]]
-    b = dflav[ddll[1]]
-    l = lflav[ddll[4:ddll.find('n')]]
-    lp = lflav[ddll[ddll.find('_',5)+1:len(ddll)]]
+    s = str(dflav[ddll[0]] + 1)
+    b = str(dflav[ddll[1]] + 1)
+    l = str(lflav[ddll[4:ddll.find('n')]] + 1)
+    lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
     return {"VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
             "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
             "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
-            "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conj() + C['F' + ind + 'S'].conj(),
-            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conj() - C['F' + ind + 'T5'].conj(),
+            "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
+            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
             "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
             "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
             "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
             "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
-            "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conj() + C['F' + ind + 'Sp'].conj(),
+            "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
             "VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
             "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
 
@@ -1658,6 +1658,16 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
                 d.update(_Bern_to_JMS_II(C, qq+'l_'+l+'nu_'+lp))
 
+    # Class V semileptonic
+    for l in lflav.keys():
+        for lp in lflav.keys():
+            d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
+                                        'sb'+'l_'+l+'nu_'+lp),
+                                        'sb'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
+                                        'db'+'l_'+l+'nu_'+lp),
+                                        'db'+'l_'+l+'nu_'+lp))
+
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
         d.update(Fierz_to_JMS_chrom(Bern_to_Fierz_chrom(C, qq, p), qq))
@@ -1677,6 +1687,16 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
     for qq in ['bs', 'bd', 'sd', 'uc']:
         qqr = qq[::-1]
         d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
+
+    # Class V semileptonic
+    for l in lflav.keys():
+        for lp in lflav.keys():
+            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                        'sb'+'l_'+l+'nu_'+lp, p),
+                                        'sb'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                        'db'+'l_'+l+'nu_'+lp, p),
+                                        'db'+'l_'+l+'nu_'+lp))
 
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:

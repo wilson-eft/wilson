@@ -118,7 +118,7 @@ class TestBern2JMS(unittest.TestCase):
         cls.from_wc = get_random_wc('WET', 'Bern')
         cls.to_wc = cls.from_wc.translate('JMS')
         # TODO!
-        cls.classes_implemented = ['I', 'Iu', 'II',]
+        cls.classes_implemented = ['I', 'Iu', 'II', 'sb', 'sd', 'db',]
         cls.sectors_implemented = [s for ci in cls.classes_implemented
                                    for s in wilson.run.wet.definitions.classes[ci]]
 
@@ -151,7 +151,7 @@ class TestFlavio2JMS(unittest.TestCase):
         cls.from_wc = get_random_wc('WET', 'flavio')
         cls.to_wc = cls.from_wc.translate('JMS')
         # TODO!
-        cls.classes_implemented = ['I', 'Iu', 'II', 'mue', 'mutau', 'taue']
+        cls.classes_implemented = ['I', 'Iu', 'II', 'sb', 'sd', 'db', 'mue', 'mutau', 'taue']
         cls.sectors_implemented = [s for ci in cls.classes_implemented
                                    for s in wilson.run.wet.definitions.classes[ci]]
 
