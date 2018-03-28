@@ -7,6 +7,7 @@ from math import log, e
 class Wilson(object):
     """Wilson."""
     def __init__(self, wc):
+        wc.validate()
         self.wc = wc
         self._cache = {}
 
