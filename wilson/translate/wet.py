@@ -1720,6 +1720,14 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
         qqr = qq[::-1]
         d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
 
+    # Class II
+    for l in lflav.keys():
+        for lp in lflav.keys():
+            for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
+                d.update(_Bern_to_JMS_II(_FlavioII_to_BernII(C,
+                                         qq+'l_'+l+'nu_'+lp, p),
+                                         qq+'l_'+l+'nu_'+lp))
+
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
