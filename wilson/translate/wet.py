@@ -773,7 +773,7 @@ def Fierz_to_JMS_lep(C, ddll):
     l = str(lflav[ddll[4:ddll.find('n')]] + 1)
     lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
-    return {"VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
+    d = {"VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
             "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
             "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
             "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
@@ -785,6 +785,7 @@ def Fierz_to_JMS_lep(C, ddll):
             "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
             "VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
             "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
+    return _symmetrize_JMS_dict(d)
 
 
 def Fierz_to_Bern_lep(C, ddll, include_charged=True):
@@ -1292,6 +1293,36 @@ def _JMS_to_array(C):
         if k in ["VuuLL", "VddLL", "VuuRR", "VddRR"]:
             Ca[k] = _symm_herm(_symm_current(Ca[k]))
     return Ca
+
+
+def _symmetrize_JMS_dict(C):
+    """For a dictionary with JMS Wilson coefficients but keys that might not be
+    in the non-redundant basis, return a dictionary with keys from the basis
+    and values conjugated if necessary."""
+    wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    Cs = {}
+    for op, v in C.items():
+        if '_' not in op or op in wc_keys:
+            Cs[op] = v
+            continue
+        name, ind = op.split('_')
+        if name in ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
+                "V8udLL", "VeuRR", "VedRR", "V1udRR", "V8udRR", "VnueLR",
+                "VeeLR", "VnuuLR", "VnudLR", "VeuLR", "VedLR", "VueLR", "VdeLR",
+                "V1uuLR", "V8uuLR", "V1udLR", "V8udLR", "V1duLR", "V8duLR",
+                "V1ddLR", "V8ddLR"]:
+            i, j, k, l = ind
+            indnew = ''.join([j, i, l, k])
+            Cs['_'.join([name, indnew])] = v.conjugate()
+        elif name in ["S1uuRR", "S8uuRR", "S1ddRR", "S8ddRR"]:
+            i, j, k, l = ind
+            indnew = ''.join([k, l, i, j])
+            Cs['_'.join([name, indnew])] = v
+        elif name in ["VuuLL", "VddLL", "VuuRR", "VddRR"]:
+            i, j, k, l = ind
+            indnew = ''.join([l, k, j, i])
+            Cs['_'.join([name, indnew])] = v.conjugate()
+    return Cs
 
 
 def rotate_down(C_in, p):
