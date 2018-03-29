@@ -780,13 +780,13 @@ def Fierz_to_JMS_lep(C, ddll, include_charged=True):
                 "VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
                 "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
                 "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
-                "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
-                "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
+                "SedRL" + '_' + lp + l + b + s : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
+                "TedRR" + '_' + lp + l + b + s : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
                 "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
                 "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
                 "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
                 "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
-                "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
+                "SedRR" + '_' + lp + l + b + s : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
                 })
     return _symmetrize_JMS_dict(d)
 
