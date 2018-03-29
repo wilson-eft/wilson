@@ -765,7 +765,7 @@ def JMS_to_Fierz_lep(C, ddll):
         }
 
 
-def Fierz_to_JMS_lep(C, ddll):
+def Fierz_to_JMS_lep(C, ddll, include_charged=True):
     """From Fierz to semileptonic JMS basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     s = str(dflav[ddll[0]] + 1)
@@ -773,18 +773,21 @@ def Fierz_to_JMS_lep(C, ddll):
     l = str(lflav[ddll[4:ddll.find('n')]] + 1)
     lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
-    d = {"VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
-            "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
-            "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
-            "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
-            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
-            "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
-            "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
-            "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
-            "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
-            "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
-            "VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
-            "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
+    d = {"VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
+         "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
+    if include_charged:
+        d.update({
+                "VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
+                "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
+                "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
+                "SedRL" + '_' + l + lp + s + b : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
+                "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
+                "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
+                "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
+                "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
+                "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
+                "SedRR" + '_' + l + lp + s + b : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
+                })
     return _symmetrize_JMS_dict(d)
 
 
@@ -1692,12 +1695,10 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
-            d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
-                                        'sb'+'l_'+l+'nu_'+lp),
-                                        'sb'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
-                                        'db'+'l_'+l+'nu_'+lp),
-                                        'db'+'l_'+l+'nu_'+lp))
+            for qq in ['sb', 'db', 'ds']:
+                d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
+                                            qq+'l_'+l+'nu_'+lp),
+                                            qq+'l_'+l+'nu_'+lp))
 
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
@@ -1728,6 +1729,11 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
             d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
                                         'db'+'l_'+l+'nu_'+lp, p),
                                         'db'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                        'ds'+'l_'+l+'nu_'+lp, p,
+                                        include_charged=(l==lp)),
+                                        'ds'+'l_'+l+'nu_'+lp,
+                                        include_charged=(l==lp)))
 
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
