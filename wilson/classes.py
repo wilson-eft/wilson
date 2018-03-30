@@ -2,14 +2,25 @@ from wilson.run.smeft import SMEFT
 from wilson.run.wet import WETrunner
 import numpy as np
 from math import log, e
+import wcxf
 
 
 class Wilson(object):
     """Wilson."""
-    def __init__(self, wc):
-        wc.validate()
-        self.wc = wc
+    def __init__(self, wcdict, scale, eft, basis):
+        self.wc = wcxf.WC(eft=eft, basis=basis, scale=scale,
+                          values=wcxf.WC.dict2values(wcdict))
+        self.wc.validate()
         self._cache = {}
+
+    @classmethod
+    def from_wc(cls, wc):
+        return cls(wcdict=wc.dict, scale=wc.scale, eft=wc.eft, basis=wc.basis)
+
+    @classmethod
+    def load_wc(cls, stream):
+        wc = wcxf.WC.load(stream)
+        return cls.from_wc(wc)
 
     def _repr_markdown_(self):
         r_wcxf = self.wc._repr_markdown_()

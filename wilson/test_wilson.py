@@ -36,14 +36,29 @@ par = {
 
 class TestWilson(unittest.TestCase):
     def test_class(self):
+        wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+
+    def test_from_wc(self):
         wc = wcxf.WC('SMEFT', 'Warsaw', 1000, {'qd1_1123': 1})
-        wilson.Wilson(wc)
+        w1 = wilson.Wilson.from_wc(wc)
+        w2 = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        self.assertDictEqual(w1.wc.dict, w2.wc.dict)
 
     def test_set_initial_wcxf(self):
         test_file = pkgutil.get_data('wilson', 'data/tests/wcxf-flavio-example.yml')
         wcxf_wc = wcxf.WC.load(test_file.decode('utf-8'))
         wcxf_wc.validate()
-        wilson_wc = wilson.Wilson(wcxf_wc)
+        wilson_wc = wilson.Wilson.from_wc(wcxf_wc)
+        wc_out = wilson_wc.match_run('WET', 'flavio', 160, 'sb')
+        self.assertEqual(wc_out.dict['C9_bsee'], -1+0.01j)
+        self.assertEqual(wc_out.dict['C9p_bsee'], 0.1)
+        self.assertEqual(wc_out.dict['C10_bsee'], 0.05j)
+        self.assertEqual(wc_out.dict['C10p_bsee'], 0.1-0.3j)
+        self.assertEqual(wc_out.dict.get('CS_bsee', 0), 0)
+
+    def test_load_initial(self):
+        test_file = pkgutil.get_data('wilson', 'data/tests/wcxf-flavio-example.yml')
+        wilson_wc = wilson.Wilson.load_wc(test_file.decode('utf-8'))
         wc_out = wilson_wc.match_run('WET', 'flavio', 160, 'sb')
         self.assertEqual(wc_out.dict['C9_bsee'], -1+0.01j)
         self.assertEqual(wc_out.dict['C9p_bsee'], 0.1)
@@ -54,15 +69,15 @@ class TestWilson(unittest.TestCase):
     def test_set_initial_wcxf_minimal(self):
         for eft in ['WET', 'WET-4', 'WET-3']:
             wc = wcxf.WC(eft, 'flavio', 120, {'CVLL_sdsd': {'Im': 1}})
-            ww = wilson.Wilson(wc)
+            ww = wilson.Wilson.from_wc(wc)
             self.assertEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
             wc = wcxf.WC(eft, 'JMS', 120, {'VddLL_1212': {'Im': 1}})
             wc.validate()
-            ww = wilson.Wilson(wc)
+            ww = wilson.Wilson.from_wc(wc)
             self.assertAlmostEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
 
     def tets_repr(self):
-        wc = wilson.Wilson(wc)
+        wc = wilson.Wilson.from_wc(wc)
         wc._repr_markdown_()
         wc.set_initial({'C7_bs': -0.1}, 5)
         wc._repr_markdown_()
@@ -72,7 +87,7 @@ class TestWilson(unittest.TestCase):
                     ('WET-4', 'WET-4', 3, 2), ('WET-4', 'WET-3', 3, 2),
                     ('WET-3', 'WET-3', 2, 1), ]:
             wc = wcxf.WC(eft[0], 'flavio', eft[2], {'CVLL_sdsd': {'Im': 1}})
-            ww = wilson.Wilson(wc)
+            ww = wilson.Wilson.from_wc(wc)
             wc_out = ww.match_run(eft[1], 'flavio', eft[3])
             wc_out.validate()
 
