@@ -102,6 +102,14 @@ def JMS_to_Bern_wet3(C, scale, parameters):
 def Bern_to_JMS(C, scale, parameters):
     return wet.Bern_to_JMS(C, scale, parameters)
 
+@wcxf.translator('WET-4', 'Bern', 'JMS')
+def Bern_to_JMS_wet4(C, scale, parameters):
+    return wet.Bern_to_JMS(C, scale, parameters)
+
+@wcxf.translator('WET-3', 'Bern', 'JMS')
+def Bern_to_JMS_wet3(C, scale, parameters):
+    return wet.Bern_to_JMS(C, scale, parameters)
+
 
 @wcxf.translator('WET', 'JMS', 'formflavor')
 def JMS_to_FormFlavor(C, scale, parameters):
