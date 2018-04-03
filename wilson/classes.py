@@ -33,6 +33,9 @@ class Wilson(object):
         """Run the Wilson coefficients to a different scale
         (and possibly different EFT)
         and return them as `wcxf.WC` instance."""
+        cached = self._get_from_cache(sector=sectors, scale=scale, eft=eft, basis=basis)
+        if cached is not None:
+            return cached
         scale_ew = 91.1876
         mb = 4.2
         mc = 1.3
@@ -42,10 +45,15 @@ class Wilson(object):
             smeft = SMEFT(self.wc)
             if eft == 'SMEFT':
                 # if input and output EFT ist SMEFT, just run.
-                return smeft.run(scale)
+                wc_out = smeft.run(scale)
+                self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
+                return wc_out
             else:
                 # if SMEFT -> WET-x: match to WET at the EW scale
-                wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
+                wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
+                if wc_ew is None:
+                    wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
+                self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew)
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
             wet = WETrunner(self.wc.translate('JMS'))
