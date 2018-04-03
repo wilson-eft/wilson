@@ -22,13 +22,12 @@ class Wilson(object):
         wc = wcxf.WC.load(stream)
         return cls.from_wc(wc)
 
-    def _repr_markdown_(self):
-        r_wcxf = self.wc._repr_markdown_()
+    def _repr_html_(self):
+        r_wcxf = self.wc._repr_html_()
         r_wcxf = '\n'.join(r_wcxf.splitlines()[2:])  # remove WCxf heading
-        md = "## `wilson` coefficients\n\n"
-        md += "### Initial values:\n\n"
-        md += r_wcxf
-        return md
+        html = "<h3>Wilson coefficients</h3>\n\n"
+        html += r_wcxf
+        return html
 
     def match_run(self, eft, basis, scale, sectors='all'):
         """Run the Wilson coefficients to a different scale
