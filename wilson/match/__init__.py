@@ -43,41 +43,41 @@ def warsaw_to_bern(C, scale, parameters):
 
 @wcxf.matcher('WET', 'flavio', 'WET-4', 'flavio')
 def wet_wet4_flavio(C, scale, parameters):
-    keys = wcxf.Basis['WET-4', 'flavio'].all_wcs
+    keys = set(wcxf.Basis['WET-4', 'flavio'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET-4', 'flavio', 'WET-3', 'flavio')
 def wet4_wet3_flavio(C, scale, parameters):
-    keys = wcxf.Basis['WET-3', 'flavio'].all_wcs
+    keys = set(wcxf.Basis['WET-3', 'flavio'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET', 'Bern', 'WET-4', 'Bern')
 def wet_wet4_bern(C, scale, parameters):
-    keys = wcxf.Basis['WET-4', 'Bern'].all_wcs
+    keys = set(wcxf.Basis['WET-4', 'Bern'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET-4', 'Bern', 'WET-3', 'Bern')
 def wet4_wet3_bern(C, scale, parameters):
-    keys = wcxf.Basis['WET-3', 'Bern'].all_wcs
+    keys = set(wcxf.Basis['WET-3', 'Bern'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET', 'JMS', 'WET-4', 'JMS')
 def wet_wet4_jms(C, scale, parameters):
-    keys = wcxf.Basis['WET-4', 'JMS'].all_wcs
+    keys = set(wcxf.Basis['WET-4', 'JMS'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET-4', 'JMS', 'WET-3', 'JMS')
 def wet4_wet3_jms(C, scale, parameters):
-    keys = wcxf.Basis['WET-3', 'JMS'].all_wcs
+    keys = set(wcxf.Basis['WET-3', 'JMS'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}
 
 
 @wcxf.matcher('WET-3', 'JMS', 'WET-2', 'JMS')
 def wet3_wet2_jms(C, scale, parameters):
-    keys = wcxf.Basis['WET-2', 'JMS'].all_wcs
+    keys = set(wcxf.Basis['WET-2', 'JMS'].all_wcs)
     return {k: v for k, v in C.items() if k in keys}

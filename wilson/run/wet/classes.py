@@ -90,8 +90,9 @@ class WETrunner(object):
         Returns an instance of `wcxf.WC`.
         """
         C_out = self._run_dict(scale_out, sectors=sectors)
+        all_wcs = set(wcxf.Basis[self.eft, 'JMS'].all_wcs)  # to speed up lookup
         C_out = {k: v for k, v in C_out.items()
-                 if v != 0 and k in wcxf.Basis[self.eft, 'JMS'].all_wcs}
+                 if v != 0 and k in all_wcs}
         return wcxf.WC(eft=self.eft, basis='JMS',
                        scale=scale_out,
                        values=wcxf.WC.dict2values(C_out))

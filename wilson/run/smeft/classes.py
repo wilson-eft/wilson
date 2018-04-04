@@ -89,7 +89,8 @@ class SMEFT(object):
         C = self._rotate_defaultbasis(C_out)
         d = wilson.translate.smeft.arrays2wcxf(C)
         basis = wcxf.Basis['SMEFT', 'Warsaw']
-        d = {k: v for k, v in d.items() if k in basis.all_wcs and v != 0}
+        all_wcs = set(basis.all_wcs)  # to speed up lookup
+        d = {k: v for k, v in d.items() if k in all_wcs and v != 0}
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('SMEFT', 'Warsaw', scale_out, d)
         return wc
@@ -152,7 +153,8 @@ class SMEFT(object):
         C_in_sm = beta.C_array2dict(np.zeros(9999))
         # set the SM parameters to the values obtained from smpar.smeftpar
         C_SM = smpar.smeftpar(scale_sm, C_out, basis='Warsaw')
-        C_SM = {k: v for k, v in C_SM.items() if k in smeftutil.SM_keys}
+        SM_keys = set(smeftutil.SM_keys)  # to speed up lookup
+        C_SM = {k: v for k, v in C_SM.items() if k in SM_keys}
         # set the Wilson coefficients at the EW scale to C_out
         C_in_sm.update(C_out)
         C_in_sm.update(C_SM)
@@ -160,7 +162,7 @@ class SMEFT(object):
         # run up (with 1% relative precision, ignore running of Wilson coefficients)
         C_SM_high = smeft_sm._rgevolve(self.scale_in, newphys=False, rtol=0.001, atol=1)
         C_SM_high = self._rotate_defaultbasis(C_SM_high)
-        return {k: v for k, v in C_SM_high.items() if k in smeftutil.SM_keys}
+        return {k: v for k, v in C_SM_high.items() if k in SM_keys}
 
     def _get_sm_scale_in(self, scale_sm=91.1876):
         """Get an estimate of the SM parameters at the input scale by running
