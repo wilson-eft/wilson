@@ -42,8 +42,8 @@ class Wilson(object):
         if self.wc.basis == basis and self.wc.eft == eft and scale == self.wc.scale:
             return self.wc  # nothing to do
         if self.wc.eft == 'SMEFT':
-            smeft = SMEFT(self.wc)
             if eft == 'SMEFT':
+                smeft = SMEFT(self.wc)
                 # if input and output EFT ist SMEFT, just run.
                 wc_out = smeft.run(scale)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
@@ -52,6 +52,7 @@ class Wilson(object):
                 # if SMEFT -> WET-x: match to WET at the EW scale
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
+                    smeft = SMEFT(self.wc)
                     wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew)
