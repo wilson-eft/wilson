@@ -1155,3 +1155,114 @@ sectors:
       tex: (\bar \tau_L \sigma^{\mu \nu} e_R) (\bar d_L \sigma_{\mu \nu} d_R)
     CTRR_etauss:
       tex: (\bar \tau_L \sigma^{\mu \nu} e_R) (\bar s_L \sigma_{\mu \nu} s_R)
+  nunumue:
+    CVLL_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_numunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_numunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_nutaunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunumuemu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_nutaunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLR_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_numunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_numunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_nutaunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunumuemu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_nutaunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+  nunumutau:
+    CVLL_nuenuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLL_numunuemutau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \tau_L \gamma_\mu \mu_L)
+    CVLL_numunuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLL_numunumutaumu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLL_nutaunuemutau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \tau_L \gamma_\mu \mu_L)
+    CVLL_nutaunuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLL_nutaunumumutau:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \tau_L \gamma_\mu \mu_L)
+    CVLL_nutaunumutaumu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLL_nutaunutautaumu:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu \tau_L)
+    CVLR_nuenuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar \mu_R \gamma_\mu \tau_R)
+    CVLR_numunuemutau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \tau_R \gamma_\mu \mu_R)
+    CVLR_numunuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_R \gamma_\mu \tau_R)
+    CVLR_numunumutaumu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar \mu_R \gamma_\mu \tau_R)
+    CVLR_nutaunuemutau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \tau_R \gamma_\mu \mu_R)
+    CVLR_nutaunuetaumu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu \tau_R)
+    CVLR_nutaunumumutau:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \tau_R \gamma_\mu \mu_R)
+    CVLR_nutaunumutaumu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu \tau_R)
+    CVLR_nutaunutautaumu:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu \tau_R)
+  nunutaue:
+    CVLL_nuenuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_L \gamma_\mu \tau_L)
+    CVLL_numunueetau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \tau_L \gamma_\mu e_L)
+    CVLL_numunuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \tau_L)
+    CVLL_numunumutaue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \tau_L)
+    CVLL_nutaunueetau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \tau_L \gamma_\mu e_L)
+    CVLL_nutaunuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \tau_L)
+    CVLL_nutaunumuetau:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \tau_L \gamma_\mu e_L)
+    CVLL_nutaunumutaue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \tau_L)
+    CVLL_nutaunutautaue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \tau_L)
+    CVLR_nuenuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_R \gamma_\mu \tau_R)
+    CVLR_numunueetau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \tau_R \gamma_\mu e_R)
+    CVLR_numunuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \tau_R)
+    CVLR_numunumutaue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \tau_R)
+    CVLR_nutaunueetau:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \tau_R \gamma_\mu e_R)
+    CVLR_nutaunuetaue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \tau_R)
+    CVLR_nutaunumuetau:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \tau_R \gamma_\mu e_R)
+    CVLR_nutaunumutaue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \tau_R)
+    CVLR_nutaunutautaue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \tau_R)

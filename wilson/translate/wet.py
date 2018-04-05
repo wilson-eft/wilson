@@ -1483,8 +1483,9 @@ def JMS_to_flavio(Cflat, scale, parameters=None):
     d.update(_Bern_to_Flavio_VII(_JMS_to_Bern_VII(Cflat, p), p))
 
     # LFV
-    dlfv = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
-    for jkey, fkey in dlfv.items():
+    dlep = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
+    dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    for jkey, fkey in dlep.items():
         if jkey in Cflat:
             d[fkey] = Cflat[jkey]
 
@@ -1747,9 +1748,10 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
     for qq in ['sb', 'db', 'ds']:
         d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, qq, p), qq))
 
-    # LFV
-    dlfv = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
-    for jkey, fkey in dlfv.items():
+    # LFV & ddll
+    dlep = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
+    dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    for jkey, fkey in dlep.items():
         if fkey in C:
             d[jkey] = C[fkey]
 

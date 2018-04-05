@@ -468,3 +468,40 @@ sectors:
       tex: (\bar \mu_L \sigma^{\mu \nu} e_R) (\bar d_L \sigma_{\mu \nu} d_R)
     CTRR_emuss:
       tex: (\bar \mu_L \sigma^{\mu \nu} e_R) (\bar s_L \sigma_{\mu \nu} s_R)
+  nunumue:
+    CVLL_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_numunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_numunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_nutaunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunumuemu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_L \gamma_\mu e_L)
+    CVLL_nutaunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLL_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_L \gamma_\mu \mu_L)
+    CVLR_nuenuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{eL})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_numunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_numunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_numunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\mu L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunueemu:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_nutaunuemue:
+      tex: (\bar \nu_{eL} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunumuemu:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar \mu_R \gamma_\mu e_R)
+    CVLR_nutaunumumue:
+      tex: (\bar \nu_{\mu L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
+    CVLR_nutaunutaumue:
+      tex: (\bar \nu_{\tau L} \gamma^\mu \nu_{\tau L})(\bar e_R \gamma_\mu \mu_R)
