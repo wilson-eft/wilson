@@ -1,6 +1,5 @@
 import unittest
 import numpy as np
-import numpy.testing as npt
 import wcxf
 from . import wet
 from math import sqrt
@@ -19,6 +18,16 @@ def get_random_wc(eft, basis, cmax=1e-2):
             if 'real' not in d or not d['real']:
                 _wc[name] += 1j*cmax*np.random.rand()
     return wcxf.WC(eft, basis, 80., wcxf.WC.dict2values(_wc))
+
+
+def _test_missing(self, wc, from_basis, ignore_sec=[], ignore_coeffs=[]):
+    to_keys = set(wc.values.keys())
+    for sec, coeffs in wcxf.Basis[wc.eft, wc.basis].sectors.items():
+        if sec in ignore_sec or sec not in wcxf.Basis[wc.eft, from_basis].sectors:
+            continue
+        to_keys_all = set(coeffs.keys())
+        self.assertSetEqual(to_keys_all - to_keys - set(ignore_coeffs), set(),
+                            msg="Missing coefficients in sector {}".format(sec))
 
 
 class TestTranslateWET(unittest.TestCase):
@@ -117,10 +126,6 @@ class TestBern2JMS(unittest.TestCase):
     def setUpClass(cls):
         cls.from_wc = get_random_wc('WET', 'Bern')
         cls.to_wc = cls.from_wc.translate('JMS')
-        # TODO!
-        cls.classes_implemented = ['I', 'Iu', 'II',]#'sb', 'sd', 'db',]
-        cls.sectors_implemented = [s for ci in cls.classes_implemented
-                                   for s in wilson.run.wet.definitions.classes[ci]]
 
     def test_validate(self):
         self.to_wc.validate()
@@ -130,11 +135,9 @@ class TestBern2JMS(unittest.TestCase):
             self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
 
     def test_missing(self):
-        to_keys = set(self.to_wc.values.keys())
-        to_keys_all = set([k for sec, coeffs in wcxf.Basis['WET', 'JMS'].sectors.items()
-                           for k in coeffs
-                           if sec in self.sectors_implemented])
-        self.assertSetEqual(to_keys_all - to_keys, set(), msg="Missing coefficients")
+        _test_missing(self, self.to_wc, 'Bern',
+                      ignore_sec=('dF=0',))
+
 
     def test_roundtrip(self):
         round_wc = self.to_wc.translate('Bern')
@@ -150,10 +153,6 @@ class TestFlavio2JMS(unittest.TestCase):
     def setUpClass(cls):
         cls.from_wc = get_random_wc('WET', 'flavio')
         cls.to_wc = cls.from_wc.translate('JMS')
-        # TODO!
-        cls.classes_implemented = ['I', 'Iu', 'II', 'mue', 'mutau', 'taue']
-        cls.sectors_implemented = [s for ci in cls.classes_implemented
-                                   for s in wilson.run.wet.definitions.classes[ci]]
 
     def test_validate(self):
         self.to_wc.validate()
@@ -163,11 +162,15 @@ class TestFlavio2JMS(unittest.TestCase):
             self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
 
     def test_missing(self):
-        to_keys = set(self.to_wc.values.keys())
-        to_keys_all = set([k for sec, coeffs in wcxf.Basis['WET', 'JMS'].sectors.items()
-                           for k in coeffs
-                           if sec in self.sectors_implemented])
-        self.assertSetEqual(to_keys_all - to_keys, set(), msg="Missing coefficients")
+        # ignore tensor coeffs
+        ignore = ['TedRR_{}{}{}{}'.format(i, j, k, l)
+                  for i in '123'
+                  for j in '123'
+                  for k in '123'
+                  for l in '123']
+        _test_missing(self, self.to_wc, 'flavio',
+                      ignore_coeffs=ignore,
+                      ignore_sec=('dF=0',))
 
     def test_roundtrip(self):
         round_wc = self.to_wc.translate('flavio')

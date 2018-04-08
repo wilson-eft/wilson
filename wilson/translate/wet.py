@@ -265,6 +265,125 @@ def _BernII_to_EOS_II(C, udlnu, parameters):
 
 ## Class III ##
 
+def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
+    """From 4-quark Fierz to JMS basis for Classes III, IV and V.
+    `qqqq` should be of the form 'sbuc', 'sdcc', 'ucuu' etc."""
+    F = Fqqqq.copy()
+    #case dduu
+    classIII = ['sbuc', 'sbcu', 'dbuc', 'dbcu', 'dsuc', 'dscu']
+    classVdduu = ['sbuu' , 'dbuu', 'dsuu', 'sbcc' , 'dbcc', 'dscc']
+    if qqqq in classIII + classVdduu:
+        f1 = str(dflav[qqqq[0]] + 1)
+        f2 = str(dflav[qqqq[1]] + 1)
+        f3 = str(uflav[qqqq[2]] + 1)
+        f4 = str(uflav[qqqq[3]] + 1)
+        d = {'V1udLL_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1'] + F['F' + qqqq + '2'] / Nc,
+            'V8udLL_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '2'],
+            'V1duLR_' + f1 + f2 + f3 + f4: F['F' + qqqq + '3'] + F['F' + qqqq + '4'] / Nc,
+            'V8duLR_' + f1 + f2 + f3 + f4: 2 * F['F' + qqqq + '4'],
+            'S1udRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '5'] + F['F' + qqqq + '6'] / Nc - 4 * F['F' + qqqq + '9'] - (4 * F['F' + qqqq + '10']) / Nc,
+            'S8udRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '6'] - 8 * F['F' + qqqq + '10'],
+            'S1udduRR_' + f3 + f2 + f1 + f4: -((8 * F['F' + qqqq + '9']) / Nc) - 8 * F['F' + qqqq + '10'],
+            'V8udduLR_' + f4 + f1 + f2 + f3: -F['F' + qqqq + '7'].conjugate(),
+            'V1udduLR_' + f4 + f1 + f2 + f3: -(F['F' + qqqq + '7'].conjugate() / (2 * Nc)) - F['F' + qqqq + '8'].conjugate() / 2,
+            'S8udduRR_' + f3 + f2 + f1 + f4: -16 * F['F' + qqqq + '9'],
+            'V1udRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1p'] + F['F' + qqqq + '2p'] / Nc,
+            'V8udRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '2p'],
+            'V1udLR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '3p'] + F['F' + qqqq + '4p'] / Nc,
+            'V8udLR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '4p'],
+            'S1udRR_' + f4 + f3 + f2 + f1: F['F' + qqqq + '5p'].conjugate() + F['F' + qqqq + '6p'].conjugate() / Nc - 4 * F['F' + qqqq + '9p'].conjugate() - (4 * F['F' + qqqq + '10p'].conjugate()) /  Nc,
+            'S8udRR_' + f4 + f3 + f2 + f1: 2 * F['F' + qqqq + '6p'].conjugate() - 8 * F['F' + qqqq + '10p'].conjugate(),
+            'S1udduRR_' + f4 + f1 + f2 + f3: -((8 * F['F' + qqqq + '9p'].conjugate()) / Nc) - 8 * F['F' + qqqq + '10p'].conjugate(),
+            'V8udduLR_' + f3 + f2 + f1 + f4: -F['F' + qqqq + '7p'],
+            'V1udduLR_' + f3 + f2 + f1 + f4: -(F['F' + qqqq + '7p'] / (2 * Nc)) - F['F' + qqqq + '8p'] / 2,
+            'S8udduRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate(),
+            }
+        return _symmetrize_JMS_dict(d)
+    #case dddd
+    classIV = ['sbsd', 'dbds', 'bsbd']
+    classVdddd = ['sbss', 'dbdd', 'dsdd', 'sbbb', 'dbbb', 'dsss']
+    classVddddind = ['sbdd', 'dsbb', 'dbss']
+    if qqqq in classVdddd + classIV:
+        # if 2nd and 4th or 1st and 3rd fields are the same, Fierz can be used
+        # to express the even coeffs in terms of the odd ones
+        for key in F:
+            # to make sure we're not screwing things up, check that none
+            # of the even WCs is actually present
+            assert int(key[5:].replace('p', '')) % 2 == 1, "Unexpected key in Fierz basis: " + key
+        for p in ['', 'p']:
+            if qqqq in ['sbbb', 'dbbb', 'dsss',]:
+                F['F' + qqqq + '2' + p] = F['F' + qqqq + '1' + p]
+                F['F' + qqqq + '4' + p] = -1 / 2 * F['F' + qqqq + '7' + p]
+                F['F' + qqqq + '6' + p] = -1 / 2 * F['F' + qqqq + '5' + p] - 6 * F['F' + qqqq + '9' + p]
+                F['F' + qqqq + '8' + p] = -2 * F['F' + qqqq + '3' + p]
+                F['F' + qqqq + '10' + p] = -1 / 8 * F['F' + qqqq + '5' + p] + 1 / 2 * F['F' + qqqq + '9' + p]
+            elif qqqq in ['sbss', 'dbdd', 'dsdd', 'sbsd', 'dbds', 'bsbd']:
+                notp = 'p' if p == '' else ''
+                F['F' + qqqq + '2' + p] = F['F' + qqqq + '1' + p]
+                F['F' + qqqq + '4' + p] = -1 / 2 * F['F' + qqqq + '7' + notp]
+                F['F' + qqqq + '6' + notp] = -1 / 2 * F['F' + qqqq + '5' + notp] - 6 * F['F' + qqqq + '9' + notp]
+                F['F' + qqqq + '8' + notp] = -2 * F['F' + qqqq + '3' + p]
+                F['F' + qqqq + '10' + notp] = -1 / 8 * F['F' + qqqq + '5' + notp] + 1 / 2 * F['F' + qqqq + '9' + notp]
+    if qqqq in classIV + classVdddd + classVddddind:
+        f1 = str(dflav[qqqq[0]] + 1)
+        f2 = str(dflav[qqqq[1]] + 1)
+        f3 = str(dflav[qqqq[2]] + 1)
+        f4 = str(dflav[qqqq[3]] + 1)
+        d = {
+        'VddLL_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1'],
+        'VddLL_' + f1 + f4 + f3 + f2: F['F' + qqqq + '2'],
+        'V1ddLR_' + f1 + f2 + f3 + f4: F['F' + qqqq + '3'] + F['F' + qqqq + '4'] / Nc,
+        'V8ddLR_' + f1 + f2 + f3 + f4: 2 * F['F' + qqqq + '4'],
+        'S1ddRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '5'] + F['F' + qqqq + '6'] / Nc - 4 * F['F' + qqqq + '9'] - (4 * F['F' + qqqq + '10']) / Nc,
+        'S8ddRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '6'] - 8 * F['F' + qqqq + '10'],
+        'V8ddLR_' + f1 + f4 + f3 + f2: -F['F' + qqqq + '7'],
+        'V1ddLR_' + f1 + f4 + f3 + f2: -(F['F' + qqqq + '7'] / (2 * Nc)) - F['F' + qqqq + '8'] /  2,
+        'S1ddRR_' + f1 + f4 + f3 + f2: -((8 * F['F' + qqqq + '9']) / Nc) - 8 * F['F' + qqqq + '10'],
+        'S8ddRR_' + f3 + f2 + f1 + f4: -16 * F['F' + qqqq + '9'],
+        'VddRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1p'],
+        'VddRR_' + f1 + f4 + f3 + f2: F['F' + qqqq + '2p'],
+        'V1ddLR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '3p'] + F['F' + qqqq + '4p'] / Nc,
+        'V8ddLR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '4p'],
+        'S1ddRR_' + f4 + f3 + f2 + f1: F['F' + qqqq + '5p'].conjugate() + F['F' + qqqq + '6p'].conjugate() / Nc - 4 * F['F' + qqqq + '9p'].conjugate() - (4 * F['F' + qqqq + '10p'].conjugate()) /  Nc,
+        'S8ddRR_' + f4 + f3 + f2 + f1: 2 * F['F' + qqqq + '6p'].conjugate() - 8 * F['F' + qqqq + '10p'].conjugate(),
+        'V8ddLR_' + f3 + f2 + f1 + f4: -F['F' + qqqq + '7p'],
+        'V1ddLR_' + f3 + f2 + f1 + f4: -(F['F' + qqqq + '7p'] / (2 * Nc)) - F['F' + qqqq + '8p'] / 2,
+        'S1ddRR_' + f4 + f1 + f2 + f3: -((8 * F['F' + qqqq + '9p'].conjugate()) / Nc) - 8 * F['F' + qqqq + '10p'].conjugate(),
+        'S8ddRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate(),
+        }
+        return _symmetrize_JMS_dict(d)
+    #case uuuu
+    classVuuuu = ['ucuu', 'cucc']
+    if qqqq in classVuuuu:
+        f1 = str(uflav[qqqq[0]] + 1)
+        f2 = str(uflav[qqqq[1]] + 1)
+        f3 = str(uflav[qqqq[2]] + 1)
+        f4 = str(uflav[qqqq[3]] + 1)
+        d = {
+        'VuuLL_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1'],
+        'VuuLL_' + f1 + f4 + f3 + f2: F['F' + qqqq + '2'],
+        'V1uuLR_' + f1 + f2 + f3 + f4: F['F' + qqqq + '3'] + F['F' + qqqq + '4'] / Nc,
+        'V8uuLR_' + f1 + f2 + f3 + f4: 2 * F['F' + qqqq + '4'],
+        'S1uuRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '5'] + F['F' + qqqq + '6'] / Nc - 4 * F['F' + qqqq + '9'] - (4 * F['F' + qqqq + '10']) / Nc,
+        'S8uuRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '6'] - 8 * F['F' + qqqq + '10'],
+        'V8uuLR_' + f1 + f4 + f3 + f2: -F['F' + qqqq + '7'],
+        'V1uuLR_' + f1 + f4 + f3 + f2: -(F['F' + qqqq + '7'] / (2 * Nc)) - F['F' + qqqq + '8'] /  2,
+        'S1uuRR_' + f1 + f4 + f3 + f2: -((8 * F['F' + qqqq + '9']) / Nc) - 8 * F['F' + qqqq + '10'],
+        'S8uuRR_' + f3 + f2 + f1 + f4: -16 * F['F' + qqqq + '9'],
+        'VuuRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1p'],
+        'VuuRR_' + f1 + f3 + f4 + f2: F['F' + qqqq + '2p'],
+        'V1uuLR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '3p'] + F['F' + qqqq + '4p'] / Nc,
+        'V8uuLR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '4p'],
+        'S1uuRR_' + f4 + f3 + f2 + f1: F['F' + qqqq + '5p'].conjugate() + F['F' + qqqq + '6p'].conjugate() / Nc - 4 * F['F' + qqqq + '9p'].conjugate() - (4 * F['F' + qqqq + '10p'].conjugate()) /  Nc,
+        'S8uuRR_' + f4 + f3 + f2 + f1: 2 * F['F' + qqqq + '6p'].conjugate() - 8 * F['F' + qqqq + '10p'].conjugate(),
+        'V8uuLR_' + f3 + f2 + f1 + f4: -F['F' + qqqq + '7p'],
+        'V1uuLR_' + f3 + f2 + f1 + f4: -(F['F' + qqqq + '7p'] / (2 * Nc)) - F['F' + qqqq + '8p'] / 2,
+        'S1uuRR_' + f4 + f1 + f2 + f3: -((8 * F['F' + qqqq + '9p'].conjugate()) / Nc) - 8 * F['F' + qqqq + '10p'].conjugate(),
+        'S8uuRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p']
+        }
+        return _symmetrize_JMS_dict(d)
+    raise ValueError("Case not implemented: {}".format(qqqq))
+
 def _JMS_to_Fierz_III_IV_V(C, qqqq):
     """From JMS to 4-quark Fierz basis for Classes III, IV and V.
     `qqqq` should be of the form 'sbuc', 'sdcc', 'ucuu' etc."""
@@ -342,7 +461,7 @@ def _JMS_to_Fierz_III_IV_V(C, qqqq):
                  'F'+ qqqq +'10' : -C["S1ddRR"][f1, f4, f3, f2] / 8
                                    + C["S8ddRR"][f3, f2, f1, f4] / (16 * Nc),
                  'F'+ qqqq +'1p' : C["VddRR"][f3, f4, f1, f2],
-                 'F'+ qqqq +'2p' : C["VddRR"][f1, f3, f4, f2],
+                 'F'+ qqqq +'2p' : C["VddRR"][f1, f4, f3, f2],
                  'F'+ qqqq +'3p' : C["V1ddLR"][f3, f4, f1, f2]
                                    - C["V8ddLR"][f3, f4, f1,f2] / (2 * Nc),
                  'F'+ qqqq +'4p' : C["V8ddLR"][f3, f4, f1, f2] / 2,
@@ -403,7 +522,7 @@ def _JMS_to_Fierz_III_IV_V(C, qqqq):
                                     C["S8uuRR"][f4, f1, f2, f3].conj() / 16 / Nc
                                     }
     else:
-        "not in Fqqqq"
+        raise ValueError("Case not implemented: {}".format(qqqq))
 
 
 def _Fierz_to_Bern_III_IV_V(Fqqqq, qqqq):
@@ -1302,7 +1421,7 @@ def _symmetrize_JMS_dict(C):
     """For a dictionary with JMS Wilson coefficients but keys that might not be
     in the non-redundant basis, return a dictionary with keys from the basis
     and values conjugated if necessary."""
-    wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    wc_keys = set(wcxf.Basis['WET', 'JMS'].all_wcs)
     Cs = {}
     for op, v in C.items():
         if '_' not in op or op in wc_keys:
@@ -1324,7 +1443,18 @@ def _symmetrize_JMS_dict(C):
         elif name in ["VuuLL", "VddLL", "VuuRR", "VddRR"]:
             i, j, k, l = ind
             indnew = ''.join([l, k, j, i])
-            Cs['_'.join([name, indnew])] = v.conjugate()
+            newname = '_'.join([name, indnew])
+            if newname in wc_keys:
+                Cs[newname] = v.conjugate()
+            else:
+                indnew = ''.join([j, i, l, k])
+                newname = '_'.join([name, indnew])
+                if newname in wc_keys:
+                    Cs[newname] = v.conjugate()
+                else:
+                    indnew = ''.join([k, l, i, j])
+                    newname = '_'.join([name, indnew])
+                    Cs[newname] = v
     return Cs
 
 
@@ -1495,7 +1625,7 @@ def JMS_to_flavio(Cflat, scale, parameters=None):
 def Bern_to_flavio(C_incomplete, scale, parameters=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     # fill in zeros for missing coefficients
-    wc_keys = wcxf.Basis['WET', 'Bern'].all_wcs
+    wc_keys = set(wcxf.Basis['WET', 'Bern'].all_wcs)
     C = {k: C_incomplete.get(k, 0) for k in wc_keys}
     d = {}
 
@@ -1693,6 +1823,26 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
                 d.update(_Bern_to_JMS_II(C, qq+'l_'+l+'nu_'+lp))
 
+
+    # Class V
+    for u1 in uflav.keys():
+        for u2 in uflav.keys():
+            d.update(_Fierz_to_JMS_III_IV_V(_Bern_to_Fierz_III_IV_V(C,
+                                                      'sb'+u1+u2), 'sb'+u1+u2))
+
+            d.update(_Fierz_to_JMS_III_IV_V(_Bern_to_Fierz_III_IV_V(C,
+                                                      'db'+u1+u2), 'db'+u1+u2))
+
+            d.update(_Fierz_to_JMS_III_IV_V(_Bern_to_Fierz_III_IV_V(C,
+                                                      'ds'+u1+u2), 'ds'+u1+u2))
+
+    for qqqq in ['sbdd', 'sbss', 'dbdd', 'dbss', 'dbbb', 'sbbb',
+                 'dbds', 'sbsd', 'dsbb',
+                 'dsss', 'dsdd',
+                 ]:
+        d.update(_Fierz_to_JMS_III_IV_V(_Bern_to_Fierz_III_IV_V(C, qqqq), qqqq))
+
+
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
@@ -1743,6 +1893,14 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
                                         include_charged=(l==lp)),
                                         'ds'+'l_'+l+'nu_'+lp,
                                         include_charged=(l==lp)))
+
+
+    # Class V non-leptonic
+    for qq1 in ['ds', 'sb', 'db']:
+        for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
+            qqqq = qq1 + qq2
+            d.update(_Fierz_to_JMS_III_IV_V(_Flavio_to_Fierz_V(C, qqqq, p),
+                                            qqqq))
 
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
