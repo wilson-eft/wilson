@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 with open('wilson/_version.py') as f:
     exec(f.read())
 
-
+#
 setup(name='wilson',
       version=__version__,
       author='Jason Aebischer, David M. Straub',
