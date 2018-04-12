@@ -9,7 +9,7 @@ wilson is a Python package for the running and matching of Wilson coefficients o
 The package requires Python version 3.5 or above. It can be installed with
 
 ```bash
-python3 -m pip install smeftrunner
+python3 -m pip install wilson
 ```
 
 
@@ -28,8 +28,8 @@ TBD
 
 - The SMEFT RGEs are based on [arXiv:1308.2627](https://arxiv.org/abs/1308.2627), [arXiv:1310.4838](https://arxiv.org/abs/1310.4838), and [arXiv:1312.2014](https://arxiv.org/abs/1312.2014).
 - The SMEFT RGE implementation was ported from the [DSixTools](https://dsixtools.github.io/) Mathematica package ([arXiv:1704.04504](https://arxiv.org/abs/1704.04504)).
-- The SMEFT to WET matching is based on []().
-- The QCD and QED running is based on []() and []().
+- The SMEFT to WET matching is based on [arXiv:1709.04486](https://arxiv.org/abs/1709.04486).
+- The QCD and QED running is based on [arXiv:1704.06639](https://arxiv.org/abs/1704.06639) and [arXiv:1711.05270](https://arxiv.org/abs/1711.05270).
 
 
 
