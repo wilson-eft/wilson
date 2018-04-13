@@ -29,7 +29,7 @@ class Wilson(object):
         html += r_wcxf
         return html
 
-    def match_run(self, eft, basis, scale, sectors='all'):
+    def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
         (and possibly different EFT)
         and return them as `wcxf.WC` instance."""

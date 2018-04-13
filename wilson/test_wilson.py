@@ -49,7 +49,7 @@ class TestWilson(unittest.TestCase):
         wcxf_wc = wcxf.WC.load(test_file.decode('utf-8'))
         wcxf_wc.validate()
         wilson_wc = wilson.Wilson.from_wc(wcxf_wc)
-        wc_out = wilson_wc.match_run('WET', 'flavio', 160, 'sb')
+        wc_out = wilson_wc.match_run(160, 'WET', 'flavio', 'sb')
         self.assertEqual(wc_out.dict['C9_bsee'], -1+0.01j)
         self.assertEqual(wc_out.dict['C9p_bsee'], 0.1)
         self.assertEqual(wc_out.dict['C10_bsee'], 0.05j)
@@ -59,7 +59,7 @@ class TestWilson(unittest.TestCase):
     def test_load_initial(self):
         test_file = pkgutil.get_data('wilson', 'data/tests/wcxf-flavio-example.yml')
         wilson_wc = wilson.Wilson.load_wc(test_file.decode('utf-8'))
-        wc_out = wilson_wc.match_run('WET', 'flavio', 160, 'sb')
+        wc_out = wilson_wc.match_run(160, 'WET', 'flavio', 'sb')
         self.assertEqual(wc_out.dict['C9_bsee'], -1+0.01j)
         self.assertEqual(wc_out.dict['C9p_bsee'], 0.1)
         self.assertEqual(wc_out.dict['C10_bsee'], 0.05j)
@@ -70,11 +70,11 @@ class TestWilson(unittest.TestCase):
         for eft in ['WET', 'WET-4', 'WET-3']:
             wc = wcxf.WC(eft, 'flavio', 120, {'CVLL_sdsd': {'Im': 1}})
             ww = wilson.Wilson.from_wc(wc)
-            self.assertEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
             wc = wcxf.WC(eft, 'JMS', 120, {'VddLL_1212': {'Im': 1}})
             wc.validate()
             ww = wilson.Wilson.from_wc(wc)
-            self.assertAlmostEqual(ww.match_run(eft, 'flavio', 120, 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertAlmostEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
 
     def tets_repr(self):
         wc = wilson.Wilson.from_wc(wc)
@@ -88,7 +88,7 @@ class TestWilson(unittest.TestCase):
                     ('WET-3', 'WET-3', 2, 1), ]:
             wc = wcxf.WC(eft[0], 'flavio', eft[2], {'CVLL_sdsd': {'Im': 1}})
             ww = wilson.Wilson.from_wc(wc)
-            wc_out = ww.match_run(eft[1], 'flavio', eft[3])
+            wc_out = ww.match_run(eft[3], eft[1], 'flavio')
             wc_out.validate()
 
 
