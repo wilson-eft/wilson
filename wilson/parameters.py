@@ -1,4 +1,4 @@
-# Standard Model parameters treated as constants
+"""Standard Model parameter values."""
 
 p = {}
 

@@ -1,4 +1,4 @@
-"""Package for the renormalization group running of Wilson coefficients in
+"""Renormalization group running of Wilson coefficients in
 the weak effective theory."""
 
 

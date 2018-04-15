@@ -1,4 +1,5 @@
-"""Utility functoins for SMEFT, taken from python-smeft"""
+"""Utility functions and dictionaries useful for the manipulation of SMEFT Wilson coefficients.
+"""
 
 import numpy as np
 

@@ -1,3 +1,7 @@
+"""Provides basis translators for SMEFT and and WET that can be used with the
+`wcxf` Python package."""
+
+
 from . import smeft
 from . import wet
 import wcxf

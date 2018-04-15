@@ -1,3 +1,6 @@
+"""Extraction of Standard Model parameters taking into account dimension-six contributions."""
+
+
 from math import sqrt, pi
 import numpy as np
 import ckmutil
@@ -86,6 +89,7 @@ def get_gpbar(ebar, gbar, v, C):
 
 
 def smeftpar(scale, C, basis):
+    """Get the running parameters in SMEFT."""
     # start with a zero dict and update it with the input values
     MW = p['m_W']
     # MZ = p['m_Z']
@@ -125,6 +129,7 @@ def smeftpar(scale, C, basis):
 
 
 def smpar(C):
+    """Get the running effective SM parameters."""
     m2 = C['m2'].real
     Lambda = C['Lambda'].real
     v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /

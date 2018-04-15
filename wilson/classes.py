@@ -1,3 +1,13 @@
+"""Main classes used at the top level of the wilson package:
+
+`Wilson`: main interface to the wilson package, providing automatic running
+and matching in SMEFT and WET
+
+`RGsolution`: Class representing a continuous solution to the
+SMEFT and WET RGEs to be used for plotting.
+"""
+
+
 from wilson.run.smeft import SMEFT
 from wilson.run.wet import WETrunner
 import numpy as np
@@ -6,8 +16,30 @@ import wcxf
 
 
 class Wilson(object):
-    """Wilson."""
+    """Main interface to the wilson package, providing automatic running
+    and matching in SMEFT and WET.
+
+    Caching is used for intermediate results.
+
+    Methods:
+
+    - `from_wc`: Return a `Wilson` instance initialized by a `wcxf.WC` instance
+    - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
+    - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
+    """
     def __init__(self, wcdict, scale, eft, basis):
+        """Initialize the `Wilson` class.
+
+        Parameters:
+
+        - `wcdict`: dictionary of Wilson coefficient values at the input scale.
+          The keys must exist as Wilson coefficients in the WCxf basis file.
+          The values must be real or complex numbers (not dictionaries with key
+          'Re'/'Im'!)
+        - `scale`: input scale in GeV
+        - `eft`: input EFT
+        - `basis`: input basis
+        """
         self.wc = wcxf.WC(eft=eft, basis=basis, scale=scale,
                           values=wcxf.WC.dict2values(wcdict))
         self.wc.validate()
@@ -15,10 +47,12 @@ class Wilson(object):
 
     @classmethod
     def from_wc(cls, wc):
+        """Return a `Wilson` instance initialized by a `wcxf.WC` instance"""
         return cls(wcdict=wc.dict, scale=wc.scale, eft=wc.eft, basis=wc.basis)
 
     @classmethod
     def load_wc(cls, stream):
+        """Return a `Wilson` instance initialized by a WCxf file-like object"""
         wc = wcxf.WC.load(stream)
         return cls.from_wc(wc)
 
@@ -32,7 +66,19 @@ class Wilson(object):
     def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
         (and possibly different EFT)
-        and return them as `wcxf.WC` instance."""
+        and return them as `wcxf.WC` instance.
+
+        Parameters:
+
+        - `scale`: output scale in GeV
+        - `eft`: output EFT
+        - `basis`: output basis
+        - `sectors`: in the case of WET (or WET-4 or WET-3), a tuple of sector
+          names can be optionally provided. In this case, only the Wilson coefficients
+          from this sector(s) will be returned and all others discareded. This
+          can speed up the computation significantly if only a small number of sectors
+          is of interest. The sector names are defined in the WCxf basis file.
+        """
         cached = self._get_from_cache(sector=sectors, scale=scale, eft=eft, basis=basis)
         if cached is not None:
             return cached
@@ -114,6 +160,7 @@ class RGsolution(object):
         """Initialize.
 
         Parameters:
+        
         - fun: function of the scale that is expected to return a
         dictionary with the RGE solution and to accept vectorized input.
         - scale_min, scale_max: lower and upper boundaries of the scale
@@ -127,6 +174,7 @@ class RGsolution(object):
         where x is the scale in GeV and y is the parameter of interest.
 
         Parameters:
+
         - key: dicionary key of the parameter to be plotted (e.g. a WCxf
           coefficient name or a SM parameter like 'g')
         - part: plot the real part 're' (default) or the imaginary part 'im'
@@ -154,6 +202,7 @@ class RGsolution(object):
         """Plot the RG evolution of parameter `key`.
 
         Parameters:
+
         - part, scale, steps: see `plotdata`
         - legend: boolean, show the legend (default: True)
         - plotargs: dictionary of arguments to be passed to plt.plot

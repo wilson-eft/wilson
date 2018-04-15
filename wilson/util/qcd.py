@@ -1,3 +1,6 @@
+"""User-friendly interface to `python-rundec` to compute running quark masses and the strong coupling constant."""
+
+
 import rundec
 from functools import lru_cache
 

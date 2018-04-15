@@ -1,3 +1,6 @@
+"""Anomalous dimension matrices."""
+
+
 import numpy as np
 
 _nf = {5: {'u': 2, 'd': 3, 'e': 3},

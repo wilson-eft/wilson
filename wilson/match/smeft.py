@@ -1,3 +1,8 @@
+"""Matcher from the SMEFT 'Warsaw up' basis to the WET JMS basis.
+
+Based on arXiv:1709.04486."""
+
+
 import numpy as np
 from math import sqrt, pi
 import wcxf

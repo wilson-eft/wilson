@@ -86,6 +86,17 @@ def scale_C(key, p):
 
 
 def run_sector(sector, C_in, eta_s, f, p_in, p_out):
+    r"""Solve the WET RGE for a specific sector.
+
+    Parameters:
+
+    - sector: sector of interest
+    - C_in: dictionary of Wilson coefficients
+    - eta_s: ratio of $\alpha_s$ at input and output scale
+    - f: number of active quark flavours
+    - p_in: running parameters at the input scale
+    - p_out: running parameters at the output scale
+    """
     Cdictout = OrderedDict()
     classname = sectors[sector]
     keylist = coeffs[sector]

@@ -13,7 +13,7 @@ import wcxf
 
 
 class SMEFT(object):
-    """Class representing a arameter point in the Standard Model Effective
+    """Class representing a parameter point in the Standard Model Effective
     Field Theory and allowing the evolution of the Wilson Coefficients.
 
     Methods:
@@ -197,6 +197,7 @@ class SMEFT(object):
         return self._to_wcxf(C_out, scale)
 
     def run_continuous(self, scale):
+        """Return a continuous solution to the RGE as `RGsolution` instance."""
         if scale == self.scale_in:
             raise ValueError("The scale must be different from the input scale")
         elif scale < self.scale_in:

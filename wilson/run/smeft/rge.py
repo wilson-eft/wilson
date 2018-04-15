@@ -1,3 +1,6 @@
+"""Solving the SMEFT RGEs."""
+
+
 from . import beta
 from copy import deepcopy
 from math import pi, log

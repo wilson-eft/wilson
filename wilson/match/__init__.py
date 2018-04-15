@@ -1,3 +1,7 @@
+"""Provides matchers from SMEFT to WET, WET to WET-4, and WET-4 to WET-3 that
+can be used with the `wcxf` Python package."""
+
+
 import wcxf
 import wilson
 from . import smeft
