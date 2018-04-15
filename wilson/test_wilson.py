@@ -91,6 +91,10 @@ class TestWilson(unittest.TestCase):
             wc_out = ww.match_run(eft[3], eft[1], 'flavio')
             wc_out.validate()
 
+    def test_run_smeft(self):
+        w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        wc = w.match_run(160, 'SMEFT', 'Warsaw up')
+        wc.validate()
 
 class TestRGsolution(unittest.TestCase):
     def test_rgsolution_smeft(self):
