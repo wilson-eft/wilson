@@ -9,7 +9,7 @@ setup(name='wilson',
       version=__version__,
       author='Jason Aebischer, David M. Straub',
       author_email='jason.aebischer@tum.de, david.straub@tum.de',
-      url='https://github.com/wilsoneft/wilson',
+      url='https://github.com/wilson-eft/wilson',
       description='Toolkit for effective field theories beyond the Standard Model',
       long_description="""``wilson`` is a Python library for matching and running Wilson coefficients of
 higher-dimensional operators beyond the Standard Model. Provided with the numer-
