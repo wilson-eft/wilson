@@ -1543,6 +1543,9 @@ def JMS_to_EOS(Cflat, scale, parameters=None):
         d.update(_BernII_to_EOS_II(_JMS_to_Bern_II(C, 'ub'+'l_'+l+'nu_'+l),
                                           'ub'+'l_'+l+'nu_'+l,
                                         p))
+        d.update(_BernII_to_EOS_II(_JMS_to_Bern_II(C, 'cb'+'l_'+l+'nu_'+l),
+                                          'cb'+'l_'+l+'nu_'+l,
+                                        p))
 
     # Class V
     Fsbuu = _JMS_to_Fierz_III_IV_V(C, 'sbuu')
