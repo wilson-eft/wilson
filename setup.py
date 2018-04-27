@@ -31,7 +31,7 @@ and can thus be easily combined with a number of existing public codes.""",
                  ],
       },
       install_requires=['scipy>=1.0', 'numpy', 'pylha>=0.2', 'pyyaml',
-                        'ckmutil>=0.3', 'wcxf>=1.3', 'rundec>=0.5'],
+                        'ckmutil>=0.3', 'wcxf>=1.4.2', 'rundec>=0.5'],
       extras_require={
             'testing': ['nose', 'smeftrunner'],
       },
