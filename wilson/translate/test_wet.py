@@ -332,7 +332,7 @@ class TestBern2flavio(unittest.TestCase):
         for k, v in jms_direct.dict.items():
             if k in jms_indirect.dict:
                 self.assertAlmostEqual(v, jms_indirect.dict[k],
-                                       delta=1e-6,
+                                       delta=1e-5,
                                        msg="Failed for {}".format(k))
 
     def test_incomplete_input(self):
@@ -431,7 +431,7 @@ class TestBern2flavioWET3(unittest.TestCase):
         for k, v in jms_direct.dict.items():
             if k in jms_indirect.dict:
                 self.assertAlmostEqual(v, jms_indirect.dict[k],
-                                       delta=1e-6,
+                                       delta=1e-5,
                                        msg="Failed for {}".format(k))
 
     def test_incomplete_input(self):
