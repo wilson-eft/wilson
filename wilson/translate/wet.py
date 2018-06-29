@@ -976,7 +976,12 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     indfl = ddll[1::-1]+ind[2:] # flavio has first two indices inverted
     indnu = ddll[1::-1]+ddll.replace('l_','nu').replace('nu_','nu')[2:]
     e = sqrt(4* pi * parameters['alpha_e'])
-    mb = parameters['m_b']
+    if ddll[:2] == 'sb' or ddll[:2] == 'db':
+        mq = parameters['m_b']
+    elif ddll[:2] == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
         "CL_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nu'],
         "CR_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nup']
@@ -987,10 +992,10 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
             "C9p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '9p'],
             "C10_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10'],
             "C10p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10p'],
-            "CS_" + indfl : (16 * pi**2) / e**2 / mb * C['F' + ind + 'S'],
-            "CSp_" + indfl : (16 * pi**2) / e**2 / mb * C['F' + ind + 'Sp'],
-            "CP_" + indfl : (16 * pi**2) / e**2 / mb * C['F' + ind + 'P'],
-            "CPp_" + indfl : (16 * pi**2) / e**2 / mb * C['F' + ind + 'Pp'],
+            "CS_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'S'],
+            "CSp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Sp'],
+            "CP_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'P'],
+            "CPp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Pp'],
         })
     if norm_gf:
         prefactor = sqrt(2)/p['GF']/xi/4
@@ -1017,7 +1022,12 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     indfl = ddll[1::-1]+ind[2:] # flavio has first two indices inverted
     indnu = ddll[1::-1]+ddll.replace('l_','nu').replace('nu_','nu')[2:]
     e = sqrt(4* pi * parameters['alpha_e'])
-    mb = parameters['m_b']
+    if ddll[:2] == 'sb' or ddll[:2] == 'db':
+        mq = parameters['m_b']
+    elif ddll[:2] == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
         'F' + ind + 'nu': C["CL_" + indnu] / ((8 * pi**2) / e**2),
         'F' + ind + 'nup': C["CR_" + indnu] / ((8 * pi**2) / e**2),
@@ -1028,10 +1038,10 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
         'F' + ind + '9p': C["C9p_" + indfl] / ((16 * pi**2) / e**2),
         'F' + ind + '10': C["C10_" + indfl] / ((16 * pi**2) / e**2),
         'F' + ind + '10p': C["C10p_" + indfl] / ((16 * pi**2) / e**2),
-        'F' + ind + 'S': C["CS_" + indfl] / ((16 * pi**2) / e**2 / mb),
-        'F' + ind + 'Sp': C["CSp_" + indfl] / ((16 * pi**2) / e**2 / mb),
-        'F' + ind + 'P': C["CP_" + indfl] / ((16 * pi**2) / e**2 / mb),
-        'F' + ind + 'Pp': C["CPp_" + indfl] / ((16 * pi**2) / e**2 / mb),
+        'F' + ind + 'S': C["CS_" + indfl] / ((16 * pi**2) / e**2 / mq),
+        'F' + ind + 'Sp': C["CSp_" + indfl] / ((16 * pi**2) / e**2 / mq),
+        'F' + ind + 'P': C["CP_" + indfl] / ((16 * pi**2) / e**2 / mq),
+        'F' + ind + 'Pp': C["CPp_" + indfl] / ((16 * pi**2) / e**2 / mq),
         'F' + ind + 'T': 0,  # tensors not implemented in flavio basis yet
         'F' + ind + 'T5': 0,  # tensors not implemented in flavio basis yet
         })
@@ -1124,12 +1134,17 @@ def Fierz_to_Bern_chrom(C, dd, parameters):
     dd should be of the form 'sb', 'ds' etc."""
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    mb = parameters['m_b']
+    if dd == 'sb' or dd == 'db':
+        mq = parameters['m_b']
+    elif dd == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
     return {
-        '7gamma' + dd : gs**2 / e / mb * C['F7gamma' + dd ],
-        '8g' + dd : gs / mb * C['F8g' + dd ],
-        '7pgamma' + dd : gs**2 / e /mb * C['F7pgamma' + dd],
-        '8pg' + dd : gs / mb * C['F8pg' + dd]
+        '7gamma' + dd : gs**2 / e / mq * C['F7gamma' + dd ],
+        '8g' + dd : gs / mq * C['F8g' + dd ],
+        '7pgamma' + dd : gs**2 / e /mq * C['F7pgamma' + dd],
+        '8pg' + dd : gs / mq * C['F8pg' + dd]
             }
 
 
@@ -1138,12 +1153,17 @@ def Bern_to_Fierz_chrom(C, dd, parameters):
     dd should be of the form 'sb', 'ds' etc."""
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    mb = parameters['m_b']
+    if dd == 'sb' or dd == 'db':
+        mq = parameters['m_b']
+    elif dd == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
     return {
-        'F7gamma' + dd : C['7gamma' + dd] / (gs**2 / e / mb),
-        'F8g' + dd : C['8g' + dd] / (gs / mb),
-        'F7pgamma' + dd: C['7pgamma' + dd] / (gs**2 / e /mb),
-        'F8pg' + dd: C['8pg' + dd] / (gs / mb)
+        'F7gamma' + dd : C['7gamma' + dd] / (gs**2 / e / mq),
+        'F8g' + dd : C['8g' + dd] / (gs / mq),
+        'F7pgamma' + dd: C['7pgamma' + dd] / (gs**2 / e /mq),
+        'F8pg' + dd: C['8pg' + dd] / (gs / mq)
             }
 
 
@@ -1163,12 +1183,17 @@ def Fierz_to_Flavio_chrom(C, dd, parameters):
     ddfl = dd[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    mb = parameters['m_b']
+    if dd == 'sb' or dd == 'db':
+        mq = parameters['m_b']
+    elif dd == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
     dic = {
-        "C7_" + ddfl : (16 * pi**2) / e / mb * C['F7gamma' + dd],
-        "C8_" + ddfl : (16 * pi**2) / gs / mb * C['F8g' + dd],
-        "C7p_" + ddfl : (16 * pi**2) / e / mb * C['F7pgamma' + dd],
-        "C8p_" + ddfl : (16 * pi**2) / gs / mb * C['F8pg' + dd]
+        "C7_" + ddfl : (16 * pi**2) / e / mq * C['F7gamma' + dd],
+        "C8_" + ddfl : (16 * pi**2) / gs / mq * C['F8g' + dd],
+        "C7p_" + ddfl : (16 * pi**2) / e / mq * C['F7pgamma' + dd],
+        "C8p_" + ddfl : (16 * pi**2) / gs / mq * C['F8pg' + dd]
             }
     prefactor = sqrt(2)/p['GF']/xi/4
     return {k: prefactor * v for k, v in dic.items()}
@@ -1190,12 +1215,17 @@ def Flavio_to_Fierz_chrom(C, dd, parameters):
     ddfl = dd[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    mb = parameters['m_b']
+    if dd == 'sb' or dd == 'db':
+        mq = parameters['m_b']
+    elif dd == 'ds':
+        mq = parameters['m_s']
+    else:
+        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
     dic = {
-        'F7gamma' + dd: C["C7_" + ddfl] / ((16 * pi**2) / e / mb),
-        'F8g' + dd: C["C8_" + ddfl] / ((16 * pi**2) / gs / mb),
-        'F7pgamma' + dd: C["C7p_" + ddfl] / ((16 * pi**2) / e / mb),
-        'F8pg' + dd: C["C8p_" + ddfl] / ((16 * pi**2) / gs / mb)
+        'F7gamma' + dd: C["C7_" + ddfl] / ((16 * pi**2) / e / mq),
+        'F8g' + dd: C["C8_" + ddfl] / ((16 * pi**2) / gs / mq),
+        'F7pgamma' + dd: C["C7p_" + ddfl] / ((16 * pi**2) / e / mq),
+        'F8pg' + dd: C["C8p_" + ddfl] / ((16 * pi**2) / gs / mq)
             }
     prefactor = sqrt(2)/p['GF']/xi/4
     return {k: v / prefactor for k, v in dic.items()}
