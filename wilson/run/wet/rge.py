@@ -8,6 +8,29 @@ import numpy as np
 from functools import lru_cache
 from wilson.run.wet import adm
 from math import log, sqrt, pi
+import wcxf
+
+@lru_cache(maxsize=32)
+def get_permissible_wcs(classname, f):
+    r"""For some classes (in particular $\Delta F=1$), only a subset of Wilson
+    coefficients exist in WET-3 and WET-4. Therefore, depending on the number
+    of flavours `f`, the dimensionality of the ADM has to be reduced."""
+    # these are the problematic sectors
+    classes = ['cu', 'db', 'sb', 'sd', 'mue', 'mutau', 'taue', 'dF0']
+    if classname not in classes or f == 5:
+        # for 5-flavour WET, nothing to do.
+        # Neither for other classes (I, II, ...) because they exist either all
+        # or not at all in WET-3 and WET-4 (they have specific flavours).
+        return 'all'
+    if f not in [3, 4]:
+        raise ValueError("f must be 3, 4, or 5.")
+    if classname == 'dF0':
+        sector = 'dF=0'
+    else:
+        sector = classname
+    perm_keys = wcxf.Basis['WET-{}'.format(f), 'JMS'].sectors[sector].keys()
+    all_keys = coeffs[sector]
+    return [i for i, c in enumerate(all_keys) if c in perm_keys]
 
 
 # new ADM functions
@@ -19,6 +42,10 @@ def admeig(classname, f, m_u, m_d, m_s, m_c, m_b, m_e, m_mu, m_tau):
     Supports memoization. Output analogous to `np.linalg.eig`."""
     args = f, m_u, m_d, m_s, m_c, m_b, m_e, m_mu, m_tau
     A = getattr(adm, 'adm_s_' + classname)(*args)
+    perm_keys = get_permissible_wcs(classname, f)
+    if perm_keys != 'all':
+        # remove disallowed rows & columns if necessary
+        A = A[perm_keys][:, perm_keys]
     w, v = np.linalg.eig(A.T)
     return w, v
 
@@ -37,6 +64,10 @@ def getUe(classname, eta_s, f, alpha_s, alpha_e, m_u, m_d, m_s, m_c, m_b, m_e, m
     """Get the QCD evolution matrix."""
     args = f, m_u, m_d, m_s, m_c, m_b, m_e, m_mu, m_tau
     A = getattr(adm, 'adm_e_' + classname)(*args)
+    perm_keys = get_permissible_wcs(classname, f)
+    if perm_keys != 'all':
+        # remove disallowed rows & columns if necessary
+        A = A[perm_keys][:, perm_keys]
     w, v = admeig(classname, *args)
     b0s = 11 - 2 * f / 3
     a = w / (2 * b0s)
@@ -100,6 +131,13 @@ def run_sector(sector, C_in, eta_s, f, p_in, p_out):
     Cdictout = OrderedDict()
     classname = sectors[sector]
     keylist = coeffs[sector]
+    if sector == 'dF=0':
+        perm_keys = get_permissible_wcs('dF0', f)
+    else:
+        perm_keys = get_permissible_wcs(sector, f)
+    if perm_keys != 'all':
+        # remove disallowed keys if necessary
+        keylist = np.asarray(keylist)[perm_keys]
     C_input = np.array([C_in.get(key, 0) for key in keylist])
     if np.count_nonzero(C_input) == 0 or classname == 'inv':
         # nothing to do for SM-like WCs or RG invariant operators
