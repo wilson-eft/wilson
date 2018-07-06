@@ -84,7 +84,10 @@ def get_gpbar(ebar, gbar, v, C):
             ebar_calc = (gb * gpb / sqrt(gb**2 + gpb**2) *
                         (1 - eps * gb * gpb / (gb**2 + gpb**2)))
             return (ebar_calc - ebar).real
-        gpbar = scipy.optimize.brentq(f0, 0, 3)
+        try:
+            gpbar = scipy.optimize.brentq(f0, 0, 3)
+        except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
+            raise ValueError("No solution for gp found. This problem can be caused by very large values for one or several Wilson coefficients.")
     return gpbar * (1 - C['phiB'] * (v**2))
 
 
