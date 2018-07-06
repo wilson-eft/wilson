@@ -70,6 +70,13 @@ class TestMh2v(unittest.TestCase):
         self.assertAlmostEqual(d2['v'], v, places=6)
         self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
 
+    def test_noconvergence(self):
+        v = 246
+        Mh2 = 125**2
+        C = {k: 0 for k in ['phi', 'phiBox']}
+        C['phiD'] = 9.678e-06
+        self.assertWarns(Warning, smpar.vMh2_to_m2Lambda, v, Mh2, C)
+
 class TestSMpar(unittest.TestCase):
     def test_smeftpar_small(self):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)
