@@ -19,9 +19,9 @@ A brief user manual can be found in the paper cited below. More information can 
 
 ## Citation
 
-If you use wilson in a project, please cite:
-
-TBD
+> "Wilson: a Python package for the running and matching of Wilson coefficients above and below the electroweak scale"
+>  J. Aebischer, J. Kumar and D. M. Straub
+>  [arXiv:1804.05033 [hep-ph]](https://arxiv.org/abs/1804.05033)
 
 ## Related work
 
