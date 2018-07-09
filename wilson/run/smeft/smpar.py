@@ -7,6 +7,7 @@ import ckmutil
 import ckmutil.ckm
 import scipy.optimize
 from cmath import phase
+import warnings
 
 
 # Default values for SM parameters: MSbar parameters at M_Z (except GF)
@@ -66,8 +67,13 @@ def vMh2_to_m2Lambda(v, Mh2, C):
         x0 = np.array([dSM['m2'], dSM['Lambda']])
         try:
             xres = scipy.optimize.newton_krylov(f0, x0)
-        except scipy.optimize.nonlin.NoConvergence:
-            raise ValueError("No solution for m^2 and Lambda found")
+        except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
+            warnings.warn('Standard optimization method did not converge. The GMRES method is used instead.', Warning)
+            try:
+                xres = scipy.optimize.newton_krylov(f0, x0, method='gmres',
+                                                    f_tol=1e-7)
+            except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
+                raise ValueError("No solution for m^2 and Lambda found. This problem can be caused by very large values for one or several Wilson coefficients.")
         return {'m2': xres[0], 'Lambda': xres[1]}
 
 
