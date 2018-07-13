@@ -1336,6 +1336,49 @@ def _JMS_to_Bern_VII(Cflat, parameters):
     return d
 
 
+def _Bern_to_JMS_VII(Cflat, parameters):
+    """From Bern to JMS basis for class VII, i.e. flavour blind operators
+    mixing with the quark EDMs and CEDMs."""
+    d = {}
+    k_unchanged = ['TeuRR_1111', 'TeuRR_1122', 'TeuRR_2211', 'TeuRR_2222',
+    'TeuRR_3311', 'TeuRR_3322', 'TedRR_1111', 'TedRR_1122', 'TedRR_1133',
+    'TedRR_2211', 'TedRR_2222', 'TedRR_2233', 'TedRR_3311', 'TedRR_3322',
+    'TedRR_3333', 'S1uuRR_1111', 'S1uuRR_1122', 'S1uuRR_1221', 'S1uuRR_2222',
+    'S8uuRR_1111', 'S8uuRR_1122', 'S8uuRR_1221', 'S8uuRR_2222', 'S1udRR_1111',
+    'S1udRR_1122', 'S1udRR_1133', 'S1udRR_2211', 'S1udRR_2222', 'S1udRR_2233',
+    'S8udRR_1111', 'S8udRR_1122', 'S8udRR_1133', 'S8udRR_2211', 'S8udRR_2222',
+    'S8udRR_2233', 'S1ddRR_1111', 'S1ddRR_1122', 'S1ddRR_1133', 'S1ddRR_1221',
+    'S1ddRR_1331', 'S1ddRR_2222', 'S1ddRR_2233', 'S1ddRR_2332', 'S1ddRR_3333',
+    'S8ddRR_1111', 'S8ddRR_1122', 'S8ddRR_1133', 'S8ddRR_1221', 'S8ddRR_1331',
+    'S8ddRR_2222', 'S8ddRR_2233', 'S8ddRR_2332', 'S8ddRR_3333', 'S1udduRR_1111',
+    'S1udduRR_1221', 'S1udduRR_1331', 'S1udduRR_2112', 'S1udduRR_2222',
+    'S1udduRR_2332', 'S8udduRR_1111', 'S8udduRR_1221', 'S8udduRR_1331',
+    'S8udduRR_2112', 'S8udduRR_2222', 'S8udduRR_2332']
+    e = sqrt(4 * pi * parameters['alpha_e'])
+    gs = sqrt(4 * pi * parameters['alpha_s'])
+    mu = parameters['m_u']
+    md = parameters['m_d']
+    ms = parameters['m_s']
+    mc = parameters['m_c']
+    mb = parameters['m_b']
+    for k in k_unchanged:
+        if k in Cflat:
+            d[k] = Cflat[k]
+    d['G'] = 1 / gs * Cflat.get('G', 0)
+    d['Gtilde'] = 1 / gs * Cflat.get('Gtilde', 0)
+    d['uG_11'] = 1 / (gs / mu) * Cflat.get('uG_11', 0)
+    d['uG_22'] = 1 / (gs / mc) * Cflat.get('uG_22', 0)
+    d['dG_11'] = 1 / (gs / md) * Cflat.get('dG_11', 0)
+    d['dG_22'] = 1 / (gs / ms) * Cflat.get('dG_22', 0)
+    d['dG_33'] = 1 / (gs / mb) * Cflat.get('dG_33', 0)
+    d['ugamma_11'] = 1 / (gs**2 / e / mu) * Cflat.get('ugamma_11', 0)
+    d['ugamma_22'] = 1 / (gs**2 / e / mc) * Cflat.get('ugamma_22', 0)
+    d['dgamma_11'] = 1 / (gs**2 / e / md) * Cflat.get('dgamma_11', 0)
+    d['dgamma_22'] = 1 / (gs**2 / e / ms) * Cflat.get('dgamma_22', 0)
+    d['dgamma_33'] = 1 / (gs**2 / e / mb) * Cflat.get('dgamma_33', 0)
+    return d
+
+
 def _Bern_to_Flavio_VII(C, parameters):
     """From Bern to flavio basis for class VII, i.e. flavour blind operators
     mixing with the quark EDMs and CEDMs."""
@@ -1888,6 +1931,9 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
     for qq in ['sb', 'db', 'ds']:
         d.update(Fierz_to_JMS_chrom(Bern_to_Fierz_chrom(C, qq, p), qq))
 
+    # Class VII
+    d.update(_Bern_to_JMS_VII(C, p))
+
     prefactor = 4 * p['GF'] / sqrt(2)
     return {k: prefactor * v for k,v in d.items()}
 
@@ -1938,6 +1984,9 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
         d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, qq, p), qq))
+
+    # Class VII
+    d.update(_Bern_to_JMS_VII(_Flavio_to_Bern_VII(C, p), p))
 
     # LFV & ddll
     dlep = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
