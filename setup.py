@@ -27,6 +27,6 @@ setup(name='wilson',
       install_requires=['scipy>=1.0', 'numpy', 'pylha>=0.2', 'pyyaml',
                         'ckmutil>=0.3', 'wcxf>=1.4.2', 'rundec>=0.5'],
       extras_require={
-            'testing': ['nose', 'smeftrunner'],
+            'testing': ['nose',],
       },
     )
