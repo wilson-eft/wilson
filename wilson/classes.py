@@ -138,6 +138,7 @@ class Wilson(ConfigurableClass):
           can speed up the computation significantly if only a small number of sectors
           is of interest. The sector names are defined in the WCxf basis file.
         """
+        accuracy = self.get_option('smeft_accuracy')
         cached = self._get_from_cache(sector=sectors, scale=scale, eft=eft, basis=basis)
         if cached is not None:
             return cached
@@ -150,7 +151,7 @@ class Wilson(ConfigurableClass):
             if eft == 'SMEFT':
                 smeft = SMEFT(self.wc.translate('Warsaw'))
                 # if input and output EFT ist SMEFT, just run.
-                wc_out = smeft.run(scale)
+                wc_out = smeft.run(scale, accuracy=accuracy)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
                 return wc_out
             else:
@@ -158,7 +159,7 @@ class Wilson(ConfigurableClass):
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
                     smeft = SMEFT(self.wc.translate('Warsaw'))
-                    wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
+                    wc_ew = smeft.run(scale_ew, accuracy=accuracy).match('WET', 'JMS')
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew)
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:

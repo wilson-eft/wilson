@@ -107,7 +107,7 @@ class SMEFT(object):
                             **kwargs)
 
     def _rgevolve_leadinglog(self, scale_out):
-        """Compute the leading logarithmix approximation to the solution
+        """Compute the leading logarithmic approximation to the solution
         of the SMEFT RGEs from the initial scale to `scale_out`.
         Returns a dictionary with parameters and Wilson coefficients.
         Much faster but less precise that `rgevolve`.
@@ -193,7 +193,12 @@ class SMEFT(object):
         ('integrate', the default, slow but precise) or the leading logarithmic
         approximation ('leadinglog', approximate but much faster).
         """
-        C_out = self._rgevolve(scale, **kwargs)
+        if accuracy == 'integrate':
+            C_out = self._rgevolve(scale, **kwargs)
+        elif accuracy == 'leadinglog':
+            C_out = self._rgevolve_leadinglog(scale)
+        else:
+            raise ValueError("'{}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').".format(accuracy))
         return self._to_wcxf(C_out, scale)
 
     def run_continuous(self, scale):
