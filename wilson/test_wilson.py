@@ -107,3 +107,18 @@ class TestRGsolution(unittest.TestCase):
         self.assertTupleEqual(y.shape, (50,))
         self.assertEqual(x.dtype, float)
         self.assertEqual(y.dtype, float)
+
+
+class TestWilsonConfig(unittest.TestCase):
+    def test_config(self):
+        wilson.Wilson._default_options['my_test_option'] = 666
+        w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        self.assertEqual(w.get_option('my_test_option'), 666)
+        wilson.Wilson.set_default_option('my_test_option', 667)
+        self.assertEqual(w.get_option('my_test_option'), 667)
+        w.set_option('my_test_option', 668)
+        self.assertEqual(w.get_option('my_test_option'), 668)
+        with self.assertRaises(ValueError):
+            w.get_option('my_config_doesntexist')
+        # remove dummy option
+        del wilson.Wilson._default_options['my_test_option']

@@ -27,6 +27,10 @@ class Wilson(object):
     - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
     - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
     """
+
+    # default config options
+    _default_options = {'smeft_accuracy': 'integrate'}
+
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
 
@@ -44,6 +48,7 @@ class Wilson(object):
                           values=wcxf.WC.dict2values(wcdict))
         self.wc.validate()
         self._cache = {}
+        self._options = {}
 
     @classmethod
     def from_wc(cls, wc):
@@ -62,6 +67,23 @@ class Wilson(object):
         html = "<h3>Wilson coefficients</h3>\n\n"
         html += r_wcxf
         return html
+
+    @classmethod
+    def _option_check_key(cls, key):
+        if key not in cls._default_options:
+            raise ValueError("Option {} unknown".format(key))
+
+    @classmethod
+    def set_default_option(cls, key, value):
+        cls._default_options[key] = value
+
+    def set_option(self, key, value):
+        self._option_check_key(key)
+        self._options[key] = value
+
+    def get_option(self, key):
+        self._option_check_key(key)
+        return self._options.get(key, self._default_options[key])
 
     def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
