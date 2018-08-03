@@ -30,6 +30,19 @@ class object_with_options(object):
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {}
 
+    # restriction for specific options:
+    # dictionary with option name as 'key' and
+    # either:
+    #   list of allowed option values as 'value'
+    # or:
+    #   callable as 'value' that takes an option value as argument and returns
+    #   TRUE if this option value is allowed, FALSE otherwise
+    # or:
+    #   two-element list as 'value' with first element a callable as described
+    #   above and second element a string shown in the error message shown if an
+    #   unallowed value is passed by the user
+    _restricted_options = {}
+
     def __init__(self):
         self._options = self._default_options.copy()
 
@@ -37,6 +50,22 @@ class object_with_options(object):
     def _option_check_key(cls, key):
         if key not in cls._default_options:
             raise ValueError("Option {} unknown".format(key))
+
+    @classmethod
+    def _option_check_value(cls, key, value):
+        if key in cls._restricted_options:
+            allowed_values = cls._restricted_options[key]
+            if callable(allowed_values):
+                allowed_values = [allowed_values, '']
+            if callable(allowed_values[0]):
+                if not allowed_values[0](value):
+                    if allowed_values[1]:
+                        allowed_values[1] = '\n'+allowed_values[1]
+                    raise ValueError("'{}' is not an allowed value for option '{}'.{}".format(value, key, allowed_values[1]))
+            elif value not in allowed_values:
+                allowed_values_str = "', '".join(str(allowed_value)
+                                               for allowed_value in allowed_values)
+                raise ValueError("'{}' is not an allowed value for option '{}'.\nIt has to be any of the following: '{}'.".format(value, key, allowed_values_str))
 
     @classmethod
     def set_default_option(cls, key, value):
@@ -53,6 +82,7 @@ class object_with_options(object):
         Instance method, affects only current instance.
         This will clear the cache."""
         self._option_check_key(key)
+        self._option_check_value(key, value)
         self.clear_cache()
         self._options[key] = value
 
@@ -83,6 +113,19 @@ class Wilson(object_with_options):
     # default config options:
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {'smeft_accuracy': 'integrate'}
+
+    # restriction for specific options:
+    # dictionary with option name as 'key' and 'value' being
+    # either:
+    #   list of allowed option values
+    # or:
+    #   callable that takes an option value as argument and returns TRUE if this
+    #   option value is allowed, FALSE otherwise
+    # or:
+    #   two-element list with first element a callable as described above and
+    #   second element a string shown in the error message raised if an
+    #   unallowed value is passed by the user
+    _restricted_options = {'smeft_accuracy': ['integrate','leadinglog']}
 
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
