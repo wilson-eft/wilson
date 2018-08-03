@@ -89,8 +89,10 @@ class Wilson(object):
     def set_option(self, key, value):
         """Set the option `key` (string) to `value`.
 
-        Instance method, affects only current instance."""
+        Instance method, affects only current instance.
+        This will clear the cache."""
         self._option_check_key(key)
+        self.clear_cache()
         self._options[key] = value
 
     def get_option(self, key):
@@ -169,6 +171,9 @@ class Wilson(object):
             return wc_out
         else:
             raise ValueError("Running from {} to {} not implemented".format(wet.eft, eft))
+
+    def clear_cache(self):
+        self._cache = {}
 
     def _get_from_cache(self, sector, scale, eft, basis):
         """Try to load a set of Wilson coefficients from the cache, else return

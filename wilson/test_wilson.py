@@ -124,3 +124,22 @@ class TestWilsonConfig(unittest.TestCase):
             w.get_option('my_config_doesntexist')
         # remove dummy option
         del wilson.Wilson._default_options['my_test_option']
+
+    def test_clearcache(self):
+        w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
+        # after init, cache empty
+        self.assertDictEqual(w._cache, {})
+        # run
+        w.match_run(140, 'WET', 'flavio')
+        # now cache not empty
+        self.assertIsInstance(w._cache['WET'][140]['flavio']['all'], wcxf.WC)
+        w.clear_cache()
+        # now cache empty again
+        self.assertDictEqual(w._cache, {})
+        # check that setting option empties cache
+        w.match_run(140, 'WET', 'flavio')
+        wilson.Wilson._default_options['my_test_option'] = 666
+        w.set_option('my_test_option', 667)
+        # remove dummy option
+        del wilson.Wilson._default_options['my_test_option']
+        self.assertDictEqual(w._cache, {})
