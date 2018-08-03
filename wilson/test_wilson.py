@@ -115,7 +115,9 @@ class TestWilsonConfig(unittest.TestCase):
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
         self.assertEqual(w.get_option('my_test_option'), 666)
         wilson.Wilson.set_default_option('my_test_option', 667)
-        self.assertEqual(w.get_option('my_test_option'), 667)
+        self.assertEqual(w.get_option('my_test_option'), 666)  # not changed!
+        w2 = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        self.assertEqual(w2.get_option('my_test_option'), 667)  # changed!
         w.set_option('my_test_option', 668)
         self.assertEqual(w.get_option('my_test_option'), 668)
         with self.assertRaises(ValueError):

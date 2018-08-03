@@ -26,6 +26,10 @@ class Wilson(object):
     - `from_wc`: Return a `Wilson` instance initialized by a `wcxf.WC` instance
     - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
     - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
+    - `set_option`: Set configuration option
+    - `get_option`: Show configuration option
+    - `set_default_option`: Class method! Set deault configuration option
+      affecting only future instances of the class.
     """
 
     # default config options
@@ -48,7 +52,7 @@ class Wilson(object):
                           values=wcxf.WC.dict2values(wcdict))
         self.wc.validate()
         self._cache = {}
-        self._options = {}
+        self._options = self._default_options.copy()
 
     @classmethod
     def from_wc(cls, wc):
@@ -75,15 +79,26 @@ class Wilson(object):
 
     @classmethod
     def set_default_option(cls, key, value):
+        """Class method. Set the default value of the option `key` (string)
+        to `value` for all future instances of the class.
+
+        Note that this does not affect existing instances or the instance
+        called from."""
         cls._default_options[key] = value
 
     def set_option(self, key, value):
+        """Set the option `key` (string) to `value`.
+
+        Instance method, affects only current instance."""
         self._option_check_key(key)
         self._options[key] = value
 
     def get_option(self, key):
+        """Return the current value of the option `key` (string).
+
+        Instance method, only refers to current instance."""
         self._option_check_key(key)
-        return self._options.get(key, self._default_options[key])
+        return self._options.get(key, None)
 
     def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
