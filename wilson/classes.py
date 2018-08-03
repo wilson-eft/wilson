@@ -14,63 +14,24 @@ import numpy as np
 from math import log, e
 import wcxf
 
-
-class Wilson(object):
-    """Main interface to the wilson package, providing automatic running
-    and matching in SMEFT and WET.
-
-    Caching is used for intermediate results.
+class object_with_options(object):
+    """Class that provides the functionality to set and get configuration
+    options.
 
     Methods:
 
-    - `from_wc`: Return a `Wilson` instance initialized by a `wcxf.WC` instance
-    - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
-    - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
     - `set_option`: Set configuration option
     - `get_option`: Show configuration option
     - `set_default_option`: Class method! Set deault configuration option
       affecting only future instances of the class.
     """
 
-    # default config options
-    _default_options = {'smeft_accuracy': 'integrate'}
+    # default config options:
+    # dictionary with option name as 'key' and default option value as 'value'
+    _default_options = {}
 
-    def __init__(self, wcdict, scale, eft, basis):
-        """Initialize the `Wilson` class.
-
-        Parameters:
-
-        - `wcdict`: dictionary of Wilson coefficient values at the input scale.
-          The keys must exist as Wilson coefficients in the WCxf basis file.
-          The values must be real or complex numbers (not dictionaries with key
-          'Re'/'Im'!)
-        - `scale`: input scale in GeV
-        - `eft`: input EFT
-        - `basis`: input basis
-        """
-        self.wc = wcxf.WC(eft=eft, basis=basis, scale=scale,
-                          values=wcxf.WC.dict2values(wcdict))
-        self.wc.validate()
-        self._cache = {}
+    def __init__(self):
         self._options = self._default_options.copy()
-
-    @classmethod
-    def from_wc(cls, wc):
-        """Return a `Wilson` instance initialized by a `wcxf.WC` instance"""
-        return cls(wcdict=wc.dict, scale=wc.scale, eft=wc.eft, basis=wc.basis)
-
-    @classmethod
-    def load_wc(cls, stream):
-        """Return a `Wilson` instance initialized by a WCxf file-like object"""
-        wc = wcxf.WC.load(stream)
-        return cls.from_wc(wc)
-
-    def _repr_html_(self):
-        r_wcxf = self.wc._repr_html_()
-        r_wcxf = '\n'.join(r_wcxf.splitlines()[2:])  # remove WCxf heading
-        html = "<h3>Wilson coefficients</h3>\n\n"
-        html += r_wcxf
-        return html
 
     @classmethod
     def _option_check_key(cls, key):
@@ -101,6 +62,64 @@ class Wilson(object):
         Instance method, only refers to current instance."""
         self._option_check_key(key)
         return self._options.get(key, None)
+
+class Wilson(object_with_options):
+    """Main interface to the wilson package, providing automatic running
+    and matching in SMEFT and WET.
+
+    Caching is used for intermediate results.
+
+    Methods:
+
+    - `from_wc`: Return a `Wilson` instance initialized by a `wcxf.WC` instance
+    - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
+    - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
+    - `set_option`: Set configuration option
+    - `get_option`: Show configuration option
+    - `set_default_option`: Class method! Set deault configuration option
+      affecting only future instances of the class.
+    """
+
+    # default config options:
+    # dictionary with option name as 'key' and default option value as 'value'
+    _default_options = {'smeft_accuracy': 'integrate'}
+
+    def __init__(self, wcdict, scale, eft, basis):
+        """Initialize the `Wilson` class.
+
+        Parameters:
+
+        - `wcdict`: dictionary of Wilson coefficient values at the input scale.
+          The keys must exist as Wilson coefficients in the WCxf basis file.
+          The values must be real or complex numbers (not dictionaries with key
+          'Re'/'Im'!)
+        - `scale`: input scale in GeV
+        - `eft`: input EFT
+        - `basis`: input basis
+        """
+        super().__init__()
+        self.wc = wcxf.WC(eft=eft, basis=basis, scale=scale,
+                          values=wcxf.WC.dict2values(wcdict))
+        self.wc.validate()
+        self._cache = {}
+
+    @classmethod
+    def from_wc(cls, wc):
+        """Return a `Wilson` instance initialized by a `wcxf.WC` instance"""
+        return cls(wcdict=wc.dict, scale=wc.scale, eft=wc.eft, basis=wc.basis)
+
+    @classmethod
+    def load_wc(cls, stream):
+        """Return a `Wilson` instance initialized by a WCxf file-like object"""
+        wc = wcxf.WC.load(stream)
+        return cls.from_wc(wc)
+
+    def _repr_html_(self):
+        r_wcxf = self.wc._repr_html_()
+        r_wcxf = '\n'.join(r_wcxf.splitlines()[2:])  # remove WCxf heading
+        html = "<h3>Wilson coefficients</h3>\n\n"
+        html += r_wcxf
+        return html
 
     def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
