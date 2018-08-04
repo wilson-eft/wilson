@@ -14,7 +14,7 @@ import numpy as np
 from math import log, e
 import wcxf
 
-class object_with_options(object):
+class ConfigurableClass(object):
     """Class that provides the functionality to set and get configuration
     options.
 
@@ -63,7 +63,8 @@ class object_with_options(object):
         self._option_check_key(key)
         return self._options.get(key, None)
 
-class Wilson(object_with_options):
+
+class Wilson(ConfigurableClass):
     """Main interface to the wilson package, providing automatic running
     and matching in SMEFT and WET.
 
