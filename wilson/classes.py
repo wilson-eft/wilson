@@ -147,10 +147,11 @@ class Wilson(ConfigurableClass):
         if self.wc.basis == basis and self.wc.eft == eft and scale == self.wc.scale:
             return self.wc  # nothing to do
         if self.wc.eft == 'SMEFT':
+            smeft_accuracy = self.get_option('smeft_accuracy')
             if eft == 'SMEFT':
                 smeft = SMEFT(self.wc.translate('Warsaw'))
                 # if input and output EFT ist SMEFT, just run.
-                wc_out = smeft.run(scale)
+                wc_out = smeft.run(scale, accuracy=smeft_accuracy)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
                 return wc_out
             else:
@@ -158,7 +159,7 @@ class Wilson(ConfigurableClass):
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
                     smeft = SMEFT(self.wc.translate('Warsaw'))
-                    wc_ew = smeft.run(scale_ew).match('WET', 'JMS')
+                    wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS')
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew)
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
