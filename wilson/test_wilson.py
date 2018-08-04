@@ -120,7 +120,7 @@ class TestWilsonConfig(unittest.TestCase):
         self.assertEqual(w2.get_option('my_test_option'), 667)  # changed!
         w.set_option('my_test_option', 668)
         self.assertEqual(w.get_option('my_test_option'), 668)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(KeyError):
             w.get_option('my_config_doesntexist')
         # remove dummy option
         del wilson.Wilson._default_options['my_test_option']
@@ -137,9 +137,10 @@ class TestWilsonConfig(unittest.TestCase):
         # now cache empty again
         self.assertDictEqual(w._cache, {})
         # check that setting option empties cache
-        w.match_run(140, 'WET', 'flavio')
         wilson.Wilson._default_options['my_test_option'] = 666
+        w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
+        w.match_run(140, 'WET', 'flavio')
         w.set_option('my_test_option', 667)
+        self.assertDictEqual(w._cache, {})
         # remove dummy option
         del wilson.Wilson._default_options['my_test_option']
-        self.assertDictEqual(w._cache, {})

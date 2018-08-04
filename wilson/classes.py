@@ -13,7 +13,7 @@ from wilson.run.wet import WETrunner
 import numpy as np
 from math import log, e
 import wcxf
-from voluptuous import Schema, All, validators
+import voluptuous as vol
 
 class ConfigurableClass(object):
     """Class that provides the functionality to set and get configuration
@@ -39,22 +39,17 @@ class ConfigurableClass(object):
 
     def __init__(self):
         self._options = self._default_options.copy()
+        self._option_schema = self.get_schema()
 
-    @classmethod
-    def _option_check_key(cls, key):
-        if key not in cls._default_options:
-            raise ValueError("Option {} unknown".format(key))
-
-    @classmethod
-    def _option_check_key_value(cls, key, value):
-        if not cls._valid_options:
-            cls._valid_options = Schema({
-                k: cls._restricted_options[k]
-                     if k in cls._restricted_options
-                     else All()
-                for k in cls._default_options.keys()
-            })
-        cls._valid_options({key: value})
+    def get_schema(self):
+        """Construct voluptuous schema"""
+        options = {}
+        for k in self._default_options.keys():
+            if k in self._restricted_options:
+                options[vol.Required(k, default=self._default_options[k])] = self._restricted_options[k]
+            else:
+                options[k] = vol.All()
+        return vol.Schema(options)
 
     @classmethod
     def set_default_option(cls, key, value):
@@ -63,24 +58,26 @@ class ConfigurableClass(object):
 
         Note that this does not affect existing instances or the instance
         called from."""
-        cls._option_check_key_value(key, value)
         cls._default_options[key] = value
+
+    def set_options(self, options):
+        self._options = self._option_schema(options)
 
     def set_option(self, key, value):
         """Set the option `key` (string) to `value`.
 
         Instance method, affects only current instance.
         This will clear the cache."""
-        self._option_check_key_value(key, value)
+        options = self._options.copy()
+        options[key] = value
+        self.set_options(options)
         self.clear_cache()
-        self._options[key] = value
 
     def get_option(self, key):
         """Return the current value of the option `key` (string).
 
         Instance method, only refers to current instance."""
-        self._option_check_key(key)
-        return self._options.get(key, None)
+        return self._options[key]
 
 
 class Wilson(ConfigurableClass):
@@ -107,8 +104,7 @@ class Wilson(ConfigurableClass):
     # restriction for specific options:
     # dictionary specifying a Voluptuous schema with option name as 'key'
     _restricted_options = {
-        'smeft_accuracy': validators.In(['integrate','leadinglog'],
-                            msg="Only 'integrate' or 'leadinglog' is allowed"),
+        'smeft_accuracy': vol.In(['integrate','leadinglog'])
     }
 
     def __init__(self, wcdict, scale, eft, basis):
