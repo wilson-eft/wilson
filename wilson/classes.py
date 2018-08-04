@@ -14,8 +14,57 @@ import numpy as np
 from math import log, e
 import wcxf
 
+class ConfigurableClass(object):
+    """Class that provides the functionality to set and get configuration
+    options.
 
-class Wilson(object):
+    Methods:
+
+    - `set_option`: Set configuration option
+    - `get_option`: Show configuration option
+    - `set_default_option`: Class method! Set deault configuration option
+      affecting only future instances of the class.
+    """
+
+    # default config options:
+    # dictionary with option name as 'key' and default option value as 'value'
+    _default_options = {}
+
+    def __init__(self):
+        self._options = self._default_options.copy()
+
+    @classmethod
+    def _option_check_key(cls, key):
+        if key not in cls._default_options:
+            raise ValueError("Option {} unknown".format(key))
+
+    @classmethod
+    def set_default_option(cls, key, value):
+        """Class method. Set the default value of the option `key` (string)
+        to `value` for all future instances of the class.
+
+        Note that this does not affect existing instances or the instance
+        called from."""
+        cls._default_options[key] = value
+
+    def set_option(self, key, value):
+        """Set the option `key` (string) to `value`.
+
+        Instance method, affects only current instance.
+        This will clear the cache."""
+        self._option_check_key(key)
+        self.clear_cache()
+        self._options[key] = value
+
+    def get_option(self, key):
+        """Return the current value of the option `key` (string).
+
+        Instance method, only refers to current instance."""
+        self._option_check_key(key)
+        return self._options.get(key, None)
+
+
+class Wilson(ConfigurableClass):
     """Main interface to the wilson package, providing automatic running
     and matching in SMEFT and WET.
 
@@ -26,7 +75,16 @@ class Wilson(object):
     - `from_wc`: Return a `Wilson` instance initialized by a `wcxf.WC` instance
     - `load_wc`: Return a `Wilson` instance initialized by a WCxf file-like object
     - `match_run`: Run the Wilson coefficients to a different scale (and possibly different EFT) and return them as `wcxf.WC` instance
+    - `set_option`: Set configuration option
+    - `get_option`: Show configuration option
+    - `set_default_option`: Class method! Set deault configuration option
+      affecting only future instances of the class.
     """
+
+    # default config options:
+    # dictionary with option name as 'key' and default option value as 'value'
+    _default_options = {'smeft_accuracy': 'integrate'}
+
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
 
@@ -40,6 +98,7 @@ class Wilson(object):
         - `eft`: input EFT
         - `basis`: input basis
         """
+        super().__init__()
         self.wc = wcxf.WC(eft=eft, basis=basis, scale=scale,
                           values=wcxf.WC.dict2values(wcdict))
         self.wc.validate()
@@ -132,6 +191,9 @@ class Wilson(object):
             return wc_out
         else:
             raise ValueError("Running from {} to {} not implemented".format(wet.eft, eft))
+
+    def clear_cache(self):
+        self._cache = {}
 
     def _get_from_cache(self, sector, scale, eft, basis):
         """Try to load a set of Wilson coefficients from the cache, else return

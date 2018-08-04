@@ -107,3 +107,39 @@ class TestRGsolution(unittest.TestCase):
         self.assertTupleEqual(y.shape, (50,))
         self.assertEqual(x.dtype, float)
         self.assertEqual(y.dtype, float)
+
+
+class TestWilsonConfig(unittest.TestCase):
+    def test_config(self):
+        wilson.Wilson._default_options['my_test_option'] = 666
+        w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        self.assertEqual(w.get_option('my_test_option'), 666)
+        wilson.Wilson.set_default_option('my_test_option', 667)
+        self.assertEqual(w.get_option('my_test_option'), 666)  # not changed!
+        w2 = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        self.assertEqual(w2.get_option('my_test_option'), 667)  # changed!
+        w.set_option('my_test_option', 668)
+        self.assertEqual(w.get_option('my_test_option'), 668)
+        with self.assertRaises(ValueError):
+            w.get_option('my_config_doesntexist')
+        # remove dummy option
+        del wilson.Wilson._default_options['my_test_option']
+
+    def test_clearcache(self):
+        w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
+        # after init, cache empty
+        self.assertDictEqual(w._cache, {})
+        # run
+        w.match_run(140, 'WET', 'flavio')
+        # now cache not empty
+        self.assertIsInstance(w._cache['WET'][140]['flavio']['all'], wcxf.WC)
+        w.clear_cache()
+        # now cache empty again
+        self.assertDictEqual(w._cache, {})
+        # check that setting option empties cache
+        w.match_run(140, 'WET', 'flavio')
+        wilson.Wilson._default_options['my_test_option'] = 666
+        w.set_option('my_test_option', 667)
+        # remove dummy option
+        del wilson.Wilson._default_options['my_test_option']
+        self.assertDictEqual(w._cache, {})
