@@ -144,7 +144,7 @@ class TestSMpar(unittest.TestCase):
             else:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
                                        msg="Failed for {}".format(k),
-                                       delta=1e-6)
+                                       delta=1e-5)
 
 class TestGetSMpar(unittest.TestCase):
     def test_wcxf_smpar(self):
