@@ -13,6 +13,7 @@ from wilson.run.wet import WETrunner
 import numpy as np
 from math import log, e
 import wcxf
+from voluptuous import Schema, All, validators
 
 class ConfigurableClass(object):
     """Class that provides the functionality to set and get configuration
@@ -30,6 +31,12 @@ class ConfigurableClass(object):
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {}
 
+    # restriction for specific options:
+    # dictionary specifying a Voluptuous schema with option name as 'key'
+    _restricted_options = {}
+
+    _valid_options = None
+
     def __init__(self):
         self._options = self._default_options.copy()
 
@@ -39,12 +46,24 @@ class ConfigurableClass(object):
             raise ValueError("Option {} unknown".format(key))
 
     @classmethod
+    def _option_check_key_value(cls, key, value):
+        if not cls._valid_options:
+            cls._valid_options = Schema({
+                k: cls._restricted_options[k]
+                     if k in cls._restricted_options
+                     else All()
+                for k in cls._default_options.keys()
+            })
+        cls._valid_options({key: value})
+
+    @classmethod
     def set_default_option(cls, key, value):
         """Class method. Set the default value of the option `key` (string)
         to `value` for all future instances of the class.
 
         Note that this does not affect existing instances or the instance
         called from."""
+        cls._option_check_key_value(key, value)
         cls._default_options[key] = value
 
     def set_option(self, key, value):
@@ -52,7 +71,7 @@ class ConfigurableClass(object):
 
         Instance method, affects only current instance.
         This will clear the cache."""
-        self._option_check_key(key)
+        self._option_check_key_value(key, value)
         self.clear_cache()
         self._options[key] = value
 
@@ -84,6 +103,13 @@ class Wilson(ConfigurableClass):
     # default config options:
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {'smeft_accuracy': 'integrate'}
+
+    # restriction for specific options:
+    # dictionary specifying a Voluptuous schema with option name as 'key'
+    _restricted_options = {
+        'smeft_accuracy': validators.In(['integrate','leadinglog'],
+                            msg="Only 'integrate' or 'leadinglog' is allowed"),
+    }
 
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
