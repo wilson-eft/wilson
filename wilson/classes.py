@@ -35,21 +35,29 @@ class ConfigurableClass(object):
     # dictionary specifying a Voluptuous schema with option name as 'key'
     _restricted_options = {}
 
-    _valid_options = None
+    _option_schema = None
 
     def __init__(self):
         self._options = self._default_options.copy()
-        self._option_schema = self.get_schema()
 
-    def get_schema(self):
+    @classmethod
+    def get_schema(cls):
         """Construct voluptuous schema"""
         options = {}
-        for k in self._default_options.keys():
-            if k in self._restricted_options:
-                options[vol.Required(k, default=self._default_options[k])] = self._restricted_options[k]
+        for k in cls._default_options.keys():
+            if k in cls._restricted_options:
+                options[vol.Required(k, default=cls._default_options[k])] = cls._restricted_options[k]
             else:
                 options[k] = vol.All()
         return vol.Schema(options)
+
+    @classmethod
+    def option_schema(cls, options):
+        """Save voluptuous schema as class attribute on the very first call.
+        Validate the `options` dictionary using the saved schema."""
+        if cls._option_schema is None:
+            cls._option_schema = cls.get_schema()
+        return cls._option_schema(options)
 
     @classmethod
     def set_default_option(cls, key, value):
@@ -58,10 +66,9 @@ class ConfigurableClass(object):
 
         Note that this does not affect existing instances or the instance
         called from."""
-        cls._default_options[key] = value
-
-    def set_options(self, options):
-        self._options = self._option_schema(options)
+        default_options = cls._default_options.copy()
+        default_options[key] = value
+        cls._default_options = cls.option_schema(default_options)
 
     def set_option(self, key, value):
         """Set the option `key` (string) to `value`.
@@ -70,7 +77,7 @@ class ConfigurableClass(object):
         This will clear the cache."""
         options = self._options.copy()
         options[key] = value
-        self.set_options(options)
+        self._options = self.option_schema(options)
         self.clear_cache()
 
     def get_option(self, key):
