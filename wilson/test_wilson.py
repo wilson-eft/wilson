@@ -110,20 +110,24 @@ class TestRGsolution(unittest.TestCase):
 
 
 class TestWilsonConfig(unittest.TestCase):
+
+
+    def test_schema(self):
+        # check that default options pass validation
+        wilson.Wilson._option_schema(wilson.Wilson._default_options)
+
     def test_config(self):
-        wilson.Wilson._default_options['my_test_option'] = 666
+        wilson.Wilson._default_options['smeft_accuracy'] = 'leadinglog'
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
-        self.assertEqual(w.get_option('my_test_option'), 666)
-        wilson.Wilson.set_default_option('my_test_option', 667)
-        self.assertEqual(w.get_option('my_test_option'), 666)  # not changed!
+        self.assertEqual(w.get_option('smeft_accuracy'), 'leadinglog')
+        wilson.Wilson.set_default_option('smeft_accuracy', 'integrate')
+        self.assertEqual(w.get_option('smeft_accuracy'), 'leadinglog')  # not changed!
         w2 = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
-        self.assertEqual(w2.get_option('my_test_option'), 667)  # changed!
-        w.set_option('my_test_option', 668)
-        self.assertEqual(w.get_option('my_test_option'), 668)
+        self.assertEqual(w2.get_option('smeft_accuracy'), 'integrate')  # changed!
+        w.set_option('smeft_accuracy', 'leadinglog')
+        self.assertEqual(w.get_option('smeft_accuracy'), 'leadinglog')
         with self.assertRaises(KeyError):
             w.get_option('my_config_doesntexist')
-        # remove dummy option
-        del wilson.Wilson._default_options['my_test_option']
 
     def test_clearcache(self):
         w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
@@ -137,10 +141,8 @@ class TestWilsonConfig(unittest.TestCase):
         # now cache empty again
         self.assertDictEqual(w._cache, {})
         # check that setting option empties cache
-        wilson.Wilson._default_options['my_test_option'] = 666
+        wilson.Wilson._default_options['smeft_accuracy'] = 666
         w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
         w.match_run(140, 'WET', 'flavio')
-        w.set_option('my_test_option', 667)
+        w.set_option('smeft_accuracy', 'leadinglog')
         self.assertDictEqual(w._cache, {})
-        # remove dummy option
-        del wilson.Wilson._default_options['my_test_option']

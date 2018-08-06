@@ -31,25 +31,12 @@ class ConfigurableClass(object):
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {}
 
-    # restriction for specific options:
-    # dictionary specifying a Voluptuous schema with option name as 'key'
-    _restricted_options = {}
-
-    _valid_options = None
+    # option schema:
+    # Voluptuous schema defining allowed option values/types
+    _option_schema = vol.Schema({})
 
     def __init__(self):
         self._options = self._default_options.copy()
-        self._option_schema = self.get_schema()
-
-    def get_schema(self):
-        """Construct voluptuous schema"""
-        options = {}
-        for k in self._default_options.keys():
-            if k in self._restricted_options:
-                options[vol.Required(k, default=self._default_options[k])] = self._restricted_options[k]
-            else:
-                options[k] = vol.All()
-        return vol.Schema(options)
 
     @classmethod
     def set_default_option(cls, key, value):
@@ -58,26 +45,21 @@ class ConfigurableClass(object):
 
         Note that this does not affect existing instances or the instance
         called from."""
-        cls._default_options[key] = value
-
-    def set_options(self, options):
-        self._options = self._option_schema(options)
+        cls._default_options.update(cls._option_schema({key: value}))
 
     def set_option(self, key, value):
         """Set the option `key` (string) to `value`.
 
         Instance method, affects only current instance.
         This will clear the cache."""
-        options = self._options.copy()
-        options[key] = value
-        self.set_options(options)
+        self._options.update(self._option_schema({key: value}))
         self.clear_cache()
 
     def get_option(self, key):
         """Return the current value of the option `key` (string).
 
         Instance method, only refers to current instance."""
-        return self._options[key]
+        return self._options.get(key, self._default_options[key])
 
 
 class Wilson(ConfigurableClass):
@@ -101,11 +83,11 @@ class Wilson(ConfigurableClass):
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {'smeft_accuracy': 'integrate'}
 
-    # restriction for specific options:
-    # dictionary specifying a Voluptuous schema with option name as 'key'
-    _restricted_options = {
+    # option schema:
+    # Voluptuous schema defining allowed option values/types
+    _option_schema = vol.Schema({
         'smeft_accuracy': vol.In(['integrate','leadinglog'])
-    }
+    })
 
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
