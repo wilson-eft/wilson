@@ -13,6 +13,7 @@ from wilson.run.wet import WETrunner
 import numpy as np
 from math import log, e
 import wcxf
+import voluptuous as vol
 
 class ConfigurableClass(object):
     """Class that provides the functionality to set and get configuration
@@ -30,13 +31,12 @@ class ConfigurableClass(object):
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {}
 
+    # option schema:
+    # Voluptuous schema defining allowed option values/types
+    _option_schema = vol.Schema({})
+
     def __init__(self):
         self._options = self._default_options.copy()
-
-    @classmethod
-    def _option_check_key(cls, key):
-        if key not in cls._default_options:
-            raise ValueError("Option {} unknown".format(key))
 
     @classmethod
     def set_default_option(cls, key, value):
@@ -45,23 +45,21 @@ class ConfigurableClass(object):
 
         Note that this does not affect existing instances or the instance
         called from."""
-        cls._default_options[key] = value
+        cls._default_options.update(cls._option_schema({key: value}))
 
     def set_option(self, key, value):
         """Set the option `key` (string) to `value`.
 
         Instance method, affects only current instance.
         This will clear the cache."""
-        self._option_check_key(key)
+        self._options.update(self._option_schema({key: value}))
         self.clear_cache()
-        self._options[key] = value
 
     def get_option(self, key):
         """Return the current value of the option `key` (string).
 
         Instance method, only refers to current instance."""
-        self._option_check_key(key)
-        return self._options.get(key, None)
+        return self._options.get(key, self._default_options[key])
 
 
 class Wilson(ConfigurableClass):
@@ -84,6 +82,12 @@ class Wilson(ConfigurableClass):
     # default config options:
     # dictionary with option name as 'key' and default option value as 'value'
     _default_options = {'smeft_accuracy': 'integrate'}
+
+    # option schema:
+    # Voluptuous schema defining allowed option values/types
+    _option_schema = vol.Schema({
+        'smeft_accuracy': vol.In(['integrate','leadinglog'])
+    })
 
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
