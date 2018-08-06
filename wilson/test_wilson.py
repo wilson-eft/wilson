@@ -20,6 +20,11 @@ def get_random_wc(eft, basis, scale, cmax=1e-6):
     return wcxf.WC(eft, basis, scale, wcxf.WC.dict2values(_wc))
 
 
+def all_subclasses(cls):
+    return set(cls.__subclasses__()).union(
+        s for c in cls.__subclasses__() for s in all_subclasses(c))
+
+
 par = {
     'm_Z': 91.1876,
     'm_b': 4.18,
@@ -108,10 +113,9 @@ class TestRGsolution(unittest.TestCase):
         self.assertEqual(x.dtype, float)
         self.assertEqual(y.dtype, float)
 
-
 class TestWilsonConfig(unittest.TestCase):
     def test_schema(self):
-        for subclass in wilson.classes.ConfigurableClass.__subclasses__():
+        for subclass in all_subclasses(wilson.classes.ConfigurableClass):
             # check that all options in schema have a default option
             self.assertEqual(set(subclass._option_schema.schema.keys()),
                              set(subclass._default_options.keys()))
