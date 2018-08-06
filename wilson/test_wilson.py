@@ -110,11 +110,13 @@ class TestRGsolution(unittest.TestCase):
 
 
 class TestWilsonConfig(unittest.TestCase):
-
-
     def test_schema(self):
-        # check that default options pass validation
-        wilson.Wilson._option_schema(wilson.Wilson._default_options)
+        for subclass in wilson.classes.ConfigurableClass.__subclasses__():
+            # check that all options in schema have a default option
+            self.assertEqual(set(subclass._option_schema.schema.keys()),
+                             set(subclass._default_options.keys()))
+            # check that default options pass validation
+            subclass._option_schema(subclass._default_options)
 
     def test_config(self):
         wilson.Wilson._default_options['smeft_accuracy'] = 'leadinglog'
