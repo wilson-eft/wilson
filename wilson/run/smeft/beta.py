@@ -2,9 +2,7 @@
 
 import numpy as np
 from collections import OrderedDict
-from functools import reduce
-import operator
-from wilson.util.smeftutil import C_keys, C_keys_shape
+from wilson.util.smeftutil import C_keys, C_keys_shape, C_array2dict, C_dict2array
 from functools import lru_cache
 
 
@@ -1822,23 +1820,3 @@ def beta_array(C, HIGHSCALE=1, *args, **kwargs):
     coefficients as a 1D numpy array."""
     beta_odict = beta(C, HIGHSCALE, *args, **kwargs)
     return np.hstack([np.asarray(b).ravel() for b in beta_odict.values()])
-
-def C_array2dict(C):
-    """Convert a 1D array containing C values to a dictionary."""
-    d = OrderedDict()
-    i=0
-    for k in C_keys:
-        s = C_keys_shape[k]
-        if s == 1:
-            j = i+1
-            d[k] = C[i]
-        else:
-            j = i \
-      + reduce(operator.mul, s, 1)
-            d[k] = C[i:j].reshape(s)
-        i = j
-    return d
-
-def C_dict2array(C):
-    """Convert an OrderedDict containing C values to a 1D array."""
-    return np.hstack([np.asarray(C[k]).ravel() for k in C_keys])

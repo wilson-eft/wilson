@@ -2,7 +2,6 @@
 
 from . import rge
 from . import definitions
-from . import beta
 from . import smpar
 from math import sqrt
 import numpy as np
@@ -150,7 +149,7 @@ class SMEFT(object):
         input scale."""
         # initialize an empty SMEFT instance
         smeft_sm = SMEFT(wc=None)
-        C_in_sm = beta.C_array2dict(np.zeros(9999))
+        C_in_sm = smeftutil.C_array2dict(np.zeros(9999))
         # set the SM parameters to the values obtained from smpar.smeftpar
         C_SM = smpar.smeftpar(scale_sm, C_out, basis='Warsaw')
         SM_keys = set(smeftutil.SM_keys)  # to speed up lookup

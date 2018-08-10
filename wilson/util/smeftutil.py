@@ -2,6 +2,9 @@
 """
 
 import numpy as np
+from collections import OrderedDict
+from functools import reduce
+import operator
 
 
 # names of SM parameters
@@ -670,3 +673,59 @@ def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):
     if 'duue' in C_in:
         C['duue'] = np.einsum('jb,ld,ia,kc,ijkl->abcd', Uu, Ue, Ud, Uu, C_in['duue'])
     return C
+
+
+def C_array2dict(C):
+    """Convert a 1D array containing C values to a dictionary."""
+    d = OrderedDict()
+    i=0
+    for k in C_keys:
+        s = C_keys_shape[k]
+        if s == 1:
+            j = i+1
+            d[k] = C[i]
+        else:
+            j = i \
+      + reduce(operator.mul, s, 1)
+            d[k] = C[i:j].reshape(s)
+        i = j
+    return d
+
+
+def C_dict2array(C):
+    """Convert an OrderedDict containing C values to a 1D array."""
+    return np.hstack([np.asarray(C[k]).ravel() for k in C_keys])
+
+
+# computing the scale vector required for scale_dict below
+# initialize with factor 1
+_d_4 = np.zeros((3,3,3,3))
+_d_6 = np.zeros((3,3,3,3))
+for i in range(3):
+    for j in range(3):
+        for k in range(3):
+            for l in range(3):
+                # class 4: symmetric under interachange of currents
+                _d_4[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j)]))
+                # class 4: symmetric under interachange of currents + Fierz
+                _d_6[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)]))
+
+
+_scale_dict = C_array2dict(np.ones(9999))
+for k in C_symm_keys[4]:
+    _scale_dict[k] = _d_4
+for k in C_symm_keys[6]:
+    _scale_dict[k] = _d_6
+
+
+def scale_dict(C):
+    """To account for the fact that arXiv:1312.2014 uses a flavour
+    non-redundant basis in contrast to WCxf, symmetry factors of two have to
+    be introduced in several places for operators that are symmetric
+    under the interchange of two currents."""
+    return {k: _scale_dict[k] * v for k, v in C.items()}
+
+
+def unscale_dict(C):
+    """Undo the scaling applied in `scale_dict`."""
+    return {k: 1 / _scale_dict[k] * v for k, v in C.items()}
