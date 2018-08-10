@@ -8,7 +8,7 @@ from math import sqrt, pi
 import wcxf
 import wilson
 from wilson.parameters import p as default_parameters
-from wilson.util import smeftutil
+from wilson.util import smeftutil, wetutil
 
 # Based on arXiv:1709.04486
 
@@ -78,10 +78,10 @@ def zdr(C, p):
 C = {}
 
 # Table 9
-C["nu"] = lambda C, p: 1/2.*C["llphiphi"]* vT(C, p)**2
+# C["nu"] = lambda C, p: 1/2.*C["llphiphi"]* vT(C, p)**2
 
 # Table 10
-C["nugamma"] = lambda C, p: np.zeros((3,3))
+# C["nugamma"] = lambda C, p: np.zeros((3,3))
 
 # Table 11
 C["egamma"] = lambda C, p: 1/sqrt(2) * (-C["eW"] * sb(C, p) + C["eB"] * cb(C, p)) * vT(C, p)
@@ -175,45 +175,45 @@ C["S8ddRR"] = lambda C, p: np.zeros((3,3,3,3))
 C["S1udduRR"] = lambda C, p: -np.einsum('stpr',C["quqd1"])
 C["S8udduRR"] = lambda C, p: -np.einsum('stpr',C["quqd8"])
 
-# Table 18
-C["SnunuLL"] = lambda C, p: np.zeros((3,3,3,3))
-
-# Table 19
-C["SnueLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["TnueLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnueLR"] = lambda C, p: np.zeros((3,3,3,3))
-
-C["SnuuLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["TnuuLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnuuLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnudLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["TnudLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnudLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnueduLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["TnueduLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SnueduLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["VnueduRL"] = lambda C, p: np.zeros((3,3,3,3))
-C["VnueduRR"] = lambda C, p: np.zeros((3,3,3,3))
+# # Table 18
+# C["SnunuLL"] = lambda C, p: np.zeros((3,3,3,3))
+#
+# # Table 19
+# C["SnueLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["TnueLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnueLR"] = lambda C, p: np.zeros((3,3,3,3))
+#
+# C["SnuuLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["TnuuLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnuuLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnudLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["TnudLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnudLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnueduLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["TnueduLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SnueduLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["VnueduRL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["VnueduRR"] = lambda C, p: np.zeros((3,3,3,3))
 
 # Table 20
-C["SuddLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
-C["SduuLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
-C["SuudLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SduuLR"] = lambda C, p: -C["qque"]-np.einsum('rpst',C["qque"])
-C["SuudRL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SduuRL"] = lambda C, p: C["duql"]
-C["SdudRL"] = lambda C, p: -C["duql"]
-C["SdduRL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SduuRR"] = lambda C, p: C["duue"]
-
-# Table 21
-C["SdddLL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SuddLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SdduLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SdddLR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SdddRL"] = lambda C, p: np.zeros((3,3,3,3))
-C["SuddRR"] = lambda C, p: np.zeros((3,3,3,3))
-C["SdddRR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SuddLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
+# C["SduuLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
+# C["SuudLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SduuLR"] = lambda C, p: -C["qque"]-np.einsum('rpst',C["qque"])
+# C["SuudRL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SduuRL"] = lambda C, p: C["duql"]
+# C["SdudRL"] = lambda C, p: -C["duql"]
+# C["SdduRL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SduuRR"] = lambda C, p: C["duue"]
+#
+# # Table 21
+# C["SdddLL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SuddLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SdduLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SdddLR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SdddRL"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SuddRR"] = lambda C, p: np.zeros((3,3,3,3))
+# C["SdddRR"] = lambda C, p: np.zeros((3,3,3,3))
 
 def match_all_array(C_SMEFT, p):
     # generate a dictionary with 0 Wilson coefficients = Standard Model
@@ -229,9 +229,11 @@ def match_all(d_SMEFT, parameters=None):
         p.update(parameters)
     C = wilson.translate.smeft.wcxf2arrays(d_SMEFT)
     C = smeftutil.symmetrize(C)
+    C = smeftutil.scale_dict(C)
     C = smeftutil.add_missing(C)
     C['vT'] = 246.22
     C_WET = match_all_array(C, p)
+    C_WET = wetutil.unscale_dict_wet(C_WET)
     C_WET = wilson.translate.wet.rotate_down(C_WET, p)
     d_WET = wilson.translate.smeft.arrays2wcxf(C_WET)
     basis = wcxf.Basis['WET', 'JMS']

@@ -4,6 +4,33 @@
 import wcxf
 import numpy as np
 import ckmutil
+from wilson.util.smeftutil import _d_4, _d_6
+
+
+# names of Wilson coefficients with the same fermionic symmetry properties
+# numbering is inspired by the corresponding categorization in SMEFT
+C_symm_keys = {}
+# 0 0F scalar object
+C_symm_keys[0] = ["G", "Gtilde"]
+# 1 2F general 3x3 matrix
+C_symm_keys[1] = ["egamma", "uG","dG", "ugamma", "dgamma"]
+# 3 4F general 3x3x3x3 object
+C_symm_keys[3] = ['S1udRR', 'S1udduRR', 'S8udRR', 'S8udduRR', 'SedRL',
+'SedRR', 'SeuRL', 'SeuRR', 'SnueduRL', 'SnueduRR', 'TedRR', 'TeuRR',
+'TnueduRR', 'V1udduLR', 'V8udduLR', 'VnueduLL', 'VnueduLR']
+# 4 4F two identical ffbar currents
+# hermitian currents
+C_symm_keys[4] = ['VuuRR', 'VddRR', 'VuuLL', 'VddLL']
+# non-hermitian currents
+C_symm_keys[41] = ['S1ddRR', 'S1uuRR', 'S8uuRR', 'SeeRR', 'S8ddRR']
+# 5 4F two independent ffbar currents, hermitian
+C_symm_keys[5] = ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
+        "V8udLL", "VeuRR", "VedRR", "V1udRR", "V8udRR", "VnueLR",
+        "VeeLR", "VnuuLR", "VnudLR", "VeuLR", "VedLR", "VueLR", "VdeLR",
+        "V1uuLR", "V8uuLR", "V1udLR", "V8udLR", "V1duLR", "V8duLR",
+        "V1ddLR", "V8ddLR"]
+# 6 4F two identical ffbar currents + Fierz symmetry
+C_symm_keys[6] = ['VeeLL', 'VeeRR', 'VnunuLL']
 
 
 # symmetrize JMS basis
@@ -51,15 +78,11 @@ def JMS_to_array(C):
     C_complete = {k: C.get(k, 0) for k in wc_keys}
     Ca = _scalar2array(C_complete)
     for k in Ca:
-        if k in ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
-                "V8udLL", "VeuRR", "VedRR", "V1udRR", "V8udRR", "VnueLR",
-                "VeeLR", "VnuuLR", "VnudLR", "VeuLR", "VedLR", "VueLR", "VdeLR",
-                "V1uuLR", "V8uuLR", "V1udLR", "V8udLR", "V1duLR", "V8duLR",
-                "V1ddLR", "V8ddLR"]:
+        if k in C_symm_keys[5]:
             Ca[k] = _symm_herm(Ca[k])
-        if k in ["S1uuRR", "S8uuRR", "S1ddRR", "S8ddRR"]:
+        if k in C_symm_keys[41]:
             Ca[k] = _symm_current(Ca[k])
-        if k in ["VuuLL", "VddLL", "VuuRR", "VddRR"]:
+        if k in C_symm_keys[4]:
             Ca[k] = _symm_herm(_symm_current(Ca[k]))
     return Ca
 
@@ -75,19 +98,15 @@ def symmetrize_JMS_dict(C):
             Cs[op] = v
             continue
         name, ind = op.split('_')
-        if name in ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
-                "V8udLL", "VeuRR", "VedRR", "V1udRR", "V8udRR", "VnueLR",
-                "VeeLR", "VnuuLR", "VnudLR", "VeuLR", "VedLR", "VueLR", "VdeLR",
-                "V1uuLR", "V8uuLR", "V1udLR", "V8udLR", "V1duLR", "V8duLR",
-                "V1ddLR", "V8ddLR"]:
+        if name in C_symm_keys[5]:
             i, j, k, l = ind
             indnew = ''.join([j, i, l, k])
             Cs['_'.join([name, indnew])] = v.conjugate()
-        elif name in ["S1uuRR", "S8uuRR", "S1ddRR", "S8ddRR"]:
+        elif name in C_symm_keys[41]:
             i, j, k, l = ind
             indnew = ''.join([k, l, i, j])
             Cs['_'.join([name, indnew])] = v
-        elif name in ["VuuLL", "VddLL", "VuuRR", "VddRR"]:
+        elif name in C_symm_keys[4]:
             i, j, k, l = ind
             indnew = ''.join([l, k, j, i])
             newname = '_'.join([name, indnew])
@@ -151,3 +170,29 @@ def rotate_down(C_in, p):
                          UdL,
                          C_in[k])
     return C
+
+
+_scale_dict = {}
+for k in C_symm_keys[0]:
+    _scale_dict[k] = 1
+for k in C_symm_keys[1]:
+    _scale_dict[k] = np.ones((3, 3))
+for k in C_symm_keys[3] + C_symm_keys[5]:
+    _scale_dict[k] = np.ones((3, 3, 3, 3))
+for k in C_symm_keys[4] + C_symm_keys[41]:
+    _scale_dict[k] = _d_4
+for k in C_symm_keys[6]:
+    _scale_dict[k] = _d_6
+
+
+def scale_dict_wet(C):
+    """To account for the fact that arXiv:Jenkins:2017jig uses a flavour
+    non-redundant basis in contrast to WCxf, symmetry factors of two have to
+    be introduced in several places for operators that are symmetric
+    under the interchange of two currents."""
+    return {k: _scale_dict[k] * v for k, v in C.items()}
+
+
+def unscale_dict_wet(C):
+    """Undo the scaling applied in `scale_dict`."""
+    return {k: 1 / _scale_dict[k] * v for k, v in C.items()}

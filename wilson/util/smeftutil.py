@@ -707,7 +707,7 @@ for i in range(3):
             for l in range(3):
                 # class 4: symmetric under interachange of currents
                 _d_4[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j)]))
-                # class 4: symmetric under interachange of currents + Fierz
+                # class 6: symmetric under interachange of currents + Fierz
                 _d_6[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)]))
 
 
