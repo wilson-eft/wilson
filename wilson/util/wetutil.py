@@ -190,9 +190,9 @@ def scale_dict_wet(C):
     non-redundant basis in contrast to WCxf, symmetry factors of two have to
     be introduced in several places for operators that are symmetric
     under the interchange of two currents."""
-    return {k: _scale_dict[k] * v for k, v in C.items()}
+    return {k: v / _scale_dict[k] for k, v in C.items()}
 
 
 def unscale_dict_wet(C):
     """Undo the scaling applied in `scale_dict`."""
-    return {k: 1 / _scale_dict[k] * v for k, v in C.items()}
+    return {k: _scale_dict[k] * v for k, v in C.items()}

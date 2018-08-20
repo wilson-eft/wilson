@@ -73,8 +73,8 @@ class TestBeta(unittest.TestCase):
     def test_rgell(self):
         # evolve only a very small bit and check that LL approximation
         # and full result agree
-        C_out_ll = rge.smeft_evolve_leadinglog(C_in=C, scale_in=1000, scale_out=950)
-        C_out = rge.smeft_evolve(C_in=C, scale_in=1000, scale_out=950)
+        C_out_ll = rge.smeft_evolve_leadinglog(C_in=C, scale_in=1000, scale_out=980)
+        C_out = rge.smeft_evolve(C_in=C, scale_in=1000, scale_out=980)
         for n in C0:
             self.assertAlmostEqual((C_out[n]/C_out_ll[n]).real, 1, places=1)
         for n in C2:
