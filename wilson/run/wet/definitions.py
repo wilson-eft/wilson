@@ -31,6 +31,7 @@ classes = {
  'mutau': ['mutau'],
  'taue': ['taue'],
  'dF0': ['dF=0'],
+ 'ffnunu': ['ffnunu'],
 }
 
 
