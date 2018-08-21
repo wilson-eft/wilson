@@ -49,6 +49,7 @@ In alphabetical order:
 - Jacky Kumar
 - Xuanyou Pan
 - Matthias Schöffel
+- Peter Stangl
 - David M. Straub
 
 ## License
