@@ -110,6 +110,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     """
     C_in = wcxf2arrays(C)
     C_in = smeftutil.symmetrize(C_in)
+    C_in = smeftutil.scale_dict(C_in)
     p = default_parameters.copy()
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
@@ -118,6 +119,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V.conj().T
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
+    C_out = smeftutil.unscale_dict(C_out)
     C_out = arrays2wcxf(C_out)
     warsawup = wcxf.Basis['SMEFT', 'Warsaw up']
     allkeys = set(warsawup.all_wcs)  # to speed up lookup
@@ -134,6 +136,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
     """
     C_in = wcxf2arrays(C)
     C_in = smeftutil.symmetrize(C_in)
+    C_in = smeftutil.scale_dict(C_in)
     p = default_parameters.copy()
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
@@ -142,6 +145,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
+    C_out = smeftutil.unscale_dict(C_out)
     C_out = arrays2wcxf(C_out)
     warsaw = wcxf.Basis['SMEFT', 'Warsaw']
     all_wcs = set(warsaw.all_wcs)  # to speed up lookup
