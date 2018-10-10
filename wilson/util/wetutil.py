@@ -4,7 +4,7 @@
 import wcxf
 import numpy as np
 import ckmutil
-from wilson.util.smeftutil import _d_4, _d_6
+from wilson.util.smeftutil import _d_4, _d_6, _d_7
 
 
 # names of Wilson coefficients with the same fermionic symmetry properties
@@ -17,7 +17,8 @@ C_symm_keys[1] = ["egamma", "uG","dG", "ugamma", "dgamma"]
 # 3 4F general 3x3x3x3 object
 C_symm_keys[3] = ['S1udRR', 'S1udduRR', 'S8udRR', 'S8udduRR', 'SedRL',
 'SedRR', 'SeuRL', 'SeuRR', 'SnueduRL', 'SnueduRR', 'TedRR', 'TeuRR',
-'TnueduRR', 'V1udduLR', 'V8udduLR', 'VnueduLL', 'VnueduLR']
+'TnueduRR', 'V1udduLR', 'V8udduLR', 'VnueduLL', 'VnueduLR',
+'SuddLL', 'SduuLL', 'SduuLR', 'SduuRL', 'SdudRL', 'SduuRR',]
 # 4 4F two identical ffbar currents
 # hermitian currents
 C_symm_keys[4] = ['VuuRR', 'VddRR', 'VuuLL', 'VddLL']
@@ -31,6 +32,8 @@ C_symm_keys[5] = ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
         "V1ddLR", "V8ddLR"]
 # 6 4F two identical ffbar currents + Fierz symmetry
 C_symm_keys[6] = ['VeeLL', 'VeeRR', 'VnunuLL']
+# 4F antisymmetric in first 2 indices
+C_symm_keys[9] = ['SuudLR', 'SuudRL', 'SdduRL']
 
 
 # symmetrize JMS basis
@@ -69,6 +72,13 @@ def _symm_current(C):
     C[nans] = np.einsum('klij', C)[nans]
     return C
 
+def _antisymm_12(C):
+    """To get rid of NaNs produced by _scalar2array, antisymmetrize the first
+    two indices of operators where C_ijkl = -C_jikl"""
+    nans = np.isnan(C)
+    C[nans] = -np.einsum('jikl', C)[nans]
+    return C
+
 
 def JMS_to_array(C):
     """For a dictionary with JMS Wilson coefficients, return a dictionary
@@ -84,6 +94,8 @@ def JMS_to_array(C):
             Ca[k] = _symm_current(Ca[k])
         if k in C_symm_keys[4]:
             Ca[k] = _symm_herm(_symm_current(Ca[k]))
+        if k in C_symm_keys[9]:
+            Ca[k] = _antisymm_12(Ca[k])
     return Ca
 
 
@@ -121,6 +133,10 @@ def symmetrize_JMS_dict(C):
                     indnew = ''.join([k, l, i, j])
                     newname = '_'.join([name, indnew])
                     Cs[newname] = v
+        elif name in C_symm_keys[9]:
+            i, j, k, l = ind
+            indnew = ''.join([j, i, k, l])
+            Cs['_'.join([name, indnew])] = -v
     return Cs
 
 
@@ -183,6 +199,11 @@ for k in C_symm_keys[4] + C_symm_keys[41]:
     _scale_dict[k] = _d_4
 for k in C_symm_keys[6]:
     _scale_dict[k] = _d_6
+for k in C_symm_keys[9]:
+    # while _d_7 contains the symmetry factors for the case of coefficients
+    # *symmetric* under the 1st 2 indices, they are actually the same as for
+    # the case where they are *antisymmetric*
+    _scale_dict[k] = _d_7
 
 
 def scale_dict_wet(C):
@@ -194,5 +215,5 @@ def scale_dict_wet(C):
 
 
 def unscale_dict_wet(C):
-    """Undo the scaling applied in `scale_dict`."""
+    """Undo the scaling applied in `scale_dict_wet`."""
     return {k: _scale_dict[k] * v for k, v in C.items()}
