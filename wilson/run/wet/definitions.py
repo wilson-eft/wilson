@@ -32,6 +32,10 @@ classes = {
  'taue': ['taue'],
  'dF0': ['dF=0'],
  'ffnunu': ['ffnunu'],
+ 'uddnu': ['uddnu',  'ussnu',  'ubbnu', 'cddnu', 'cssnu',  'cbbnu'],
+ 'udsnu': ['udsnu', 'usbnu', 'udbnu', 'cdbnu', 'cdsnu', 'csbnu'],
+ 'uude': ['uude', 'uudmu', 'uudtau', 'ccde', 'ccdmu', 'ccdtau', 'uuse', 'uusmu', 'uustau', 'ccse', 'ccsmu', 'ccstau', 'uube', 'uubmu', 'uubtau', 'ccbe', 'ccbmu', 'ccbtau'],
+ 'ucde': ['ucde', 'ucdmu', 'ucdtau', 'ucse', 'ucsmu', 'ucstau',  'ucbe', 'ucbmu', 'ucbtau'],
 }
 
 
