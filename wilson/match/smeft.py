@@ -196,16 +196,16 @@ C["S8udduRR"] = lambda C, p: -np.einsum('stpr',C["quqd8"])
 # C["VnueduRR"] = lambda C, p: np.zeros((3,3,3,3))
 
 # Table 20
-# C["SuddLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
-# C["SduuLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
-# C["SuudLR"] = lambda C, p: np.zeros((3,3,3,3))
-# C["SduuLR"] = lambda C, p: -C["qque"]-np.einsum('rpst',C["qque"])
-# C["SuudRL"] = lambda C, p: np.zeros((3,3,3,3))
-# C["SduuRL"] = lambda C, p: C["duql"]
-# C["SdudRL"] = lambda C, p: -C["duql"]
-# C["SdduRL"] = lambda C, p: np.zeros((3,3,3,3))
-# C["SduuRR"] = lambda C, p: C["duue"]
-#
+C["SuddLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
+C["SduuLL"] = lambda C, p: -C["qqql"]-np.einsum('rpst',C["qqql"])
+C["SuudLR"] = lambda C, p: np.zeros((3,3,3,3))
+C["SduuLR"] = lambda C, p: -C["qque"]-np.einsum('rpst',C["qque"])
+C["SuudRL"] = lambda C, p: np.zeros((3,3,3,3))
+C["SduuRL"] = lambda C, p: C["duql"]
+C["SdudRL"] = lambda C, p: -C["duql"]
+C["SdduRL"] = lambda C, p: np.zeros((3,3,3,3))
+C["SduuRR"] = lambda C, p: C["duue"]
+
 # # Table 21
 # C["SdddLL"] = lambda C, p: np.zeros((3,3,3,3))
 # C["SuddLR"] = lambda C, p: np.zeros((3,3,3,3))
