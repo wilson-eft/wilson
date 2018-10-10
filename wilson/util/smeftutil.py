@@ -701,6 +701,7 @@ def C_dict2array(C):
 # initialize with factor 1
 _d_4 = np.zeros((3,3,3,3))
 _d_6 = np.zeros((3,3,3,3))
+_d_7 = np.zeros((3,3,3,3))
 for i in range(3):
     for j in range(3):
         for k in range(3):
@@ -709,6 +710,8 @@ for i in range(3):
                 _d_4[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j)]))
                 # class 6: symmetric under interachange of currents + Fierz
                 _d_6[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)]))
+                # class 7: symmetric under interachange of first two indices
+                _d_7[i, j, k, l] = len(set([(i, j, k, l), (j, i, k, l)]))
 
 
 _scale_dict = C_array2dict(np.ones(9999))
@@ -716,6 +719,8 @@ for k in C_symm_keys[4]:
     _scale_dict[k] = _d_4
 for k in C_symm_keys[6]:
     _scale_dict[k] = _d_6
+for k in C_symm_keys[7]:
+    _scale_dict[k] = _d_7
 
 
 def scale_dict(C):
