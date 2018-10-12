@@ -80,8 +80,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V.conj().T
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
-    C_out = smeftutil.unscale_dict(C_out)
-    C_out = smeftutil.arrays2wcxf(C_out)
+    C_out = smeftutil.arrays2wcxf_nonred(C_out)
     warsawup = wcxf.Basis['SMEFT', 'Warsaw up']
     allkeys = set(warsawup.all_wcs)  # to speed up lookup
     return {k: v for k, v in C_out.items() if k in allkeys}
@@ -104,8 +103,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
-    C_out = smeftutil.unscale_dict(C_out)
-    C_out = smeftutil.arrays2wcxf(C_out)
+    C_out = smeftutil.arrays2wcxf_nonred(C_out)
     warsaw = wcxf.Basis['SMEFT', 'Warsaw']
     all_wcs = set(warsaw.all_wcs)  # to speed up lookup
     return {k: v for k, v in C_out.items() if k in all_wcs}

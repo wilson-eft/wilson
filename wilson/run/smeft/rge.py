@@ -5,7 +5,7 @@ from . import beta
 from copy import deepcopy
 from math import pi, log
 from scipy.integrate import solve_ivp
-from wilson.util.smeftutil import C_array2dict, C_dict2array, arrays2wcxf
+from wilson.util.smeftutil import C_array2dict, C_dict2array, arrays2wcxf_nonred
 import numpy as np
 
 
@@ -51,7 +51,7 @@ def smeft_evolve_continuous(C_in, scale_in, scale_out, newphys=True, **kwargs):
         t = log(scale)
         y = sol.sol(t).view(complex)
         yd = C_array2dict(y)
-        yw = arrays2wcxf(yd)
+        yw = arrays2wcxf_nonred(yd)
         return yw
     def rge_solution(scale):
         # this is to return a scalar if the input is scalar

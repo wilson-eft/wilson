@@ -781,7 +781,8 @@ def wcxf2arrays_symmetrized(d):
 
 
     In contrast to `wcxf2arrays`, here the numpy arrays fulfill the same
-    symmetry relations as the operators and do not contain undefined indices.
+    symmetry relations as the operators (i.e. they contain redundant entries)
+    and they do not contain undefined indices.
 
     Zero arrays are added for missing coefficients."""
     C = wcxf2arrays(d)
@@ -789,3 +790,17 @@ def wcxf2arrays_symmetrized(d):
     C = scale_dict(C)
     C = add_missing(C)
     return C
+
+
+def arrays2wcxf_nonred(C):
+    """Convert a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values.
+
+    In contrast to `arrays2wcxf`, here the Wilson coefficient arrays are assumed
+    to fulfill the same symmetry relations as the operators, i.e. contain
+    redundant entries, while the WCxf output refers to the non-redundant basis."""
+    C_out = unscale_dict(C)
+    d = arrays2wcxf(C_out)
+    return d
