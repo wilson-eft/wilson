@@ -61,9 +61,8 @@ class SMEFT(object):
             raise ValueError("Wilson coefficients use wrong EFT.")
         if wc.basis != 'Warsaw':
             raise ValueError("Wilson coefficients use wrong basis.")
-        C = wilson.translate.smeft.wcxf2arrays(wc.dict)
         self.scale_in = wc.scale
-        C = smeftutil.symmetrize(C)
+        C = wilson.util.smeftutil.wcxf2arrays_symmetrized(wc.dict)
         # fill in zeros for missing WCs
         for k, s in smeftutil.C_keys_shape.items():
             if k not in C and k not in smeftutil.SM_keys:
@@ -86,7 +85,8 @@ class SMEFT(object):
         as defined in WCxf, i.e. to the basis where the down-type and charged
         lepton mass matrices are diagonal."""
         C = self._rotate_defaultbasis(C_out)
-        d = wilson.translate.smeft.arrays2wcxf(C)
+        C = smeftutil.unscale_dict(C_out)
+        d = wilson.util.smeftutil.arrays2wcxf(C)
         basis = wcxf.Basis['SMEFT', 'Warsaw']
         all_wcs = set(basis.all_wcs)  # to speed up lookup
         d = {k: v for k, v in d.items() if k in all_wcs and v != 0}

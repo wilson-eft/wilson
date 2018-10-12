@@ -569,6 +569,43 @@ def symmetrize(C):
     return C_symm
 
 
+def arrays2wcxf(C):
+    """Convert a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values. This is needed for the output in WCxf format."""
+    d = {}
+    for k, v in C.items():
+        if np.shape(v) == ():
+            d[k] = v
+        else:
+            ind = np.indices(v.shape).reshape(v.ndim, v.size).T
+            for i in ind:
+                name = k + '_' + ''.join([str(int(j) + 1) for j in i])
+                d[name] = v[tuple(i)]
+    return d
+
+
+def wcxf2arrays(d):
+    """Convert a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values to a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values. This is needed for the parsing
+    of input in WCxf format."""
+    C = {}
+    for k, v in d.items():
+        name = k.split('_')[0]
+        s = C_keys_shape[name]
+        if s == 1:
+            C[k] = v
+        else:
+            ind = k.split('_')[-1]
+            if name not in C:
+                C[name] = np.zeros(s, dtype=complex)
+            C[name][tuple([int(i) - 1 for i in ind])] = v
+    return C
+
+
 def add_missing(C):
     """Add arrays with zeros for missing Wilson coefficient keys"""
     C_out = C.copy()
@@ -734,3 +771,21 @@ def scale_dict(C):
 def unscale_dict(C):
     """Undo the scaling applied in `scale_dict`."""
     return {k: _scale_dict[k] * v for k, v in C.items()}
+
+
+def wcxf2arrays_symmetrized(d):
+    """Convert a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values to a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values.
+
+
+    In contrast to `wcxf2arrays`, here the numpy arrays fulfill the same
+    symmetry relations as the operators and do not contain undefined indices.
+
+    Zero arrays are added for missing coefficients."""
+    C = wcxf2arrays(d)
+    C = symmetrize(C)
+    C = scale_dict(C)
+    C = add_missing(C)
+    return C

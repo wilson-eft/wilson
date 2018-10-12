@@ -7,43 +7,6 @@ import numpy as np
 from collections import OrderedDict
 
 
-def arrays2wcxf(C):
-    """Convert a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values. This is needed for the output in WCxf format."""
-    d = {}
-    for k, v in C.items():
-        if np.shape(v) == ():
-            d[k] = v
-        else:
-            ind = np.indices(v.shape).reshape(v.ndim, v.size).T
-            for i in ind:
-                name = k + '_' + ''.join([str(int(j) + 1) for j in i])
-                d[name] = v[tuple(i)]
-    return d
-
-
-def wcxf2arrays(d):
-    """Convert a dictionary dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values to a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values. This is needed for the parsing
-    of input in WCxf format."""
-    C = {}
-    for k, v in d.items():
-        name = k.split('_')[0]
-        s = smeftutil.C_keys_shape[name]
-        if s == 1:
-            C[k] = v
-        else:
-            ind = k.split('_')[-1]
-            if name not in C:
-                C[name] = np.zeros(s, dtype=complex)
-            C[name][tuple([int(i) - 1 for i in ind])] = v
-    return C
-
-
 def smeft_toarray(wc_name, wc_dict):
     """Construct a numpy array with Wilson coefficient values from a
     dictionary of label-value pairs corresponding to the non-redundant
@@ -108,9 +71,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
       as the mismatch between left-handed quark mass matrix diagonalization
       matrices).
     """
-    C_in = wcxf2arrays(C)
-    C_in = smeftutil.symmetrize(C_in)
-    C_in = smeftutil.scale_dict(C_in)
+    C_in = smeftutil.wcxf2arrays_symmetrized(C)
     p = default_parameters.copy()
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
@@ -120,7 +81,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     Uq = V.conj().T
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.unscale_dict(C_out)
-    C_out = arrays2wcxf(C_out)
+    C_out = smeftutil.arrays2wcxf(C_out)
     warsawup = wcxf.Basis['SMEFT', 'Warsaw up']
     allkeys = set(warsawup.all_wcs)  # to speed up lookup
     return {k: v for k, v in C_out.items() if k in allkeys}
@@ -134,9 +95,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
       as the mismatch between left-handed quark mass matrix diagonalization
       matrices).
     """
-    C_in = wcxf2arrays(C)
-    C_in = smeftutil.symmetrize(C_in)
-    C_in = smeftutil.scale_dict(C_in)
+    C_in = smeftutil.wcxf2arrays_symmetrized(C)
     p = default_parameters.copy()
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
@@ -146,7 +105,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
     Uq = V
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.unscale_dict(C_out)
-    C_out = arrays2wcxf(C_out)
+    C_out = smeftutil.arrays2wcxf(C_out)
     warsaw = wcxf.Basis['SMEFT', 'Warsaw']
     all_wcs = set(warsaw.all_wcs)  # to speed up lookup
     return {k: v for k, v in C_out.items() if k in all_wcs}

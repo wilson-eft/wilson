@@ -57,8 +57,8 @@ class TestIO(unittest.TestCase):
     def test_arrays2wcxf(self):
         """Test the functions needed for WCxf IO."""
         wc = wc_Warsaw_random
-        C_arr = wilson.translate.smeft.wcxf2arrays(wc.dict)
-        C_wcxf = wilson.translate.smeft.arrays2wcxf(C_arr)
+        C_arr = wilson.util.smeftutil.wcxf2arrays(wc.dict)
+        C_wcxf = wilson.util.smeftutil.arrays2wcxf(C_arr)
         for k, v in wc.dict.items():
             self.assertEqual(v, C_wcxf[k],
                              msg="Failed for {}".format(k))
