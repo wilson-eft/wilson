@@ -627,7 +627,7 @@ def arrays2wcxf(C):
     values. This is needed for the output in WCxf format."""
     d = {}
     for k, v in C.items():
-        if np.shape(v) == ():
+        if np.shape(v) == () or np.shape(v) == (1,):
             d[k] = v
         else:
             ind = np.indices(v.shape).reshape(v.ndim, v.size).T
