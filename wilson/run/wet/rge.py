@@ -116,7 +116,7 @@ def scale_C(key, p):
         return 1
 
 
-def run_sector(sector, C_in, eta_s, f, p_in, p_out):
+def run_sector(sector, C_in, eta_s, f, p_in, p_out, qed_order=1, qcd_order=1):
     r"""Solve the WET RGE for a specific sector.
 
     Parameters:
@@ -143,9 +143,18 @@ def run_sector(sector, C_in, eta_s, f, p_in, p_out):
         # nothing to do for SM-like WCs or RG invariant operators
         C_result = C_input
     else:
-        Us = getUs(classname, eta_s, f, **p_in)
-        Ue = getUe(classname, eta_s, f, **p_in)
-        C_scaled = [C_input[i] * scale_C(key, p_in) for i, key in enumerate(keylist)]
+        C_scaled = np.asarray([C_input[i] * scale_C(key, p_in) for i, key in enumerate(keylist)])
+        if qcd_order == 0:
+            Us = np.eye(len(C_scaled))
+        elif qcd_order == 1:
+            Us = getUs(classname, eta_s, f, **p_in)
+        if qed_order == 0:
+            Ue = np.zeros(C_scaled.shape)
+        elif qed_order == 1:
+            if qcd_order == 0:
+                Ue = getUe(classname, 1, f, **p_in)
+            else:
+                Ue = getUe(classname, eta_s, f, **p_in)
         C_out = (Us + Ue) @ C_scaled
         C_result = [C_out[i] / scale_C(key, p_out) for i, key in enumerate(keylist)]
     for j in range(len(C_result)):

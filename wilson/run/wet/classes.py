@@ -19,7 +19,7 @@ class WETrunner(object):
     - run: Evolve the Wilson coefficients to a different scale
     """
 
-    def __init__(self, wc, parameters=None):
+    def __init__(self, wc, parameters=None, qed_order=1, qcd_order=1):
         """Initialize the instance.
 
         Parameters:
@@ -30,6 +30,8 @@ class WETrunner(object):
         - parameters: optional. If provided, must be a dictionary containing
           values for the input parameters as defined in `run.wet.parameters`.
           Default values are used for all parameters not provided.
+        - `qcd_order`: order of QCD ADMs. 0: neglect. 1 (default): LO.
+        - `qed_order`: order of QED ADMs. 0: neglect. 1 (default): LO.
         """
         assert isinstance(wc, wcxf.WC)
         assert wc.basis == 'JMS', \
@@ -44,7 +46,9 @@ class WETrunner(object):
             self.f = 3
         self.scale_in = wc.scale
         self.C_in = wc.dict
-        self.parameters = default_parameters
+        self.parameters = default_parameters.copy()
+        self.qed_order = qed_order
+        self.qcd_order = qcd_order
         if parameters is not None:
             self.parameters.update(parameters)
 
@@ -74,7 +78,9 @@ class WETrunner(object):
             if sector in definitions.sectors:
                 if sectors == 'all' or sector in sectors:
                     C_out.update(rge.run_sector(sector, self.C_in,
-                                                Etas, self.f, p_i, p_o))
+                                                Etas, self.f, p_i, p_o,
+                                                qed_order=self.qed_order,
+                                                qcd_order=self.qcd_order))
         return C_out
 
     def run(self, scale_out, sectors='all'):

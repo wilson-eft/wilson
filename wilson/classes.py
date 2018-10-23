@@ -81,12 +81,17 @@ class Wilson(ConfigurableClass):
 
     # default config options:
     # dictionary with option name as 'key' and default option value as 'value'
-    _default_options = {'smeft_accuracy': 'integrate'}
+    _default_options = {'smeft_accuracy': 'integrate',
+                        'qed_order': 1,
+                        'qcd_order': 1,
+                        }
 
     # option schema:
     # Voluptuous schema defining allowed option values/types
     _option_schema = vol.Schema({
-        'smeft_accuracy': vol.In(['integrate','leadinglog'])
+        'smeft_accuracy': vol.In(['integrate','leadinglog']),
+        'qed_order': vol.In([0,1]),
+        'qcd_order': vol.In([0,1]),
     })
 
     def __init__(self, wcdict, scale, eft, basis):
@@ -125,6 +130,12 @@ class Wilson(ConfigurableClass):
         html = "<h3>Wilson coefficients</h3>\n\n"
         html += r_wcxf
         return html
+
+    def _wetrun_opt(self):
+        """Return a dictionary of options to pass to a `run.wet.WETrunner`
+        instance."""
+        return {'qed_order': self.get_option('qed_order'),
+                'qcd_order': self.get_option('qcd_order')}
 
     def match_run(self, scale, eft, basis, sectors='all'):
         """Run the Wilson coefficients to a different scale
@@ -165,9 +176,9 @@ class Wilson(ConfigurableClass):
                     smeft = SMEFT(self.wc.translate('Warsaw'))
                     wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS')
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
-                wet = WETrunner(wc_ew)
+                wet = WETrunner(wc_ew, **self._wetrun_opt())
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
-            wet = WETrunner(self.wc.translate('JMS'))
+            wet = WETrunner(self.wc.translate('JMS'), **self._wetrun_opt())
         else:
             raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
         if eft == wet.eft:  # just run
@@ -176,21 +187,21 @@ class Wilson(ConfigurableClass):
             return wc_out
         elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS')
-            wet4 = WETrunner(wc_mb)
+            wet4 = WETrunner(wc_mb, **self._wetrun_opt())
             wc_out = wet4.run(scale, sectors=sectors).translate(basis)
             self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
             return wc_out
         elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
             wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS')
-            wet3 = WETrunner(wc_mc)
+            wet3 = WETrunner(wc_mc, **self._wetrun_opt())
             wc_out = wet3.run(scale, sectors=sectors).translate(basis)
             return wc_out
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS')
-            wet4 = WETrunner(wc_mb)
+            wet4 = WETrunner(wc_mb, **self._wetrun_opt())
             wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS')
-            wet3 = WETrunner(wc_mc)
+            wet3 = WETrunner(wc_mc, **self._wetrun_opt())
             wc_out = wet3.run(scale, sectors=sectors).translate(basis)
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
             return wc_out

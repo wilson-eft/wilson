@@ -90,3 +90,37 @@ class TestClassWET4(unittest.TestCase):
         for k in self.wet.C_in:
             self.assertTrue(k in C_out,
                             msg='{} missing in output'.format(k))
+
+class TestOrder(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.wc = get_random_wc('WET', 'JMS', 160)
+        cls.wet_11 = wet.WETrunner(cls.wc)
+        cls.wet_11_ae0 = wet.WETrunner(cls.wc)
+        cls.wet_11_ae0.parameters['alpha_e'] = 0
+        cls.wet_11_as0 = wet.WETrunner(cls.wc)
+        cls.wet_11_as0.parameters['alpha_s'] = 1e-16  # avoid div by 0
+        cls.wet_10 = wet.WETrunner(cls.wc, qed_order=0)
+        cls.wet_01 = wet.WETrunner(cls.wc, qcd_order=0)
+        cls.wet_00 = wet.WETrunner(cls.wc, qed_order=0, qcd_order=0)
+
+    def test_00(self):
+        # running with order 0 = not running
+        wc_hi = self.wet_11.run(160, ('sbsb',))
+        wc_lo = self.wet_00.run(4, ('sbsb',))
+        for k, v in wc_lo.dict.items():
+            self.assertAlmostEqual(v, wc_hi[k], msg="Failed for {}".format(k))
+
+    def test_10(self):
+        # running without QED = running with alpha_e = 0
+        wc_10 = self.wet_10.run(4, ('sbsb',))
+        wc_11 = self.wet_11_ae0.run(4, ('sbsb',))
+        for k, v in wc_10.dict.items():
+            self.assertAlmostEqual(v, wc_11[k], msg="Failed for {}".format(k))
+
+    def test_01(self):
+        # running without QED = running with alpha_e = 0
+        wc_01 = self.wet_01.run(4, ('sbsb',))
+        wc_11 = self.wet_11_as0.run(4, ('sbsb',))
+        for k, v in wc_01.dict.items():
+            self.assertAlmostEqual(v, wc_11[k], msg="Failed for {}".format(k))
