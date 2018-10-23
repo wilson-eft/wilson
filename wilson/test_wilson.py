@@ -152,3 +152,15 @@ class TestWilsonConfig(unittest.TestCase):
         w.match_run(140, 'WET', 'flavio')
         w.set_option('smeft_accuracy', 'leadinglog')
         self.assertDictEqual(w._cache, {})
+
+    def test_smeft_matchingscale(self):
+        w = wilson.Wilson({'lq1_2223': 1e-8}, 1000, 'SMEFT', 'Warsaw')
+        w.set_option('smeft_accuracy', 'leadinglog')
+        w.set_option('smeft_matchingscale', 145)
+        w.set_option('mb_matchingscale', 4)
+        w.set_option('mc_matchingscale', 2)
+        w.match_run(80, 'WET', 'JMS')
+        self.assertSetEqual(set(w._cache['WET'].keys()), {145, 80})
+        w.match_run(1, 'WET-3', 'JMS')
+        self.assertEqual(w.get_option('mb_matchingscale'), 4)
+        self.assertEqual(w.get_option('mc_matchingscale'), 2)

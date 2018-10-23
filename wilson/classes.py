@@ -84,6 +84,9 @@ class Wilson(ConfigurableClass):
     _default_options = {'smeft_accuracy': 'integrate',
                         'qed_order': 1,
                         'qcd_order': 1,
+                        'smeft_matchingscale': 91.1876,
+                        'mb_matchingscale': 4.2,
+                        'mc_matchingscale': 1.3,
                         }
 
     # option schema:
@@ -92,6 +95,9 @@ class Wilson(ConfigurableClass):
         'smeft_accuracy': vol.In(['integrate','leadinglog']),
         'qed_order': vol.In([0,1]),
         'qcd_order': vol.In([0,1]),
+        'smeft_matchingscale': vol.Coerce(float),
+        'mb_matchingscale': vol.Coerce(float),
+        'mc_matchingscale': vol.Coerce(float),
     })
 
     def __init__(self, wcdict, scale, eft, basis):
@@ -156,9 +162,9 @@ class Wilson(ConfigurableClass):
         cached = self._get_from_cache(sector=sectors, scale=scale, eft=eft, basis=basis)
         if cached is not None:
             return cached
-        scale_ew = 91.1876
-        mb = 4.2
-        mc = 1.3
+        scale_ew = self.get_option('smeft_matchingscale')
+        mb = self.get_option('mb_matchingscale')
+        mc = self.get_option('mc_matchingscale')
         if self.wc.basis == basis and self.wc.eft == eft and scale == self.wc.scale:
             return self.wc  # nothing to do
         if self.wc.eft == 'SMEFT':
