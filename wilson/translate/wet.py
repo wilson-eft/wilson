@@ -973,9 +973,13 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
         xi = V[2, 1] * V[2, 0].conj()
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
-    ind = ddll.replace('l_','').replace('nu_','')
-    indfl = ddll[1::-1]+ind[2:] # flavio has first two indices inverted
-    indnu = ddll[1::-1]+ddll.replace('l_','nu').replace('nu_','nu')[2:]
+    q1, q2 = ddll[:2]
+    l1 = ddll[4:ddll.find('n')]
+    l2 = ddll[ddll.find('_', 5) + 1:]
+    ind = q1 + q2 + l1 + l2
+    # flavio has indices within currents inverted
+    indfl = q2 + q1 + l2 + l1
+    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
     e = sqrt(4* pi * parameters['alpha_e'])
     if ddll[:2] == 'sb' or ddll[:2] == 'db':
         mq = parameters['m_b']
@@ -1019,9 +1023,13 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
         xi = V[2, 1] * V[2, 0].conj()
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
-    ind = ddll.replace('l_','').replace('nu_','')
-    indfl = ddll[1::-1]+ind[2:] # flavio has first two indices inverted
-    indnu = ddll[1::-1]+ddll.replace('l_','nu').replace('nu_','nu')[2:]
+    q1, q2 = ddll[:2]
+    l1 = ddll[4:ddll.find('n')]
+    l2 = ddll[ddll.find('_', 5) + 1:]
+    ind = q1 + q2 + l1 + l2
+    # flavio has indices within currents inverted
+    indfl = q2 + q1 + l2 + l1
+    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
     e = sqrt(4* pi * parameters['alpha_e'])
     if ddll[:2] == 'sb' or ddll[:2] == 'db':
         mq = parameters['m_b']
