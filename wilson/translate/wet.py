@@ -1447,8 +1447,7 @@ def JMS_to_flavio(Cflat, scale, parameters=None):
             d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
                                         'ds'+'l_'+l+'nu_'+lp),
                                         'ds'+'l_'+l+'nu_'+lp, p,
-                                        include_charged=(l==lp),
-                                        norm_gf=True))  # l+l- only for l=l'
+                                        norm_gf=True))
 
     # Class V non-leptonic
     for qq1 in ['ds', 'sb', 'db']:
@@ -1506,7 +1505,6 @@ def Bern_to_flavio(C_incomplete, scale, parameters=None):
             d.update(Fierz_to_Flavio_lep(Bern_to_Fierz_lep(C,
                                         'ds'+'l_'+l+'nu_'+lp),
                                          'ds'+'l_'+l+'nu_'+lp, p,
-                                         include_charged=(l==lp),  # l+l- only for l=l'
                                          norm_gf=True))
 
 
@@ -1733,10 +1731,8 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
                                         'db'+'l_'+l+'nu_'+lp, p),
                                         'db'+'l_'+l+'nu_'+lp))
             d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
-                                        'ds'+'l_'+l+'nu_'+lp, p,
-                                        include_charged=(l==lp)),
-                                        'ds'+'l_'+l+'nu_'+lp,
-                                        include_charged=(l==lp)))
+                                        'ds'+'l_'+l+'nu_'+lp, p),
+                                        'ds'+'l_'+l+'nu_'+lp))
 
 
     # Class V non-leptonic
