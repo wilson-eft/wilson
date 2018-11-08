@@ -25,7 +25,7 @@ setup(name='wilson',
                  ],
       },
       install_requires=['scipy>=1.0', 'numpy', 'pylha>=0.2', 'pyyaml',
-                        'ckmutil>=0.3', 'wcxf>=1.4.6', 'rundec>=0.5',
+                        'ckmutil>=0.3', 'wcxf==1.4.7', 'rundec>=0.5',
                         'voluptuous'],
       extras_require={
             'testing': ['nose',],
