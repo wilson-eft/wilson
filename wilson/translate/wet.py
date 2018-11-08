@@ -812,37 +812,42 @@ def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
     """From Fierz to the EOS basis for b -> s transitions.
     The arguments are dictionaries of the corresponding Fierz bases """
     dic = {
-    'b->s::c1' :  -2 * Fsbbb['Fsbbb1'] / 5 + Fsbcc['Fsbcc1'] -
-                  6 * Fsbdd['Fsbdd1'] / 5 + 4 * Fsbdd['Fsbdd2'] / 5
-                  -2 * Fsbss['Fsbss1'] / 5 + Fsbuu['Fsbuu1'],
-     'b->s::c2' : -4 * Fsbbb['Fsbbb1'] / 15 + Fsbcc['Fsbcc1'] / 6
-                  + Fsbcc['Fsbcc2'] / 2 + Fsbdd['Fsbdd1'] / 5
-                  - 7 * Fsbdd['Fsbdd2'] / 15 - 4 * Fsbss['Fsbss1'] / 15
-                  + Fsbuu['Fsbuu1'] / 6 + Fsbuu['Fsbuu2'] / 2,
-     'b->s::c3' : -4 * Fsbbb['Fsbbb1'] / 45 + 4 * Fsbbb['Fsbbb3'] / 15 +
-                    4 * Fsbbb['Fsbbb4'] / 45 + 4 * Fsbcc['Fsbcc3'] / 15 +
-                    4 * Fsbcc['Fsbcc4'] / 45 - 7 * Fsbdd['Fsbdd1'] / 45
-                    + Fsbdd['Fsbdd2'] / 15 + 4 * Fsbdd['Fsbdd3'] / 15
-                    + 4 * Fsbdd['Fsbdd4'] / 45 - 4 * Fsbss['Fsbss1'] / 45
+    'b->s::c1' :  -Fsbbb['Fsbbb1']/3 + 2*Fsbcc['Fsbcc1']
+                    - 2 * Fsbdd['Fsbdd1'] / 3 + Fsbdd['Fsbdd2']/3 -
+                    Fsbss['Fsbss1'] / 3 - 2 * Fsbuu['Fsbuu1'] / 3
+                    + Fsbuu['Fsbuu2'] / 3,
+     'b->s::c2' : -2 * Fsbbb['Fsbbb1'] / 9 + Fsbcc['Fsbcc1'] / 3
+                    + Fsbcc['Fsbcc2'] + Fsbdd['Fsbdd1'] / 18
+                    - 5 * Fsbdd['Fsbdd2'] / 18 - 2 * Fsbss['Fsbss1'] / 9
+                    + Fsbuu['Fsbuu1'] / 18 - 5 * Fsbuu['Fsbuu2'] / 18,
+     'b->s::c3' : -2 * Fsbbb['Fsbbb1'] / 27 + 4 * Fsbbb['Fsbbb3'] / 15
+                    + 4 * Fsbbb['Fsbbb4'] / 45 + 4 * Fsbcc['Fsbcc3'] / 15
+                    + 4 * Fsbcc['Fsbcc4'] / 45 - 5 * Fsbdd['Fsbdd1'] / 54
+                    + Fsbdd['Fsbdd2'] / 54 + 4 * Fsbdd['Fsbdd3'] / 15
+                    + 4 * Fsbdd['Fsbdd4'] / 45 - 2 * Fsbss['Fsbss1'] / 27
                     + 4 * Fsbss['Fsbss3'] / 15 + 4 * Fsbss['Fsbss4'] / 45
+                    - 5 * Fsbuu['Fsbuu1'] / 54 + Fsbuu['Fsbuu2'] / 54
                     + 4 * Fsbuu['Fsbuu3'] / 15 + 4 * Fsbuu['Fsbuu4'] / 45,
-     'b->s::c4' : - 2 * Fsbbb['Fsbbb1'] / 15 + 8 * Fsbbb['Fsbbb4'] / 15
-                    + 8 * Fsbcc['Fsbcc4'] / 15 + 4 * Fsbdd['Fsbdd1'] / 15
-                    - 2 * Fsbdd['Fsbdd2'] / 5 + 8 * Fsbdd['Fsbdd4'] / 15
-                    - 2 * Fsbss['Fsbss1'] / 15 + 8 * Fsbss['Fsbss4'] / 15
+     'b->s::c4' : -Fsbbb['Fsbbb1'] / 9 + 8 * Fsbbb['Fsbbb4'] / 15
+                    + 8 * Fsbcc['Fsbcc4'] / 15 + Fsbdd['Fsbdd1'] / 9
+                    - 2 * Fsbdd['Fsbdd2'] / 9 + 8 * Fsbdd['Fsbdd4'] / 15
+                    - Fsbss['Fsbss1'] / 9 + 8 * Fsbss['Fsbss4'] / 15
+                    + Fsbuu['Fsbuu1'] / 9 - 2 * Fsbuu['Fsbuu2'] / 9
                     + 8 * Fsbuu['Fsbuu4'] / 15,
-     'b->s::c5' : Fsbbb['Fsbbb1'] / 45 - Fsbbb['Fsbbb3'] / 60
-                  -Fsbbb['Fsbbb4'] / 180 - Fsbcc['Fsbcc3'] / 60
-                  - Fsbcc['Fsbcc4'] / 180 + 7 * Fsbdd['Fsbdd1'] / 180
-                  - Fsbdd['Fsbdd2'] / 60 - Fsbdd['Fsbdd3'] / 60
-                  -Fsbdd['Fsbdd4'] / 180 + Fsbss['Fsbss1'] / 45
-                  - Fsbss['Fsbss3'] / 60 -Fsbss['Fsbss4'] / 180
-                  - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180,
-     'b->s::c6' : Fsbbb['Fsbbb1'] / 30 - Fsbbb['Fsbbb4'] / 30
-                  -Fsbcc['Fsbcc4'] / 30 - Fsbdd['Fsbdd1'] / 15
-                  + Fsbdd['Fsbdd2'] / 10 -Fsbdd['Fsbdd4'] / 30
-                  + Fsbss['Fsbss1'] / 30 - Fsbss['Fsbss4'] / 30
-                  -Fsbuu['Fsbuu4'] / 30
+     'b->s::c5' : Fsbbb['Fsbbb1'] / 54 - Fsbbb['Fsbbb3'] / 60
+                 - Fsbbb['Fsbbb4'] / 180 - Fsbcc['Fsbcc3'] / 60
+                 - Fsbcc['Fsbcc4'] / 180 + 5 * Fsbdd['Fsbdd1'] / 216
+                 - Fsbdd['Fsbdd2'] / 216 - Fsbdd['Fsbdd3'] / 60
+                 - Fsbdd['Fsbdd4'] / 180 + Fsbss['Fsbss1'] / 54
+                 - Fsbss['Fsbss3'] / 60 - Fsbss['Fsbss4'] / 180
+                 + 5 * Fsbuu['Fsbuu1'] / 216 - Fsbuu['Fsbuu2'] / 216
+                 - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180,
+     'b->s::c6' : Fsbbb['Fsbbb1'] / 36 - Fsbbb['Fsbbb4'] / 30
+                  - Fsbcc['Fsbcc4'] / 30 - Fsbdd['Fsbdd1'] / 36
+                  + Fsbdd['Fsbdd2'] / 18 - Fsbdd['Fsbdd4'] / 30
+                  + Fsbss['Fsbss1'] / 36 - Fsbss['Fsbss4'] / 30
+                  - Fsbuu['Fsbuu1'] / 36 + Fsbuu['Fsbuu2'] / 18
+                  - Fsbuu['Fsbuu4'] / 30
                   }
     prefactor = sqrt(2)/p['GF']/Vtb/Vts.conj()/4
     return {k: prefactor * v for k,v in dic.items()}
