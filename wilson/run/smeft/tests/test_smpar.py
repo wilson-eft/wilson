@@ -161,3 +161,12 @@ class TestGetSMpar(unittest.TestCase):
         wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'qd1_1111': {'Im': 1e-6}})
         smeft = SMEFT(wc)
         smeft.run(91.1876)
+
+    def test_method(self):
+        wc = wcxf.WC('SMEFT', 'Warsaw', 1000, {'uG_33': 1e-6})
+        smeft = SMEFT(wc)
+        p_out = smeft.get_smpar()
+        p_def = smpar.p
+        for k, v in p_out.items():
+            self.assertAlmostEqual(v / p_def[k], 1, places=1,
+                                   msg="Failed for {}".format(k))
