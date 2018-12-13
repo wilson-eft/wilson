@@ -24,18 +24,19 @@ def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
         return alphasMZ  # nothing to do
     _sane(scale, f)
     crd = rundec.CRunDec()
+    return_value = 0
     if f == 5:
-        return crd.AlphasExact(alphasMZ, MZ, scale, f, loop)
+        return_value = crd.AlphasExact(alphasMZ, MZ, scale, f, loop)
     elif f == 6:
         crd.nfMmu.Mth = 170
         crd.nfMmu.muth = 170
         crd.nfMmu.nf = 6
-        return crd.AlL2AlH(alphasMZ, MZ, crd.nfMmu, scale, loop)
+        return_value = crd.AlL2AlH(alphasMZ, MZ, crd.nfMmu, scale, loop)
     elif f == 4:
         crd.nfMmu.Mth = 4.8
         crd.nfMmu.muth = 4.8
         crd.nfMmu.nf = 5
-        return crd.AlH2AlL(alphasMZ, MZ, crd.nfMmu, scale, loop)
+        return_value = crd.AlH2AlL(alphasMZ, MZ, crd.nfMmu, scale, loop)
     elif f == 3:
         crd.nfMmu.Mth = 4.8
         crd.nfMmu.muth = 4.8
@@ -45,9 +46,13 @@ def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.Mth = mc
         crd.nfMmu.muth = mc
         crd.nfMmu.nf = 4
-        return crd.AlH2AlL(asmc, mc, crd.nfMmu, scale, loop)
+        return_value = crd.AlH2AlL(asmc, mc, crd.nfMmu, scale, loop)
     else:
         raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
+    if return_value == 0:
+        raise ValueError("Return value is 0, probably `scale={}` is too small.".format(scale))
+    else:
+        return return_value
 
 
 @lru_cache(32)
