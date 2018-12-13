@@ -24,7 +24,6 @@ def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
         return alphasMZ  # nothing to do
     _sane(scale, f)
     crd = rundec.CRunDec()
-    return_value = 0
     if f == 5:
         return_value = crd.AlphasExact(alphasMZ, MZ, scale, f, loop)
     elif f == 6:
