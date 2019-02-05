@@ -1388,7 +1388,7 @@ def get_parameters(scale, f=5, input_parameters=None):
 
 # final dicitonaries
 
-def JMS_to_EOS(Cflat, scale, parameters=None):
+def JMS_to_EOS(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     C = JMS_to_array(Cflat)
     d={}
@@ -1421,7 +1421,7 @@ def JMS_to_EOS(Cflat, scale, parameters=None):
     return d
 
 
-def JMS_to_flavio(Cflat, scale, parameters=None):
+def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     C = JMS_to_array(Cflat)
     d={}
@@ -1479,7 +1479,7 @@ def JMS_to_flavio(Cflat, scale, parameters=None):
     return d
 
 
-def Bern_to_flavio(C_incomplete, scale, parameters=None):
+def Bern_to_flavio(C_incomplete, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     # fill in zeros for missing coefficients
     wc_keys = set(wcxf.Basis['WET', 'Bern'].all_wcs)
@@ -1530,7 +1530,7 @@ def Bern_to_flavio(C_incomplete, scale, parameters=None):
 
 
 
-def flavio_to_Bern(C_incomplete, scale, parameters=None):
+def flavio_to_Bern(C_incomplete, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     # fill in zeros for missing coefficients
     wc_keys = wcxf.Basis['WET', 'flavio'].all_wcs
@@ -1582,7 +1582,7 @@ def flavio_to_Bern(C_incomplete, scale, parameters=None):
     prefactor = sqrt(2)/p['GF']/4
     return {k: prefactor * v for k,v in d.items()}
 
-def JMS_to_FormFlavor(Cflat, scale, parameters=None):
+def JMS_to_FormFlavor(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     C = JMS_to_array(Cflat)
     d={}
@@ -1601,7 +1601,7 @@ def JMS_to_FormFlavor(Cflat, scale, parameters=None):
     return d
 
 
-def JMS_to_Bern(Cflat, scale, parameters=None):
+def JMS_to_Bern(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     C = JMS_to_array(Cflat)
     d={}
@@ -1653,7 +1653,7 @@ def JMS_to_Bern(Cflat, scale, parameters=None):
     return {k: prefactor * v for k,v in d.items()}
 
 
-def Bern_to_JMS(C_incomplete, scale, parameters=None):
+def Bern_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     # fill in zeros for missing coefficients
     wc_keys = wcxf.Basis['WET', 'Bern'].all_wcs
@@ -1706,7 +1706,7 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None):
     return {k: prefactor * v for k,v in d.items()}
 
 
-def flavio_to_JMS(C_incomplete, scale, parameters=None):
+def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     # fill in zeros for missing coefficients
     wc_keys = wcxf.Basis['WET', 'flavio'].all_wcs
@@ -1763,7 +1763,7 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None):
 
     return {k: v for k,v in d.items()}
 
-def FlavorKit_to_JMS(C, scale, parameters=None):
+def FlavorKit_to_JMS(C, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     d = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms.json').decode('utf8'))
     d_conj = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms_conj.json').decode('utf8'))
@@ -1792,7 +1792,7 @@ def FlavorKit_to_JMS(C, scale, parameters=None):
     return C_out
 
 
-def JMS_to_FlavorKit(C, scale, parameters=None):
+def JMS_to_FlavorKit(C, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
     d = json.loads(pkgutil.get_data('wilson', 'data/flavorkit_jms.json').decode('utf8'))
     d = {v: k for k, v in d.items()}  # revert dict

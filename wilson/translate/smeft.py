@@ -32,7 +32,7 @@ def smeft_fromarray(wc_name, C):
     return wc_dict
 
 
-def warsaw_to_warsawmass(C, parameters=None):
+def warsaw_to_warsawmass(C, parameters=None, sectors=None):
     """Translate from the Warsaw basis to the 'Warsaw mass' basis.
 
     Parameters used:
@@ -63,7 +63,7 @@ def warsaw_to_warsawmass(C, parameters=None):
     return C_out
 
 
-def warsaw_to_warsaw_up(C, parameters=None):
+def warsaw_to_warsaw_up(C, parameters=None, sectors=None):
     """Translate from the Warsaw basis to the 'Warsaw mass' basis.
 
     Parameters used:
@@ -86,7 +86,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     return {k: v for k, v in C_out.items() if k in allkeys}
 
 
-def warsaw_up_to_warsaw(C, parameters=None):
+def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
     """Translate from the 'Warsaw up' basis to the Warsaw basis.
 
     Parameters used:

@@ -77,7 +77,6 @@ class SMEFT(object):
         if get_smpar:
             self.C_in.update(self._get_sm_scale_in())
 
-
     def _to_wcxf(self, C_out, scale_out):
         """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
 
