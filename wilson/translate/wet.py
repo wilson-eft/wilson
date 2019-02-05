@@ -885,12 +885,23 @@ def JMS_to_Fierz_lep(C, ddll):
                            + C["SedRR"][lp, l, b, s].conj() / 2,
         'F' + ind + 'Pp' : C["SedRL"][l, lp, s, b] / 2
                             - C["SedRR"][lp, l, b, s].conj() / 2,
+        }
+
+def JMS_to_Fierz_nunu(C, ddll):
+    """From JMS to semileptonic Fierz basis for Class V.
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    s = dflav[ddll[0]]
+    b = dflav[ddll[1]]
+    l = lflav[ddll[4:ddll.find('n')]]
+    lp = lflav[ddll[ddll.find('_',5)+1:len(ddll)]]
+    ind = ddll.replace('l_','').replace('nu_','')
+    return {
         'F' + ind + 'nu' : C["VnudLL"][l, lp, s, b],
         'F' + ind + 'nup' : C["VnudLR"][l, lp, s, b]
         }
 
 
-def Fierz_to_JMS_lep(C, ddll, include_charged=True):
+def Fierz_to_JMS_lep(C, ddll):
     """From Fierz to semileptonic JMS basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     s = str(dflav[ddll[0]] + 1)
@@ -898,49 +909,66 @@ def Fierz_to_JMS_lep(C, ddll, include_charged=True):
     l = str(lflav[ddll[4:ddll.find('n')]] + 1)
     lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
-    d = {"VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
-         "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']}
-    if include_charged:
-        d.update({
-                "VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
-                "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
-                "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
-                "SedRL" + '_' + lp + l + b + s : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
-                "TedRR" + '_' + lp + l + b + s : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
-                "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
-                "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
-                "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
-                "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
-                "SedRR" + '_' + lp + l + b + s : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
-                })
+    d = {
+        "VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
+        "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
+        "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
+        "SedRL" + '_' + lp + l + b + s : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
+        "TedRR" + '_' + lp + l + b + s : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
+        "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
+        "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
+        "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
+        "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
+        "SedRR" + '_' + lp + l + b + s : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
+    }
+    return symmetrize_JMS_dict(d)
+
+def Fierz_to_JMS_nunu(C, ddll):
+    """From Fierz to semileptonic JMS basis for Class V.
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    s = str(dflav[ddll[0]] + 1)
+    b = str(dflav[ddll[1]] + 1)
+    l = str(lflav[ddll[4:ddll.find('n')]] + 1)
+    lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
+    ind = ddll.replace('l_','').replace('nu_','')
+    d = {
+        "VnudLL" + '_' + l + lp + s + b : C['F' + ind + 'nu'],
+        "VnudLR" + '_' + l + lp + s + b : C['F' + ind + 'nup']
+    }
     return symmetrize_JMS_dict(d)
 
 
-def Fierz_to_Bern_lep(C, ddll, include_charged=True):
+def Fierz_to_Bern_lep(C, ddll):
     """From semileptonic Fierz basis to Bern semileptonic basis for Class V.
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     ind = ddll.replace('l_','').replace('nu_','')
-    dic =  {'nu1' + ind : C['F' + ind + 'nu'],
-            'nu1p' + ind : C['F' + ind + 'nup']
-            }
-    if include_charged:
-        dic.update({
-            '1' + ind : 5 * C['F'+ ind + '10'] / 3 + C['F'+ ind + '9'],
-            '3' + ind : -C['F' + ind + '10'] / 6,
-            '5' + ind : C['F' + ind + 'S'] - 5 * C['F' + ind + 'P'] / 3,
-            '7' + ind : 2 * C['F' + ind + 'P'] / 3 + C['F' + ind + 'T']
-                        + C['F' + ind + 'T5'],
-            '9' + ind : C['F' + ind + 'P'] / 24,
-            '1p' + ind : C['F' + ind + '9p'] - 5 * C['F' + ind + '10p'] / 3,
-            '3p' + ind : C['F' + ind + '10p'] / 6,
-            '5p' + ind : 5 * C['F' + ind + 'Pp'] / 3 + C['F' + ind + 'Sp'],
-            '7p' + ind : -2 * C['F' + ind + 'Pp'] / 3 + C['F' + ind + 'T']
-                        - C['F' + ind + 'T5'],
-            '9p' + ind : -C['F' + ind + 'Pp'] / 24,
-            'nu1' + ind : C['F' + ind + 'nu'],
-            'nu1p' + ind : C['F' + ind + 'nup']
-            })
+    dic = {
+        '1' + ind : 5 * C['F'+ ind + '10'] / 3 + C['F'+ ind + '9'],
+        '3' + ind : -C['F' + ind + '10'] / 6,
+        '5' + ind : C['F' + ind + 'S'] - 5 * C['F' + ind + 'P'] / 3,
+        '7' + ind : 2 * C['F' + ind + 'P'] / 3 + C['F' + ind + 'T']
+                    + C['F' + ind + 'T5'],
+        '9' + ind : C['F' + ind + 'P'] / 24,
+        '1p' + ind : C['F' + ind + '9p'] - 5 * C['F' + ind + '10p'] / 3,
+        '3p' + ind : C['F' + ind + '10p'] / 6,
+        '5p' + ind : 5 * C['F' + ind + 'Pp'] / 3 + C['F' + ind + 'Sp'],
+        '7p' + ind : -2 * C['F' + ind + 'Pp'] / 3 + C['F' + ind + 'T']
+                    - C['F' + ind + 'T5'],
+        '9p' + ind : -C['F' + ind + 'Pp'] / 24,
+    }
+    return dic
+
+def Fierz_to_Bern_nunu(C, ddll):
+    """From semileptonic Fierz basis to Bern semileptonic basis for Class V.
+    C should be the corresponding leptonic Fierz basis and
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    ind = ddll.replace('l_','').replace('nu_','')
+    dic = {
+
+        'nu1' + ind : C['F' + ind + 'nu'],
+        'nu1p' + ind : C['F' + ind + 'nup']
+    }
     return dic
 
 
@@ -959,12 +987,21 @@ def Bern_to_Fierz_lep(C,ddll):
             'F' + ind + '10p': 6 * C['3p' + ind],
             'F' + ind + 'Sp': C['5p' + ind] + 40 * C['9p' + ind],
             'F' + ind + 'Pp': -24 * C['9p' + ind],
+            }
+
+
+def Bern_to_Fierz_nunu(C,ddll):
+    """From semileptonic Bern basis to Fierz semileptonic basis for Class V.
+    C should be the corresponding leptonic Fierz basis and
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    ind = ddll.replace('l_','').replace('nu_','')
+    return {
             'F' + ind + 'nu': C['nu1' + ind],
             'F' + ind + 'nup': C['nu1p' + ind],
             }
 
 
-def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True):
+def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
     """From semileptonic Fierz basis to Flavio semileptonic basis for Class V.
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
@@ -984,7 +1021,6 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     ind = q1 + q2 + l1 + l2
     # flavio has indices within currents inverted
     indfl = q2 + q1 + l2 + l1
-    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
     e = sqrt(4* pi * parameters['alpha_e'])
     if ddll[:2] == 'sb' or ddll[:2] == 'db':
         mq = parameters['m_b']
@@ -993,20 +1029,15 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
-        "CL_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nu'],
-        "CR_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nup']
+        "C9_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '9'],
+        "C9p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '9p'],
+        "C10_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10'],
+        "C10p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10p'],
+        "CS_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'S'],
+        "CSp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Sp'],
+        "CP_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'P'],
+        "CPp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Pp'],
     }
-    if include_charged:
-        dic.update({
-            "C9_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '9'],
-            "C9p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '9p'],
-            "C10_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10'],
-            "C10p_" + indfl : (16 * pi**2) / e**2 * C['F' + ind + '10p'],
-            "CS_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'S'],
-            "CSp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Sp'],
-            "CP_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'P'],
-            "CPp_" + indfl : (16 * pi**2) / e**2 / mq * C['F' + ind + 'Pp'],
-        })
     if norm_gf:
         prefactor = sqrt(2)/p['GF']/xi/4
     else:
@@ -1014,7 +1045,40 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     return {k: prefactor * v for k,v in dic.items()}
 
 
-def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True):
+def Fierz_to_Flavio_nunu(C, ddll, parameters, norm_gf=True):
+    """From semileptonic Fierz basis to Flavio semileptonic basis for Class V.
+    C should be the corresponding leptonic Fierz basis and
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if ddll[:2] == 'sb':
+        xi = V[2, 2] * V[2, 1].conj()
+    elif ddll[:2] == 'db':
+        xi = V[2, 2] * V[2, 0].conj()
+    elif ddll[:2] == 'ds':
+        xi = V[2, 1] * V[2, 0].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
+    q1, q2 = ddll[:2]
+    l1 = ddll[4:ddll.find('n')]
+    l2 = ddll[ddll.find('_', 5) + 1:]
+    ind = q1 + q2 + l1 + l2
+    # flavio has indices within currents inverted
+    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
+    e = sqrt(4* pi * parameters['alpha_e'])
+    dic = {
+        "CL_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nu'],
+        "CR_" + indnu : (8 * pi**2) / e**2 * C['F' + ind + 'nup']
+    }
+    if norm_gf:
+        prefactor = sqrt(2)/p['GF']/xi/4
+    else:
+        prefactor = 1 / xi
+    return {k: prefactor * v for k,v in dic.items()}
+
+
+
+def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
     """From  Flavio semileptonic basis to semileptonic Fierz basis for Class V.
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
@@ -1034,7 +1098,6 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     ind = q1 + q2 + l1 + l2
     # flavio has indices within currents inverted
     indfl = q2 + q1 + l2 + l1
-    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
     e = sqrt(4* pi * parameters['alpha_e'])
     if ddll[:2] == 'sb' or ddll[:2] == 'db':
         mq = parameters['m_b']
@@ -1043,11 +1106,6 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
-        'F' + ind + 'nu': C["CL_" + indnu] / ((8 * pi**2) / e**2),
-        'F' + ind + 'nup': C["CR_" + indnu] / ((8 * pi**2) / e**2),
-        }
-    if include_charged:
-        dic.update({
         'F' + ind + '9': C["C9_" + indfl] / ((16 * pi**2) / e**2),
         'F' + ind + '9p': C["C9p_" + indfl] / ((16 * pi**2) / e**2),
         'F' + ind + '10': C["C10_" + indfl] / ((16 * pi**2) / e**2),
@@ -1058,7 +1116,39 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, include_charged=True, norm_gf=True)
         'F' + ind + 'Pp': C["CPp_" + indfl] / ((16 * pi**2) / e**2 / mq),
         'F' + ind + 'T': 0,  # tensors not implemented in flavio basis yet
         'F' + ind + 'T5': 0,  # tensors not implemented in flavio basis yet
-        })
+    }
+    if norm_gf:
+        prefactor = sqrt(2)/p['GF']/xi/4
+    else:
+        prefactor = 1 / xi
+    return {k: v / prefactor for k, v in dic.items()}
+
+
+def Flavio_to_Fierz_nunu(C, ddll, parameters, norm_gf=True):
+    """From  Flavio semileptonic basis to semileptonic Fierz basis for Class V.
+    C should be the corresponding leptonic Fierz basis and
+    `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if ddll[:2] == 'sb':
+        xi = V[2, 2] * V[2, 1].conj()
+    elif ddll[:2] == 'db':
+        xi = V[2, 2] * V[2, 0].conj()
+    elif ddll[:2] == 'ds':
+        xi = V[2, 1] * V[2, 0].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
+    q1, q2 = ddll[:2]
+    l1 = ddll[4:ddll.find('n')]
+    l2 = ddll[ddll.find('_', 5) + 1:]
+    ind = q1 + q2 + l1 + l2
+    # flavio has indices within currents inverted
+    indnu = q2 + q1 + 'nu' + l2 + 'nu' + l1
+    e = sqrt(4* pi * parameters['alpha_e'])
+    dic = {
+        'F' + ind + 'nu': C["CL_" + indnu] / ((8 * pi**2) / e**2),
+        'F' + ind + 'nup': C["CR_" + indnu] / ((8 * pi**2) / e**2),
+    }
     if norm_gf:
         prefactor = sqrt(2)/p['GF']/xi/4
     else:
@@ -1390,7 +1480,7 @@ def get_parameters(scale, f=5, input_parameters=None):
 
 def JMS_to_EOS(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    C = JMS_to_array(Cflat)
+    C = JMS_to_array(Cflat, sectors=sectors)
     d={}
 
     # Class II
@@ -1423,55 +1513,85 @@ def JMS_to_EOS(Cflat, scale, parameters=None, sectors=None):
 
 def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    C = JMS_to_array(Cflat)
+    C = JMS_to_array(Cflat, sectors=sectors)
     d={}
 
     # Class I
     for qq in ['sb', 'db', 'ds', 'cu']:
-        d.update(_BernI_to_Flavio_I(_JMS_to_Bern_I(C, qq), qq))
+        if sectors is None or 2*qq in sectors or (qq == 'ds' and 2*'sd' in sectors):
+            d.update(_BernI_to_Flavio_I(_JMS_to_Bern_I(C, qq), qq))
 
     # Class II
     for l in lflav.keys():
         for lp in lflav.keys():
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
-                d.update(_BernII_to_Flavio_II(_JMS_to_Bern_II(C,
-                                              qq+'l_'+l+'nu_'+lp),
-                                              qq+'l_'+l+'nu_'+lp, p))
+                if sectors is None or qq+l+'nu' in sectors:
+                    d.update(_BernII_to_Flavio_II(_JMS_to_Bern_II(C,
+                                                  qq+'l_'+l+'nu_'+lp),
+                                                  qq+'l_'+l+'nu_'+lp, p))
 
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
-            d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
-                                        'sb'+'l_'+l+'nu_'+lp),
-                                        'sb'+'l_'+l+'nu_'+lp, p,
-                                        norm_gf=True))
-            d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
-                                        'db'+'l_'+l+'nu_'+lp),
-                                         'db'+'l_'+l+'nu_'+lp, p,
-                                         norm_gf=True))
-            d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
-                                        'ds'+'l_'+l+'nu_'+lp),
-                                        'ds'+'l_'+l+'nu_'+lp, p,
-                                        norm_gf=True))
+            # ddnunu
+            if sectors is None or 'sbnunu' in sectors:
+                d.update(Fierz_to_Flavio_nunu(JMS_to_Fierz_nunu(C,
+                                            'sb'+'l_'+l+'nu_'+lp),
+                                            'sb'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
+            if sectors is None or 'dbnunu' in sectors:
+                d.update(Fierz_to_Flavio_nunu(JMS_to_Fierz_nunu(C,
+                                            'db'+'l_'+l+'nu_'+lp),
+                                            'db'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
+            if sectors is None or 'sdnunu' in sectors:
+                d.update(Fierz_to_Flavio_nunu(JMS_to_Fierz_nunu(C,
+                                            'ds'+'l_'+l+'nu_'+lp),
+                                            'ds'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
+            # ddll
+            if sectors is None or ('sb' in sectors and l == lp) or ('sb'+ l + lp in sectors):
+                d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
+                                            'sb'+'l_'+l+'nu_'+lp),
+                                            'sb'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
+            if sectors is None or ('db' in sectors and l == lp) or ('db'+ l + lp in sectors):
+                d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
+                                            'db'+'l_'+l+'nu_'+lp),
+                                            'db'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
+            if sectors is None or ('sd' in sectors and l == lp) or ('sd'+ l + lp in sectors):
+                d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
+                                            'ds'+'l_'+l+'nu_'+lp),
+                                            'ds'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True))
 
     # Class V non-leptonic
     for qq1 in ['ds', 'sb', 'db']:
-        for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
-            qqqq = qq1 + qq2
-            d.update(_Fierz_to_Flavio_V(_JMS_to_Fierz_III_IV_V(C, qqqq),
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+            for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
+                qqqq = qq1 + qq2
+                d.update(_Fierz_to_Flavio_V(_JMS_to_Fierz_III_IV_V(C, qqqq),
                                         qqqq, p))
 
     # Class V chromomagnetic
-    d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'sb'), 'sb', p))
-    d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'db'), 'db', p))
-    d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'ds'), 'ds', p))
+    if sectors is None or 'sb' in sectors:
+        d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'sb'), 'sb', p))
+    if sectors is None or 'db' in sectors:
+        d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'db'), 'db', p))
+    if sectors is None or 'sd' in sectors:
+        d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'ds'), 'ds', p))
 
     # Class VII
-    d.update(_JMS_to_Flavio_VII(Cflat, p))
+    if sectors is None or 'dF=0' in sectors:
+        d.update(_JMS_to_Flavio_VII(Cflat, p))
 
     # LFV
-    dlep = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
-    dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    dlep = {}
+    if sectors is None or bool(set(sectors) & {'nunumue', 'nunumutau', 'nunutaue'}):
+        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8')))
+    if sectors is None or bool(set(sectors) & {'mutau', 'mue', 'taue', 'tauetaue', 'taumutaumu', 'muemue', 'muemutau', 'etauemu', 'tauetaumu'}):
+        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
     for jkey, fkey in dlep.items():
         if jkey in Cflat:
             d[fkey] = Cflat[jkey]
@@ -1508,6 +1628,18 @@ def Bern_to_flavio(C_incomplete, scale, parameters=None, sectors=None):
                                          'db'+'l_'+l+'nu_'+lp, p,
                                          norm_gf=True))
             d.update(Fierz_to_Flavio_lep(Bern_to_Fierz_lep(C,
+                                        'ds'+'l_'+l+'nu_'+lp),
+                                         'ds'+'l_'+l+'nu_'+lp, p,
+                                         norm_gf=True))
+            d.update(Fierz_to_Flavio_nunu(Bern_to_Fierz_nunu(C,
+                                        'sb'+'l_'+l+'nu_'+lp),
+                                        'sb'+'l_'+l+'nu_'+lp, p,
+                                        norm_gf=True))
+            d.update(Fierz_to_Flavio_nunu(Bern_to_Fierz_nunu(C,
+                                        'db'+'l_'+l+'nu_'+lp),
+                                         'db'+'l_'+l+'nu_'+lp, p,
+                                         norm_gf=True))
+            d.update(Fierz_to_Flavio_nunu(Bern_to_Fierz_nunu(C,
                                         'ds'+'l_'+l+'nu_'+lp),
                                          'ds'+'l_'+l+'nu_'+lp, p,
                                          norm_gf=True))
@@ -1558,12 +1690,23 @@ def flavio_to_Bern(C_incomplete, scale, parameters=None, sectors=None):
                                         'db'+'l_'+l+'nu_'+lp, p,
                                         norm_gf=True),
                                         'db'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_Bern_lep(Flavio_to_Fierz_lep(C,
+            if l == lp:  # l+l- only for l=l'
+                d.update(Fierz_to_Bern_lep(Flavio_to_Fierz_lep(C,
+                                            'ds'+'l_'+l+'nu_'+lp, p,
+                                            norm_gf=True),
+                                            'ds'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(Flavio_to_Fierz_nunu(C,
+                                        'sb'+'l_'+l+'nu_'+lp, p,
+                                        norm_gf=True),
+                                        'sb'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(Flavio_to_Fierz_nunu(C,
+                                        'db'+'l_'+l+'nu_'+lp, p,
+                                        norm_gf=True),
+                                        'db'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(Flavio_to_Fierz_nunu(C,
                                         'ds'+'l_'+l+'nu_'+lp, p,
-                                        include_charged=(l==lp),
                                         norm_gf=True),  # l+l- only for l=l'
-                                        'ds'+'l_'+l+'nu_'+lp,
-                                        include_charged=(l==lp)),  # l+l- only for l=l'
+                                        'ds'+'l_'+l+'nu_'+lp),  # l+l- only for l=l'
                                         )
 
 
@@ -1584,7 +1727,7 @@ def flavio_to_Bern(C_incomplete, scale, parameters=None, sectors=None):
 
 def JMS_to_FormFlavor(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    C = JMS_to_array(Cflat)
+    C = JMS_to_array(Cflat, sectors=sectors)
     d={}
 
     # Class I
@@ -1603,7 +1746,7 @@ def JMS_to_FormFlavor(Cflat, scale, parameters=None, sectors=None):
 
 def JMS_to_Bern(Cflat, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
-    C = JMS_to_array(Cflat)
+    C = JMS_to_array(Cflat, sectors=sectors)
     d={}
 
     # Class I
@@ -1642,6 +1785,12 @@ def JMS_to_Bern(Cflat, scale, parameters=None, sectors=None):
             d.update(Fierz_to_Bern_lep(JMS_to_Fierz_lep(C, 'db'+'l_'+l+'nu_'+lp)
                                                          ,'db'+'l_'+l+'nu_'+lp))
             d.update(Fierz_to_Bern_lep(JMS_to_Fierz_lep(C, 'ds'+'l_'+l+'nu_'+lp)
+                                                         ,'ds'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(JMS_to_Fierz_nunu(C, 'sb'+'l_'+l+'nu_'+lp)
+                                                         ,'sb'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(JMS_to_Fierz_nunu(C, 'db'+'l_'+l+'nu_'+lp)
+                                                         ,'db'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_Bern_nunu(JMS_to_Fierz_nunu(C, 'ds'+'l_'+l+'nu_'+lp)
                                                          ,'ds'+'l_'+l+'nu_'+lp))
 
     # Class V chromomagnetic
@@ -1697,6 +1846,9 @@ def Bern_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
                 d.update(Fierz_to_JMS_lep(Bern_to_Fierz_lep(C,
                                             qq+'l_'+l+'nu_'+lp),
                                             qq+'l_'+l+'nu_'+lp))
+                d.update(Fierz_to_JMS_nunu(Bern_to_Fierz_nunu(C,
+                                            qq+'l_'+l+'nu_'+lp),
+                                            qq+'l_'+l+'nu_'+lp))
 
     # Class V chromomagnetic
     for qq in ['sb', 'db', 'ds']:
@@ -1736,6 +1888,15 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
                                         'db'+'l_'+l+'nu_'+lp, p),
                                         'db'+'l_'+l+'nu_'+lp))
             d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                        'ds'+'l_'+l+'nu_'+lp, p),
+                                        'ds'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
+                                        'sb'+'l_'+l+'nu_'+lp, p),
+                                        'sb'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
+                                        'db'+'l_'+l+'nu_'+lp, p),
+                                        'db'+'l_'+l+'nu_'+lp))
+            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
                                         'ds'+'l_'+l+'nu_'+lp, p),
                                         'ds'+'l_'+l+'nu_'+lp))
 

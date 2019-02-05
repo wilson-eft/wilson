@@ -80,10 +80,16 @@ def _antisymm_12(C):
     return C
 
 
-def JMS_to_array(C):
+def JMS_to_array(C, sectors=None):
     """For a dictionary with JMS Wilson coefficients, return a dictionary
     of arrays."""
-    wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    if sectors is None:
+        wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    else:
+        try:
+            wc_keys = [k for s in sectors for k in wcxf.Basis['WET', 'JMS'].sectors[s]]
+        except KeyError:
+            print(sectors)
     # fill in zeros for missing coefficients
     C_complete = {k: C.get(k, 0) for k in wc_keys}
     Ca = _scalar2array(C_complete)

@@ -58,6 +58,15 @@ class TestJMS2Flavio(unittest.TestCase):
         # the output WC instance should contain only one as well
         self.assertEqual(list(flavio_wc.dict.keys()), ['CVRR_bsbs'])
 
+    def test_sectors(self):
+        jms_wc = get_random_wc('WET', 'JMS')
+        sectors = wcxf.Basis['WET', 'flavio'].sectors.keys()
+        flavio_wc_1 = jms_wc.translate('flavio')
+        flavio_wc_2 = jms_wc.translate('flavio', sectors=None)
+        flavio_wc_3 = jms_wc.translate('flavio', sectors=sectors)
+        self.assertDictEqual(flavio_wc_1.dict, flavio_wc_2.dict)
+        self.assertDictEqual(flavio_wc_1.dict, flavio_wc_3.dict)
+
 
 class TestJMS2FlavioWET3(unittest.TestCase):
 

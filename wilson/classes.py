@@ -162,6 +162,11 @@ class Wilson(ConfigurableClass):
         cached = self._get_from_cache(sector=sectors, scale=scale, eft=eft, basis=basis)
         if cached is not None:
             return cached
+        if sectors  == 'all':
+            # the default value for sectors is "None" for translators
+            translate_sectors = None
+        else:
+            translate_sectors = sectors
         scale_ew = self.get_option('smeft_matchingscale')
         mb = self.get_option('mb_matchingscale')
         mc = self.get_option('mc_matchingscale')
@@ -170,7 +175,7 @@ class Wilson(ConfigurableClass):
         if self.wc.eft == 'SMEFT':
             smeft_accuracy = self.get_option('smeft_accuracy')
             if eft == 'SMEFT':
-                smeft = SMEFT(self.wc.translate('Warsaw'))
+                smeft = SMEFT(self.wc.translate('Warsaw', sectors=translate_sectors))
                 # if input and output EFT ist SMEFT, just run.
                 wc_out = smeft.run(scale, accuracy=smeft_accuracy)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
@@ -188,19 +193,19 @@ class Wilson(ConfigurableClass):
         else:
             raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
         if eft == wet.eft:  # just run
-            wc_out = wet.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors)
             self._set_cache(sectors, scale, eft, basis, wc_out)
             return wc_out
         elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS')
             wet4 = WETrunner(wc_mb, **self._wetrun_opt())
-            wc_out = wet4.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet4.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors)
             self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
             return wc_out
         elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
             wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS')
             wet3 = WETrunner(wc_mc, **self._wetrun_opt())
-            wc_out = wet3.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors)
             return wc_out
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
@@ -208,7 +213,7 @@ class Wilson(ConfigurableClass):
             wet4 = WETrunner(wc_mb, **self._wetrun_opt())
             wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS')
             wet3 = WETrunner(wc_mc, **self._wetrun_opt())
-            wc_out = wet3.run(scale, sectors=sectors).translate(basis)
+            wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors)
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
             return wc_out
         else:

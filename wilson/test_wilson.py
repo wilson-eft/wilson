@@ -75,11 +75,11 @@ class TestWilson(unittest.TestCase):
         for eft in ['WET', 'WET-4', 'WET-3']:
             wc = wcxf.WC(eft, 'flavio', 120, {'CVLL_sdsd': {'Im': 1}})
             ww = wilson.Wilson.from_wc(wc)
-            self.assertEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertEqual(ww.match_run(120, eft, 'flavio', ('sdsd',)).dict['CVLL_sdsd'], 1j)
             wc = wcxf.WC(eft, 'JMS', 120, {'VddLL_1212': {'Im': 1}})
             wc.validate()
             ww = wilson.Wilson.from_wc(wc)
-            self.assertAlmostEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertAlmostEqual(ww.match_run(120, eft, 'flavio', ('sdsd',)).dict['CVLL_sdsd'], 1j)
 
     def tets_repr(self):
         wc = wilson.Wilson.from_wc(wc)
