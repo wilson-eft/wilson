@@ -4,7 +4,7 @@ from wilson.util.qcd import alpha_s, m_b, m_c, m_s
 # All numbers compared to Mathemetica version of RunDec
 
 delta = 1e-8
-deltam = 1e-5
+deltam = 1e-4
 
 
 class TestMb(unittest.TestCase):
@@ -21,6 +21,18 @@ class TestMb(unittest.TestCase):
         self.assertAlmostEqual(m_b(4.2, 200, 6),
                                2.69632,
                                delta=deltam)
+        self.assertAlmostEqual(m_b(4.163, 50, 5, alphasMZ=0.1181, loop=5),
+                               3.00704,
+                               delta=deltam)
+        self.assertAlmostEqual(m_b(4.163, 2, 4, alphasMZ=0.1181, loop=5),
+                               4.94031,
+                               delta=deltam)
+        self.assertAlmostEqual(m_b(4.163, 1, 3, alphasMZ=0.1181, loop=5),
+                               6.55283,
+                               delta=deltam)
+        self.assertAlmostEqual(m_b(4.163, 200, 6, alphasMZ=0.1181, loop=5),
+                               2.67213,
+                               delta=deltam)
 
 
 class TestMc(unittest.TestCase):
@@ -34,6 +46,15 @@ class TestMc(unittest.TestCase):
         self.assertAlmostEqual(m_c(1.2, 1, 3),
                                1.32125,
                                delta=deltam)
+        self.assertAlmostEqual(m_c(1.279, 50, 5, alphasMZ=0.1181, loop=5),
+                               0.66840,
+                               delta=deltam)
+        self.assertAlmostEqual(m_c(1.279, 2, 4, alphasMZ=0.1181, loop=5),
+                               1.09811,
+                               delta=deltam)
+        self.assertAlmostEqual(m_c(1.279, 1, 3, alphasMZ=0.1181, loop=5),
+                               1.45654,
+                               delta=deltam)
 
 
 class TestMs(unittest.TestCase):
@@ -46,6 +67,15 @@ class TestMs(unittest.TestCase):
                                delta=deltam)
         self.assertAlmostEqual(m_s(0.1, 50, 5),
                                0.0607461,
+                               delta=deltam)
+        self.assertAlmostEqual(m_s(0.095, 1, 3, alphasMZ=0.1181, loop=5),
+                               0.12527,
+                               delta=deltam)
+        self.assertAlmostEqual(m_s(0.095, 2.5, 4, alphasMZ=0.1181, loop=5),
+                               0.08904,
+                               delta=deltam)
+        self.assertAlmostEqual(m_s(0.095, 50, 5, alphasMZ=0.1181, loop=5),
+                               0.05750,
                                delta=deltam)
 
 class TestAlphas(unittest.TestCase):
