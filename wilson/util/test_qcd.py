@@ -72,6 +72,12 @@ class TestAlphas(unittest.TestCase):
         self.assertAlmostEqual(alpha_s(10, 5),
                                0.17931693160062720703,
                                delta=delta)
+        self.assertAlmostEqual(alpha_s(100, 5, alphasMZ=0.1181, loop=5),
+                               0.1164747252483566,
+                               delta=delta)
+        self.assertAlmostEqual(alpha_s(10, 5, alphasMZ=0.1181, loop=5),
+                               0.17846838859679,
+                               delta=delta)
         # crazy values
         self.assertAlmostEqual(alpha_s(1, 5),
                                0.40957053067188524193,
@@ -84,6 +90,9 @@ class TestAlphas(unittest.TestCase):
         self.assertAlmostEqual(alpha_s(500, 6),
                                0.095517575136454583087,
                                delta=delta)
+        self.assertAlmostEqual(alpha_s(500, 6, alphasMZ=0.1181, loop=5),
+                               0.095272906877950202894,
+                               delta=delta)
         # crazy values
         self.assertAlmostEqual(alpha_s(50, 6),
                                0.12785358110125187370,
@@ -93,6 +102,9 @@ class TestAlphas(unittest.TestCase):
     def test_alphas_4(self):
         self.assertAlmostEqual(alpha_s(3, 4),
                                0.25604161478941490576,
+                               delta=delta)
+        self.assertAlmostEqual(alpha_s(3, 4, alphasMZ=0.1181, loop=5),
+                               0.25391329528950183050,
                                delta=delta)
         # crazy values
         self.assertAlmostEqual(alpha_s(1, 4),
@@ -106,6 +118,9 @@ class TestAlphas(unittest.TestCase):
     def test_alphas_3(self):
         self.assertAlmostEqual(alpha_s(0.9, 3),
                                0.527089,
+                               delta=1e-5)
+        self.assertAlmostEqual(alpha_s(0.9, 3, alphasMZ=0.1181, loop=5),
+                               0.517328,
                                delta=1e-5)
         # crazy values
         self.assertAlmostEqual(alpha_s(1000, 3),
