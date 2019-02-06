@@ -61,10 +61,10 @@ def m_b(mbmb, scale, f, alphasMZ=0.1185, loop=3):
     if scale == mbmb and f == 5:
         return mbmb  # nothing to do
     _sane(scale, f)
-    alphas_mb = alpha_s(mbmb, 5, alphasMZ=alphasMZ)
+    alphas_mb = alpha_s(mbmb, 5, alphasMZ=alphasMZ, loop=loop)
     crd = rundec.CRunDec()
     if f == 5:
-        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ)
+        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ, loop=loop)
         return crd.mMS2mMS(mbmb, alphas_mb, alphas_scale, f, loop)
     elif f == 4:
         crd.nfMmu.Mth = 4.8
@@ -80,7 +80,7 @@ def m_b(mbmb, scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.Mth = mc
         crd.nfMmu.muth = mc
         crd.nfMmu.nf = 4
-        alphas_mc = alpha_s(mc, 4, alphasMZ=alphasMZ)
+        alphas_mc = alpha_s(mc, 4, alphasMZ=alphasMZ, loop=loop)
         return crd.mH2mL(mbmc, alphas_mc, mc, crd.nfMmu, scale, loop)
     elif f == 6:
         crd.nfMmu.Mth = 170
@@ -99,9 +99,9 @@ def m_c(mcmc, scale, f, alphasMZ=0.1185, loop=3):
         return mcmc  # nothing to do
     _sane(scale, f)
     crd = rundec.CRunDec()
-    alphas_mc = alpha_s(mcmc, 4, alphasMZ=alphasMZ)
+    alphas_mc = alpha_s(mcmc, 4, alphasMZ=alphasMZ, loop=loop)
     if f == 4:
-        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ)
+        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ, loop=loop)
         return crd.mMS2mMS(mcmc, alphas_mc, alphas_scale, f, loop)
     elif f == 3:
         crd.nfMmu.Mth = 1.3
@@ -125,9 +125,9 @@ def m_s(ms2, scale, f, alphasMZ=0.1185, loop=3):
         return ms2  # nothing to do
     _sane(scale, f)
     crd = rundec.CRunDec()
-    alphas_2 = alpha_s(2, 3, alphasMZ=alphasMZ)
+    alphas_2 = alpha_s(2, 3, alphasMZ=alphasMZ, loop=loop)
     if f == 3:
-        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ)
+        alphas_scale = alpha_s(scale, f, alphasMZ=alphasMZ, loop=loop)
         return crd.mMS2mMS(ms2, alphas_2, alphas_scale, f, loop)
     elif f == 4:
         crd.nfMmu.Mth = 1.3
@@ -143,7 +143,7 @@ def m_s(ms2, scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.Mth = 4.8
         crd.nfMmu.muth = 4.8
         crd.nfMmu.nf = 5
-        alphas_mc = alpha_s(mc, 4, alphasMZ=alphasMZ)
+        alphas_mc = alpha_s(mc, 4, alphasMZ=alphasMZ, loop=loop)
         return crd.mL2mH(msmc, alphas_mc, mc, crd.nfMmu, scale, loop)
     else:
         raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
