@@ -185,7 +185,10 @@ class Wilson(ConfigurableClass):
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
                     smeft = SMEFT(self.wc.translate('Warsaw'))
-                    wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS')
+                    if self.wc.scale == scale_ew:
+                        wc_ew = self.wc.match('WET', 'JMS')  # no need to run
+                    else:
+                        wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS')
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew, **self._wetrun_opt())
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
