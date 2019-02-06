@@ -18,7 +18,7 @@ MZ = 91.1876
 
 @lru_cache(32)
 def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
-    """3-loop cumputation of alpha_s for f flavours
+    """3-loop computation of alpha_s for f flavours
     with initial condition alpha_s(MZ) = 0.1185"""
     if scale == MZ and f == 5:
         return alphasMZ  # nothing to do
