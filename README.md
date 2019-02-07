@@ -51,6 +51,7 @@ In alphabetical order:
 - Matthias Schöffel
 - Peter Stangl
 - David M. Straub
+- Jean-Loup Tastet
 
 ## License
 
