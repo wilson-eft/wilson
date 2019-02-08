@@ -171,7 +171,7 @@ def rotate_down(C_in, p):
                          UdL.conj(), UdL,
                          C_in[k])
     # type dL X dL X
-    for k in ['S1ddRR', ]:
+    for k in ['S1ddRR', 'S8ddRR']:
         C[k] = np.einsum('ia,kc,ijkl->ajcl',
                          UdL.conj(), UdL.conj(),
                          C_in[k])
