@@ -155,6 +155,7 @@ def rotate_down(C_in, p):
     C = C_in.copy()
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     UdL = V
+    ## B conserving operators
     # type dL dL dL dL
     for k in ['VddLL']:
         C[k] = np.einsum('ia,jb,kc,ld,ijkl->abcd',
@@ -190,6 +191,22 @@ def rotate_down(C_in, p):
     for k in ['SedRL', ]:
         C[k] = np.einsum('ld,ijkl->ijkd',
                          UdL,
+                         C_in[k])
+    ## DeltaB=DeltaL=1 operators
+    # type dL X X X
+    for k in ['SduuLL',  'SduuLR']:
+        C[k] = np.einsum('ia,ijkl->ajkl',
+                         UdL,
+                         C_in[k])
+    # type X X dL X
+    for k in ['SuudRL', 'SdudRL']:
+        C[k] = np.einsum('kc,ijkl->ijcl',
+                         UdL,
+                         C_in[k])
+    # type X dL dL X
+    for k in ['SuddLL']:
+        C[k] = np.einsum('jb,kc,ijkl->ibcl',
+                         UdL, UdL,
                          C_in[k])
     return C
 
