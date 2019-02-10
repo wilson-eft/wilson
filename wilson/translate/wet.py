@@ -1560,7 +1560,8 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
                                             'db'+'l_'+l+'nu_'+lp),
                                             'db'+'l_'+l+'nu_'+lp, p,
                                             norm_gf=True))
-            if sectors is None or ('sd' in sectors and l == lp) or ('sd'+ l + lp in sectors):
+            # not how both sd<->ds and l,lp<->lp,l are interchanged!
+            if sectors is None or ('sd' in sectors and l == lp) or ('sd'+ lp + l in sectors):
                 d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
                                             'ds'+'l_'+l+'nu_'+lp),
                                             'ds'+'l_'+l+'nu_'+lp, p,
@@ -1583,15 +1584,15 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
         d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'ds'), 'ds', p))
 
     # Class VII
-    if sectors is None or 'dF=0' in sectors:
+    if sectors is None or 'dF=0' in sectors or 'ffnunu' in sectors:
         d.update(_JMS_to_Flavio_VII(Cflat, p))
 
     # LFV
     dlep = {}
     if sectors is None or bool(set(sectors) & {'nunumue', 'nunumutau', 'nunutaue'}):
-        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8')))
-    if sectors is None or bool(set(sectors) & {'mutau', 'mue', 'taue', 'tauetaue', 'taumutaumu', 'muemue', 'muemutau', 'etauemu', 'tauetaumu'}):
         dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    if sectors is None or bool(set(sectors) & {'mutau', 'mue', 'taue', 'tauetaue', 'taumutaumu', 'muemue', 'muemutau', 'etauemu', 'tauetaumu'}):
+        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8')))
     for jkey, fkey in dlep.items():
         if jkey in Cflat:
             d[fkey] = Cflat[jkey]
