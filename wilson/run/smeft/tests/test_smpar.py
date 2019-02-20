@@ -118,7 +118,7 @@ class TestSMpar(unittest.TestCase):
         Cboth.update(smeft.C_in)
         Cback = smpar.smpar(Cboth)
         for k in smpar.p:
-            if k not in ['m_Z', 'gamma']:
+            if k not in ['m_Z', 'delta']:
                 self.assertAlmostEqual(smpar.p[k], Cback[k],
                                        msg="Failed for {}".format(k))
 
@@ -137,7 +137,7 @@ class TestSMpar(unittest.TestCase):
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
                                        msg="Failed for {}".format(k),
                                        delta=0.05)
-            elif k in ['gamma']:
+            elif k in ['delta']:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
                                        msg="Failed for {}".format(k),
                                        delta=1e-3)

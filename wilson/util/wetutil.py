@@ -153,7 +153,7 @@ def rotate_down(C_in, p):
     C_in is expected to be an array-valued dictionary containg a key
     for all Wilson coefficient matrices."""
     C = C_in.copy()
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     UdL = V
     ## B conserving operators
     # type dL dL dL dL
