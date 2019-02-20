@@ -3,6 +3,7 @@ import wcxf
 import wilson
 import numpy as np
 import pkgutil
+import voluptuous as vol
 
 
 np.random.seed(235)
@@ -134,6 +135,22 @@ class TestWilsonConfig(unittest.TestCase):
         self.assertEqual(w.get_option('smeft_accuracy'), 'leadinglog')
         with self.assertRaises(KeyError):
             w.get_option('my_config_doesntexist')
+
+    def test_config_parameters(self):
+        w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        with self.assertRaises(vol.MultipleInvalid):
+            # value must be dict
+            w.set_option('parameters', 4)
+        with self.assertRaises(vol.MultipleInvalid):
+            # dict value must be number
+            w.set_option('parameters', {'bla': 'blo'})
+        # int should be OK but corced to float
+        w.set_option('parameters', {'bla': 1})
+        self.assertTrue(type(w.get_option('parameters')['bla']), float)
+        self.assertEqual(w.get_option('parameters'), {'bla': 1.})
+        w.set_option('parameters', {'m_b': 4.0})
+        self.assertEqual(w.get_option('parameters'), {'m_b': 4.0})
+        self.assertEqual(w.parameters['m_b'], 4.0)
 
     def test_clearcache(self):
         w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')
