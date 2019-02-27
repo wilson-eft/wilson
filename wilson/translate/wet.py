@@ -1869,61 +1869,82 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
     # Class I
     for qq in ['bs', 'bd', 'sd', 'uc']:
         qqr = qq[::-1]
-        d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
+        if sectors is None or 2*qqr in sectors or 2*qq in sectors:
+            d.update(_Bern_to_JMS_I(_FlavioI_to_Bern_I(C, qq), qqr))
 
     # Class II
     for l in lflav.keys():
         for lp in lflav.keys():
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
-                d.update(_Bern_to_JMS_II(_FlavioII_to_BernII(C,
-                                         qq+'l_'+l+'nu_'+lp, p),
-                                         qq+'l_'+l+'nu_'+lp))
+                if sectors is None or qq+l+'nu' in sectors:
+                    d.update(_Bern_to_JMS_II(_FlavioII_to_BernII(C,
+                                             qq+'l_'+l+'nu_'+lp, p),
+                                             qq+'l_'+l+'nu_'+lp))
 
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
-            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
-                                        'sb'+'l_'+l+'nu_'+lp, p),
-                                        'sb'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
-                                        'db'+'l_'+l+'nu_'+lp, p),
-                                        'db'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
-                                        'ds'+'l_'+l+'nu_'+lp, p),
-                                        'ds'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
-                                        'sb'+'l_'+l+'nu_'+lp, p),
-                                        'sb'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
-                                        'db'+'l_'+l+'nu_'+lp, p),
-                                        'db'+'l_'+l+'nu_'+lp))
-            d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
-                                        'ds'+'l_'+l+'nu_'+lp, p),
-                                        'ds'+'l_'+l+'nu_'+lp))
+            # ddll
+            if sectors is None or ('sb' in sectors and l == lp) or ('sb'+ l + lp in sectors):
+                d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                            'sb'+'l_'+l+'nu_'+lp, p),
+                                            'sb'+'l_'+l+'nu_'+lp))
+            if sectors is None or ('db' in sectors and l == lp) or ('db'+ l + lp in sectors):
+                d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                            'db'+'l_'+l+'nu_'+lp, p),
+                                            'db'+'l_'+l+'nu_'+lp))
+            # not how both sd<->ds and l,lp<->lp,l are interchanged!
+            if sectors is None or ('sd' in sectors and l == lp) or ('sd'+ lp + l in sectors):
+                d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                            'ds'+'l_'+l+'nu_'+lp, p),
+                                            'ds'+'l_'+l+'nu_'+lp))
+            # ddnunu
+            if sectors is None or 'sbnunu' in sectors:
+                d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
+                                            'sb'+'l_'+l+'nu_'+lp, p),
+                                            'sb'+'l_'+l+'nu_'+lp))
+            if sectors is None or 'dbnunu' in sectors:
+                d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
+                                            'db'+'l_'+l+'nu_'+lp, p),
+                                            'db'+'l_'+l+'nu_'+lp))
+            if sectors is None or 'sdnunu' in sectors:
+                d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
+                                            'ds'+'l_'+l+'nu_'+lp, p),
+                                            'ds'+'l_'+l+'nu_'+lp))
 
 
     # Class V non-leptonic
     for qq1 in ['ds', 'sb', 'db']:
-        for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
-            qqqq = qq1 + qq2
-            d.update(_Fierz_to_JMS_III_IV_V(_Flavio_to_Fierz_V(C, qqqq, p),
-                                            qqqq))
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+            for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
+                qqqq = qq1 + qq2
+                d.update(_Fierz_to_JMS_III_IV_V(_Flavio_to_Fierz_V(C, qqqq, p),
+                                                qqqq))
 
     # Class V chromomagnetic
-    for qq in ['sb', 'db', 'ds']:
-        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, qq, p), qq))
+    if sectors is None or 'sb' in sectors:
+        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'sb', p), 'sb'))
+    if sectors is None or 'db' in sectors:
+        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'db', p), 'db'))
+    if sectors is None or 'sd' in sectors:
+        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'ds', p), 'ds'))
 
     # Class VII
-    d.update(_Flavio_to_JMS_VII(C, p))
+    if sectors is None or 'dF=0' in sectors or 'ffnunu' in sectors:
+        d.update(_Flavio_to_JMS_VII(C, p))
 
+    dlep = {}
     # LFV & ddll
-    dlep = json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8'))
-    dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    if sectors is None or bool(set(sectors) & {'nunumue', 'nunumutau', 'nunutaue'}):
+        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_nunull.json').decode('utf8')))
+    if sectors is None or bool(set(sectors) & {'mutau', 'mue', 'taue', 'tauetaue', 'taumutaumu', 'muemue', 'muemutau', 'etauemu', 'tauetaumu'}):
+        dlep.update(json.loads(pkgutil.get_data('wilson', 'data/flavio_jms_lfv.json').decode('utf8')))
     for jkey, fkey in dlep.items():
         if fkey in C:
             d[jkey] = C[fkey]
 
-    return {k: v for k,v in d.items()}
+    return d
+
 
 def FlavorKit_to_JMS(C, scale, parameters=None, sectors=None):
     p = get_parameters(scale, f=5, input_parameters=parameters)
