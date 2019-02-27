@@ -203,7 +203,7 @@ class Wilson(ConfigurableClass):
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew, **self._wetrun_opt())
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
-            wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters), **self._wetrun_opt())
+            wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors), **self._wetrun_opt())
         else:
             raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
         if eft == wet.eft:  # just run
