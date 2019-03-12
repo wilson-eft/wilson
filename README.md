@@ -15,7 +15,7 @@ python3 -m pip install wilson
 
 ## Documentation
 
-A brief user manual can be found in the paper cited below. More information can be found on the [project web site](https://wilson.github.io).
+A brief user manual can be found in the paper cited below. More information can be found on the [project web site](https://wilson-eft.github.io).
 
 ## Citation
 
