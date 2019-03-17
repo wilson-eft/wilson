@@ -122,6 +122,12 @@ class Wilson(ConfigurableClass):
         self.wc.validate()
         self._cache = {}
 
+    def __hash__(self):
+        """Return a hash of the `Wilson` instance.
+        The hash changes when Wilson coefficient values or options are modified.
+        It assumes that `wcxf.WC` instances are not modified after instantiation."""
+        return hash((self.wc, frozenset(self._options)))
+
     @classmethod
     def from_wc(cls, wc):
         """Return a `Wilson` instance initialized by a `wcxf.WC` instance"""
