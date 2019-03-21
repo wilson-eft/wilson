@@ -707,6 +707,8 @@ def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
         xi = V[2, 2] * V[2, 0].conj()
     elif qqqq[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qqqq[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(qqqq[:2]))
     pf = sqrt(2) / p['GF'] / xi / 4
@@ -760,11 +762,13 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
         xi = V[2, 2] * V[2, 0].conj()
     elif qqqq[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qqqq[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(qqqq[:2]))
     pf = 4 * p['GF'] /sqrt(2) * xi
     qqqq_fl = qqqq[1] + qqqq[0] + qqqq[2:]  # 1st two indices flipped for flavio
-    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb']:
+    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb', 'ucuu', 'uccc']:
         return {
             'F' + qqqq + '1': pf * Cqqqq['CVLL_' + qqqq_fl],
             'F' + qqqq + '3': pf * Cqqqq['CVLR_' + qqqq_fl],
@@ -777,7 +781,7 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
             'F' + qqqq + '7p': pf * Cqqqq['CSLR_' + qqqq_fl],
             'F' + qqqq + '9p': pf * Cqqqq['CTLL_' + qqqq_fl],
         }
-    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd']:
+    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd', 'ucdd', 'ucss', 'ucbb']:
         return {
             'F' + qqqq + '1': pf * Cqqqq['CVLL_' + qqqq_fl],
             'F' + qqqq + '2': pf * Cqqqq['CVLLt_' + qqqq_fl],
@@ -859,8 +863,12 @@ def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
 def JMS_to_Fierz_lep(C, ddll):
     """From JMS to semileptonic Fierz basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
-    s = dflav[ddll[0]]
-    b = dflav[ddll[1]]
+    if ddll[:2] == 'uc':
+        s = uflav[ddll[0]]
+        b = uflav[ddll[1]]
+    else:
+        s = dflav[ddll[0]]
+        b = dflav[ddll[1]]
     l = lflav[ddll[4:ddll.find('n')]]
     lp = lflav[ddll[ddll.find('_',5)+1:len(ddll)]]
     ind = ddll.replace('l_','').replace('nu_','')
@@ -904,8 +912,12 @@ def JMS_to_Fierz_nunu(C, ddll):
 def Fierz_to_JMS_lep(C, ddll):
     """From Fierz to semileptonic JMS basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
-    s = str(dflav[ddll[0]] + 1)
-    b = str(dflav[ddll[1]] + 1)
+    if ddll[:2] == 'uc':
+        s = str(uflav[ddll[0]] + 1)
+        b = str(uflav[ddll[1]] + 1)
+    else:
+        s = str(dflav[ddll[0]] + 1)
+        b = str(dflav[ddll[1]] + 1)
     l = str(lflav[ddll[4:ddll.find('n')]] + 1)
     lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
@@ -1013,6 +1025,8 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
         xi = V[2, 2] * V[2, 0].conj()
     elif ddll[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif ddll[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
     q1, q2 = ddll[:2]
@@ -1026,6 +1040,8 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
         mq = parameters['m_b']
     elif ddll[:2] == 'ds':
         mq = parameters['m_s']
+    elif ddll[:2] == 'uc':
+        mq = parameters['m_c']
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
@@ -1090,6 +1106,8 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
         xi = V[2, 2] * V[2, 0].conj()
     elif ddll[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif ddll[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
     q1, q2 = ddll[:2]
@@ -1103,6 +1121,8 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
         mq = parameters['m_b']
     elif ddll[:2] == 'ds':
         mq = parameters['m_s']
+    elif ddll[:2] == 'uc':
+        mq = parameters['m_c']
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
@@ -1566,10 +1586,17 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
                                             'ds'+'l_'+l+'nu_'+lp),
                                             'ds'+'l_'+l+'nu_'+lp, p,
                                             norm_gf=True))
+            # uull
+            if sectors is None or ('cu' in sectors and l == lp):
+                if l == lp:
+                    d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
+                                                'uc'+'l_'+l+'nu_'+lp),
+                                                'uc'+'l_'+l+'nu_'+lp, p,
+                                                norm_gf=True))
 
     # Class V non-leptonic
-    for qq1 in ['ds', 'sb', 'db']:
-        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+    for qq1 in ['ds', 'sb', 'db', 'uc']:
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors) or (qq1 == 'uc' and 'cu' in sectors):
             for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
                 qqqq = qq1 + qq2
                 d.update(_Fierz_to_Flavio_V(_JMS_to_Fierz_III_IV_V(C, qqqq),
@@ -1911,11 +1938,17 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
                 d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
                                             'ds'+'l_'+l+'nu_'+lp, p),
                                             'ds'+'l_'+l+'nu_'+lp))
+            # uull
+            if sectors is None or ('cu' in sectors and l == lp):
+                if  l == lp:
+                    d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                                'uc'+'l_'+l+'nu_'+lp, p),
+                                                'uc'+'l_'+l+'nu_'+lp))
 
 
     # Class V non-leptonic
-    for qq1 in ['ds', 'sb', 'db']:
-        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+    for qq1 in ['ds', 'sb', 'db', 'uc']:
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors) or (qq1 == 'uc' and 'cu' in sectors):
             for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
                 qqqq = qq1 + qq2
                 d.update(_Fierz_to_JMS_III_IV_V(_Flavio_to_Fierz_V(C, qqqq, p),
