@@ -166,7 +166,12 @@ class TestFlavio2JMS(unittest.TestCase):
                   for i in '123'
                   for j in '123'
                   for k in '123'
-                  for l in '123']
+                  for l in '123'
+                  ] + ['TeuRR_{}{}{}{}'.format(i, j, k, l)
+                            for i in '123'
+                            for j in '123'
+                            for k in '123'
+                            for l in '123']
         _test_missing(self, self.to_wc, 'flavio',
                       ignore_coeffs=ignore,
                       ignore_sec=('dF=0',))
