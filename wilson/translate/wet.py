@@ -1345,19 +1345,10 @@ def Fierz_to_EOS_chrom(C, dd, parameters):
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
     mb = parameters['m_b']
-    ms = parameters['m_s']
-    dic = {"b->s::c7": 16 * pi**2 * mb / e * C["F7gamma" + dd] / (mb**2 - ms**2)
-                       -16 * pi**2 * ms / e * C["F7pgamma" + dd]
-                                                              / (mb**2 - ms**2),
-            "b->s::c7'": - 16 * pi**2  * ms / e * C["F7gamma" + dd]
-                                                    / (mb**2 - ms**2)
-                        + 16 * pi**2  * mb / e * C["F7pgamma" + dd]
-                                                        / (mb**2 - ms**2),
-            "b->s::c8": 16 * pi**2 * mb / gs * C["F8g" + dd] / (mb**2 - ms**2)
-                        - 16 * pi**2 * ms / gs * C["F8pg" + dd]
-                                                            / (mb**2 - ms**2),
-            "b->s::c8'": - 16 * pi**2 * ms / gs * C["F8g" + dd] / (mb**2 - ms**2)
-                        + 16 * pi**2 * mb / gs * C["F8pg" + dd] / (mb**2 - ms**2)
+    dic = {"b->s::c7": 16 * pi**2 / mb / e * C["F7gamma" + dd],
+            "b->s::c7'": 16 * pi**2 / mb / e * C["F7pgamma" + dd],
+            "b->s::c8": 16 * pi**2 / mb / gs * C["F8g" + dd],
+            "b->s::c8'": 16 * pi**2 / mb / gs * C["F8pg" + dd]
                 }
     prefactor = sqrt(2)/p['GF']/Vtb/Vts.conj()/4
     return {k: prefactor * v for k,v in dic.items()}
