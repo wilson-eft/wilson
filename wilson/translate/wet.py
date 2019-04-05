@@ -300,11 +300,41 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
             'S8udduRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate(),
             }
         return symmetrize_JMS_dict(d)
+    #case uudd
+    classVuudd = ['ucdd', 'ucss','ucbb']
+    if qqqq in classVuudd:
+        f3 = str(uflav[qqqq[0]] + 1)
+        f4 = str(uflav[qqqq[1]] + 1)
+        f1 = str(dflav[qqqq[2]] + 1)
+        f2 = str(dflav[qqqq[3]] + 1)
+        d = {'V1udLL_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1'] + F['F' + qqqq + '2'] / Nc,
+            'V8udLL_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '2'],
+            'V1duLR_' + f1 + f2 + f3 + f4: F['F' + qqqq + '3p'] + F['F' + qqqq + '4p'] / Nc,
+            'V8duLR_' + f1 + f2 + f3 + f4: 2 * F['F' + qqqq + '4p'],
+            'S1udRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '5'] + F['F' + qqqq + '6'] / Nc - 4 * F['F' + qqqq + '9'] - (4 * F['F' + qqqq + '10']) / Nc,
+            'S8udRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '6'] - 8 * F['F' + qqqq + '10'],
+            'S1udduRR_' + f3 + f2 + f1 + f4: -((8 * F['F' + qqqq + '9']) / Nc) - 8 * F['F' + qqqq + '10'],
+            'V8udduLR_' + f4 + f1 + f2 + f3: -F['F' + qqqq + '7p'].conjugate(),
+            'V1udduLR_' + f4 + f1 + f2 + f3: -(F['F' + qqqq + '7p'].conjugate() / (2 * Nc)) - F['F' + qqqq + '8p'].conjugate() / 2,
+            'S8udduRR_' + f3 + f2 + f1 + f4: -16 * F['F' + qqqq + '9'],
+            'V1udRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1p'] + F['F' + qqqq + '2p'] / Nc,
+            'V8udRR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '2p'],
+            'V1udLR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '3'] + F['F' + qqqq + '4'] / Nc,
+            'V8udLR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '4'],
+            'S1udRR_' + f4 + f3 + f2 + f1: F['F' + qqqq + '5p'].conjugate() + F['F' + qqqq + '6p'].conjugate() / Nc - 4 * F['F' + qqqq + '9p'].conjugate() - (4 * F['F' + qqqq + '10p'].conjugate()) /  Nc,
+            'S8udRR_' + f4 + f3 + f2 + f1: 2 * F['F' + qqqq + '6p'].conjugate() - 8 * F['F' + qqqq + '10p'].conjugate(),
+            'S1udduRR_' + f4 + f1 + f2 + f3: -((8 * F['F' + qqqq + '9p'].conjugate()) / Nc) - 8 * F['F' + qqqq + '10p'].conjugate(),
+            'V8udduLR_' + f3 + f2 + f1 + f4: -F['F' + qqqq + '7'],
+            'V1udduLR_' + f3 + f2 + f1 + f4: -(F['F' + qqqq + '7'] / (2 * Nc)) - F['F' + qqqq + '8'] / 2,
+            'S8udduRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate(),
+            }
+        return symmetrize_JMS_dict(d)
     #case dddd
     classIV = ['sbsd', 'dbds', 'bsbd']
     classVdddd = ['sbss', 'dbdd', 'dsdd', 'sbbb', 'dbbb', 'dsss']
     classVddddind = ['sbdd', 'dsbb', 'dbss']
-    if qqqq in classVdddd + classIV:
+    classVuuuu = ['ucuu', 'cucc', 'uccc', 'cuuu']
+    if qqqq in classVdddd + classIV + classVuuuu:
         # if 2nd and 4th or 1st and 3rd fields are the same, Fierz can be used
         # to express the even coeffs in terms of the odd ones
         for key in F:
@@ -312,13 +342,13 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
             # of the even WCs is actually present
             assert int(key[5:].replace('p', '')) % 2 == 1, "Unexpected key in Fierz basis: " + key
         for p in ['', 'p']:
-            if qqqq in ['sbbb', 'dbbb', 'dsss',]:
+            if qqqq in ['sbbb', 'dbbb', 'dsss', 'uccc']:
                 F['F' + qqqq + '2' + p] = F['F' + qqqq + '1' + p]
                 F['F' + qqqq + '4' + p] = -1 / 2 * F['F' + qqqq + '7' + p]
                 F['F' + qqqq + '6' + p] = -1 / 2 * F['F' + qqqq + '5' + p] - 6 * F['F' + qqqq + '9' + p]
                 F['F' + qqqq + '8' + p] = -2 * F['F' + qqqq + '3' + p]
                 F['F' + qqqq + '10' + p] = -1 / 8 * F['F' + qqqq + '5' + p] + 1 / 2 * F['F' + qqqq + '9' + p]
-            elif qqqq in ['sbss', 'dbdd', 'dsdd', 'sbsd', 'dbds', 'bsbd']:
+            elif qqqq in ['sbss', 'dbdd', 'dsdd', 'sbsd', 'dbds', 'bsbd', 'ucuu']:
                 notp = 'p' if p == '' else ''
                 F['F' + qqqq + '2' + p] = F['F' + qqqq + '1' + p]
                 F['F' + qqqq + '4' + p] = -1 / 2 * F['F' + qqqq + '7' + notp]
@@ -354,7 +384,6 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
         }
         return symmetrize_JMS_dict(d)
     #case uuuu
-    classVuuuu = ['ucuu', 'cucc']
     if qqqq in classVuuuu:
         f1 = str(uflav[qqqq[0]] + 1)
         f2 = str(uflav[qqqq[1]] + 1)
@@ -372,7 +401,7 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
         'S1uuRR_' + f1 + f4 + f3 + f2: -((8 * F['F' + qqqq + '9']) / Nc) - 8 * F['F' + qqqq + '10'],
         'S8uuRR_' + f3 + f2 + f1 + f4: -16 * F['F' + qqqq + '9'],
         'VuuRR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '1p'],
-        'VuuRR_' + f1 + f3 + f4 + f2: F['F' + qqqq + '2p'],
+        'VuuRR_' + f1 + f4 + f3 + f2: F['F' + qqqq + '2p'],
         'V1uuLR_' + f3 + f4 + f1 + f2: F['F' + qqqq + '3p'] + F['F' + qqqq + '4p'] / Nc,
         'V8uuLR_' + f3 + f4 + f1 + f2: 2 * F['F' + qqqq + '4p'],
         'S1uuRR_' + f4 + f3 + f2 + f1: F['F' + qqqq + '5p'].conjugate() + F['F' + qqqq + '6p'].conjugate() / Nc - 4 * F['F' + qqqq + '9p'].conjugate() - (4 * F['F' + qqqq + '10p'].conjugate()) /  Nc,
@@ -380,7 +409,7 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
         'V8uuLR_' + f3 + f2 + f1 + f4: -F['F' + qqqq + '7p'],
         'V1uuLR_' + f3 + f2 + f1 + f4: -(F['F' + qqqq + '7p'] / (2 * Nc)) - F['F' + qqqq + '8p'] / 2,
         'S1uuRR_' + f4 + f1 + f2 + f3: -((8 * F['F' + qqqq + '9p'].conjugate()) / Nc) - 8 * F['F' + qqqq + '10p'].conjugate(),
-        'S8uuRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p']
+        'S8uuRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate()
         }
         return symmetrize_JMS_dict(d)
     raise ValueError("Case not implemented: {}".format(qqqq))
@@ -434,6 +463,50 @@ def _JMS_to_Fierz_III_IV_V(C, qqqq):
             'F' + qqqq + '10p' : -C["S1udduRR"][f4, f1, f2, f3].conj() / 8
                                 + C["S8udduRR"][f4, f1, f2, f3].conj() / 16 / Nc
                             }
+    classVuudd = ['ucdd', 'ucss', 'ucbb']
+    if qqqq in classVuudd:
+        f3 = uflav[qqqq[0]]
+        f4 = uflav[qqqq[1]]
+        f1 = dflav[qqqq[2]]
+        f2 = dflav[qqqq[3]]
+        return {
+            'F' + qqqq + '1' : C["V1udLL"][f3, f4, f1, f2]
+                                - C["V8udLL"][f3, f4, f1, f2] / (2 * Nc),
+            'F' + qqqq + '2' : C["V8udLL"][f3, f4, f1, f2] / 2,
+            'F' + qqqq + '3p' : C["V1duLR"][f1, f2, f3, f4]
+                                - C["V8duLR"][f1, f2, f3, f4] / (2 * Nc),
+            'F' + qqqq + '4p' : C["V8duLR"][f1, f2, f3, f4] / 2,
+            'F' + qqqq + '5' : C["S1udRR"][f3, f4, f1, f2]
+                                - C["S8udduRR"][f3, f2, f1, f4] / 4
+                                - C["S8udRR"][f3, f4, f1, f2] / (2 * Nc),
+            'F' + qqqq + '6' : -C["S1udduRR"][f3, f2, f1, f4] / 2
+                                + C["S8udduRR"][f3, f2, f1, f4] /(4 * Nc)
+                                + C["S8udRR"][f3, f4, f1, f2] / 2,
+            'F' + qqqq + '7p' : -C["V8udduLR"][f4, f1, f2, f3].conj(),
+            'F' + qqqq + '8p' : -2 * C["V1udduLR"][f4, f1, f2, f3].conj()
+                                + C["V8udduLR"][f4, f1, f2, f3].conj() / Nc,
+            'F' + qqqq + '9' : -C["S8udduRR"][f3, f2, f1, f4] / 16,
+            'F' + qqqq + '10' : -C["S1udduRR"][f3, f2, f1, f4] / 8
+                                + C["S8udduRR"][f3, f2, f1, f4] / (16 * Nc),
+            'F' + qqqq + '1p' : C["V1udRR"][f3, f4, f1, f2]
+                                - C["V8udRR"][f3, f4, f1, f2] / (2 * Nc),
+            'F' + qqqq + '2p' : C["V8udRR"][f3, f4, f1, f2] / 2,
+            'F' + qqqq + '3' : C["V1udLR"][f3, f4, f1, f2]
+                                - C["V8udLR"][f3, f4, f1, f2] / (2 * Nc),
+            'F' + qqqq + '4' : C["V8udLR"][f3, f4, f1, f2] / 2,
+            'F' + qqqq + '5p' : C["S1udRR"][f4, f3, f2, f1].conj() -
+                                C["S8udduRR"][f4, f1, f2, f3].conj() / 4
+                                - C["S8udRR"][f4, f3, f2, f1].conj() / (2 * Nc),
+            'F' + qqqq + '6p' : -C["S1udduRR"][f4, f1, f2, f3].conj() / 2 +
+                                C["S8udduRR"][f4, f1, f2, f3].conj()/(4 * Nc)
+                                + C["S8udRR"][f4, f3, f2, f1].conj() / 2,
+            'F' + qqqq + '7' : -C["V8udduLR"][f3, f2, f1, f4],
+            'F' + qqqq + '8' : - 2 * C["V1udduLR"][f3, f2, f1, f4]
+                                + C["V8udduLR"][f3, f2, f1, f4] / Nc,
+            'F' + qqqq + '9p' : -C["S8udduRR"][f4, f1, f2, f3].conj() / 16,
+            'F' + qqqq + '10p' : -C["S1udduRR"][f4, f1, f2, f3].conj() / 8
+                                + C["S8udduRR"][f4, f1, f2, f3].conj() / 16 / Nc
+                            }
     #case dddd
     classIV = ['sbsd', 'dbds', 'bsbd']
     classVdddd = ['sbss', 'dbdd', 'dsdd', 'sbbb', 'dbbb', 'dsss']
@@ -480,7 +553,7 @@ def _JMS_to_Fierz_III_IV_V(C, qqqq):
                                     C["S8ddRR"][f4, f1, f2, f3].conj() / 16 / Nc
                                     }
     #case uuuu
-    classVuuuu = ['ucuu', 'cucc']
+    classVuuuu = ['ucuu', 'cucc', 'cuuu', 'uccc']
     if qqqq in classVuuuu:
         f1 = uflav[qqqq[0]]
         f2 = uflav[qqqq[1]]
@@ -707,11 +780,13 @@ def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
         xi = V[2, 2] * V[2, 0].conj()
     elif qqqq[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qqqq[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(qqqq[:2]))
     pf = sqrt(2) / p['GF'] / xi / 4
     qqqq_fl = qqqq[1] + qqqq[0] + qqqq[2:]  # 1st two indices flipped for flavio
-    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb']:
+    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb', 'ucuu', 'uccc']:
         return {
             'CVLL_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '1'],
             'CVLR_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '3'],
@@ -724,7 +799,7 @@ def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
             'CSLR_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '7p'],
             'CTLL_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '9p'],
         }
-    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd']:
+    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd', 'ucdd', 'ucss', 'ucbb']:
         return {
             'CVLL_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '1'],
             'CVLLt_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '2'],
@@ -760,11 +835,13 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
         xi = V[2, 2] * V[2, 0].conj()
     elif qqqq[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qqqq[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(qqqq[:2]))
     pf = 4 * p['GF'] /sqrt(2) * xi
     qqqq_fl = qqqq[1] + qqqq[0] + qqqq[2:]  # 1st two indices flipped for flavio
-    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb']:
+    if qqqq in ['dsss', 'dsdd', 'dbbb', 'dbdd', 'sbss', 'sbbb', 'ucuu', 'uccc']:
         return {
             'F' + qqqq + '1': pf * Cqqqq['CVLL_' + qqqq_fl],
             'F' + qqqq + '3': pf * Cqqqq['CVLR_' + qqqq_fl],
@@ -777,7 +854,7 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
             'F' + qqqq + '7p': pf * Cqqqq['CSLR_' + qqqq_fl],
             'F' + qqqq + '9p': pf * Cqqqq['CTLL_' + qqqq_fl],
         }
-    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd']:
+    elif qqqq in ['dsuu', 'dscc', 'dsbb', 'dbuu', 'dbcc', 'dbss', 'sbuu', 'sbcc', 'sbdd', 'ucdd', 'ucss', 'ucbb']:
         return {
             'F' + qqqq + '1': pf * Cqqqq['CVLL_' + qqqq_fl],
             'F' + qqqq + '2': pf * Cqqqq['CVLLt_' + qqqq_fl],
@@ -859,32 +936,38 @@ def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
 def JMS_to_Fierz_lep(C, ddll):
     """From JMS to semileptonic Fierz basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
-    s = dflav[ddll[0]]
-    b = dflav[ddll[1]]
+    if ddll[:2] == 'uc':
+        s = uflav[ddll[0]]
+        b = uflav[ddll[1]]
+        q = 'u'
+    else:
+        s = dflav[ddll[0]]
+        b = dflav[ddll[1]]
+        q = 'd'
     l = lflav[ddll[4:ddll.find('n')]]
     lp = lflav[ddll[ddll.find('_',5)+1:len(ddll)]]
     ind = ddll.replace('l_','').replace('nu_','')
     return {
-        'F' + ind + '9' : C["VdeLR"][s, b, l, lp] / 2
-                          + C["VedLL"][l, lp, s, b] / 2,
-        'F' + ind + '10' : C["VdeLR"][s, b, l, lp] / 2
-                           - C["VedLL"][l, lp, s, b] / 2,
-        'F' + ind + 'S' : C["SedRL"][lp, l, b, s].conj() / 2
-                          + C["SedRR"][l, lp, s, b] / 2,
-        'F' + ind + 'P' : - C["SedRL"][lp, l, b, s].conj() / 2
-                          + C["SedRR"][l, lp, s, b] / 2,
-        'F' + ind + 'T' : C["TedRR"][l, lp, s, b] / 2
-                          + C["TedRR"][lp, l, b, s].conj() / 2,
-        'F' + ind + 'T5' : C["TedRR"][l, lp, s, b] / 2
-                           - C["TedRR"][lp, l, b, s].conj() / 2,
-        'F' + ind + '9p' : C["VedLR"][l, lp, s, b] / 2
-                           + C["VedRR"][l, lp, s, b] / 2,
-        'F' + ind + '10p' : -C["VedLR"][l, lp, s, b] / 2
-                            + C["VedRR"][l, lp, s, b] / 2,
-        'F' + ind + 'Sp' : C["SedRL"][l, lp, s, b] / 2
-                           + C["SedRR"][lp, l, b, s].conj() / 2,
-        'F' + ind + 'Pp' : C["SedRL"][l, lp, s, b] / 2
-                            - C["SedRR"][lp, l, b, s].conj() / 2,
+        'F' + ind + '9' : C["V" + q + "eLR"][s, b, l, lp] / 2
+                          + C["Ve" + q + "LL"][l, lp, s, b] / 2,
+        'F' + ind + '10' : C["V" + q + "eLR"][s, b, l, lp] / 2
+                           - C["Ve" + q + "LL"][l, lp, s, b] / 2,
+        'F' + ind + 'S' : C["Se" + q + "RL"][lp, l, b, s].conj() / 2
+                          + C["Se" + q + "RR"][l, lp, s, b] / 2,
+        'F' + ind + 'P' : - C["Se" + q + "RL"][lp, l, b, s].conj() / 2
+                          + C["Se" + q + "RR"][l, lp, s, b] / 2,
+        'F' + ind + 'T' : C["Te" + q + "RR"][l, lp, s, b] / 2
+                          + C["Te" + q + "RR"][lp, l, b, s].conj() / 2,
+        'F' + ind + 'T5' : C["Te" + q + "RR"][l, lp, s, b] / 2
+                           - C["Te" + q + "RR"][lp, l, b, s].conj() / 2,
+        'F' + ind + '9p' : C["Ve" + q + "LR"][l, lp, s, b] / 2
+                           + C["Ve" + q + "RR"][l, lp, s, b] / 2,
+        'F' + ind + '10p' : -C["Ve" + q + "LR"][l, lp, s, b] / 2
+                            + C["Ve" + q + "RR"][l, lp, s, b] / 2,
+        'F' + ind + 'Sp' : C["Se" + q + "RL"][l, lp, s, b] / 2
+                           + C["Se" + q + "RR"][lp, l, b, s].conj() / 2,
+        'F' + ind + 'Pp' : C["Se" + q + "RL"][l, lp, s, b] / 2
+                            - C["Se" + q + "RR"][lp, l, b, s].conj() / 2,
         }
 
 def JMS_to_Fierz_nunu(C, ddll):
@@ -904,22 +987,28 @@ def JMS_to_Fierz_nunu(C, ddll):
 def Fierz_to_JMS_lep(C, ddll):
     """From Fierz to semileptonic JMS basis for Class V.
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
-    s = str(dflav[ddll[0]] + 1)
-    b = str(dflav[ddll[1]] + 1)
+    if ddll[:2] == 'uc':
+        s = str(uflav[ddll[0]] + 1)
+        b = str(uflav[ddll[1]] + 1)
+        q = 'u'
+    else:
+        s = str(dflav[ddll[0]] + 1)
+        b = str(dflav[ddll[1]] + 1)
+        q = 'd'
     l = str(lflav[ddll[4:ddll.find('n')]] + 1)
     lp = str(lflav[ddll[ddll.find('_',5)+1:len(ddll)]] + 1)
     ind = ddll.replace('l_','').replace('nu_','')
     d = {
-        "VedLL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
-        "VdeLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
-        "SedRR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
-        "SedRL" + '_' + lp + l + b + s : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
-        "TedRR" + '_' + lp + l + b + s : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
-        "TedRR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
-        "VedLR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
-        "VedRR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
-        "SedRL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
-        "SedRR" + '_' + lp + l + b + s : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
+        "Ve" + q + "LL" + '_' + l + lp + s + b  : -C['F' + ind + '10'] + C['F' + ind + '9'],
+        "V" + q + "eLR" + '_' + s + b + l + lp : C['F' + ind + '10'] + C['F' + ind + '9'],
+        "Se" + q + "RR" + '_' + l + lp + s + b : C['F' + ind + 'P'] + C['F' + ind + 'S'],
+        "Se" + q + "RL" + '_' + lp + l + b + s : -C['F' + ind + 'P'].conjugate() + C['F' + ind + 'S'].conjugate(),
+        "Te" + q + "RR" + '_' + lp + l + b + s : C['F' + ind + 'T'].conjugate() - C['F' + ind + 'T5'].conjugate(),
+        "Te" + q + "RR" + '_' + l + lp + s + b : C['F' + ind + 'T'] + C['F' + ind + 'T5'],
+        "Ve" + q + "LR" + '_' + l + lp + s + b : -C['F' + ind + '10p'] + C['F' + ind + '9p'],
+        "Ve" + q + "RR" + '_' + l + lp + s + b : C['F' + ind + '10p'] + C['F' + ind + '9p'],
+        "Se" + q + "RL" + '_' + l + lp + s + b : C['F' + ind + 'Pp'] + C['F' + ind + 'Sp'],
+        "Se" + q + "RR" + '_' + lp + l + b + s : -C['F' + ind + 'Pp'].conjugate() + C['F' + ind + 'Sp'].conjugate(),
     }
     return symmetrize_JMS_dict(d)
 
@@ -1013,6 +1102,8 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
         xi = V[2, 2] * V[2, 0].conj()
     elif ddll[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif ddll[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
     q1, q2 = ddll[:2]
@@ -1026,6 +1117,8 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
         mq = parameters['m_b']
     elif ddll[:2] == 'ds':
         mq = parameters['m_s']
+    elif ddll[:2] == 'uc':
+        mq = parameters['m_c']
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
@@ -1090,6 +1183,8 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
         xi = V[2, 2] * V[2, 0].conj()
     elif ddll[:2] == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif ddll[:2] == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
         raise ValueError("Unexpected flavours: {}".format(ddll[:2]))
     q1, q2 = ddll[:2]
@@ -1103,6 +1198,8 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
         mq = parameters['m_b']
     elif ddll[:2] == 'ds':
         mq = parameters['m_s']
+    elif ddll[:2] == 'uc':
+        mq = parameters['m_c']
     else:
         KeyError("Not sure what to do with quark mass for flavour {}".format(ddll[:2]))
     dic = {
@@ -1208,29 +1305,48 @@ def JMS_to_FormFlavor_lep(C, dd):
             }
 
 # chromomagnetic operators
-def JMS_to_Fierz_chrom(C, dd):
+def JMS_to_Fierz_chrom(C, qq):
     """From JMS to chromomagnetic Fierz basis for Class V.
     qq should be of the form 'sb', 'ds' etc."""
-    s = dflav[dd[0]]
-    b = dflav[dd[1]]
-    return {
-            'F7gamma' + dd : C['dgamma'][s, b],
-            'F8g' + dd : C['dG'][s, b],
-            'F7pgamma' + dd : C['dgamma'][b, s].conj(),
-            'F8pg' + dd : C['dG'][b, s].conj()
-                }
+    if qq[0] in dflav:
+        s = dflav[qq[0]]
+        b = dflav[qq[1]]
+        return {
+                'F7gamma' + qq : C['dgamma'][s, b],
+                'F8g' + qq : C['dG'][s, b],
+                'F7pgamma' + qq : C['dgamma'][b, s].conj(),
+                'F8pg' + qq : C['dG'][b, s].conj()
+                    }
+    else:
+        u = uflav[qq[0]]
+        c = uflav[qq[1]]
+        return {
+                'F7gamma' + qq : C['ugamma'][u, c],
+                'F8g' + qq : C['uG'][u, c],
+                'F7pgamma' + qq : C['ugamma'][c, u].conj(),
+                'F8pg' + qq : C['uG'][c, u].conj()
+                    }
 
 
-def Fierz_to_JMS_chrom(C, dd):
+def Fierz_to_JMS_chrom(C, qq):
     """From chromomagnetic Fierz to JMS basis for Class V.
     qq should be of the form 'sb', 'ds' etc."""
-    s = dflav[dd[0]] + 1
-    b = dflav[dd[1]] + 1
-    return {'dgamma_{}{}'.format(s, b): C['F7gamma' + dd],
-            'dG_{}{}'.format(s, b): C['F8g' + dd],
-            'dgamma_{}{}'.format(b, s): C['F7pgamma' + dd].conjugate(),
-            'dG_{}{}'.format(b, s): C['F8pg' + dd].conjugate(),
-            }
+    if qq[0] in dflav:
+        s = dflav[qq[0]] + 1
+        b = dflav[qq[1]] + 1
+        return {'dgamma_{}{}'.format(s, b): C['F7gamma' + qq],
+                'dG_{}{}'.format(s, b): C['F8g' + qq],
+                'dgamma_{}{}'.format(b, s): C['F7pgamma' + qq].conjugate(),
+                'dG_{}{}'.format(b, s): C['F8pg' + qq].conjugate(),
+                }
+    else:
+        u = uflav[qq[0]] + 1
+        c = uflav[qq[1]] + 1
+        return {'ugamma_{}{}'.format(u, c): C['F7gamma' + qq],
+                'uG_{}{}'.format(u, c): C['F8g' + qq],
+                'ugamma_{}{}'.format(c, u): C['F7pgamma' + qq].conjugate(),
+                'uG_{}{}'.format(c, u): C['F8pg' + qq].conjugate(),
+                }
 
 
 def Fierz_to_Bern_chrom(C, dd, parameters):
@@ -1271,65 +1387,73 @@ def Bern_to_Fierz_chrom(C, dd, parameters):
             }
 
 
-def Fierz_to_Flavio_chrom(C, dd, parameters):
+def Fierz_to_Flavio_chrom(C, qq, parameters):
     """From Fierz to chromomagnetic Flavio basis for Class V.
-    dd should be of the form 'sb', 'db' etc."""
+    qq should be of the form 'sb', 'db' etc."""
     p = parameters
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
-    if dd == 'sb':
+    if qq == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
-    elif dd == 'db':
+    elif qq == 'db':
         xi = V[2, 2] * V[2, 0].conj()
-    elif dd == 'ds':
+    elif qq == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qq == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
-        raise ValueError("Unexpected flavours: {}".format(dd))
-    ddfl = dd[::-1]
+        raise ValueError("Unexpected flavours: {}".format(qq))
+    qqfl = qq[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    if dd == 'sb' or dd == 'db':
+    if qq == 'sb' or qq == 'db':
         mq = parameters['m_b']
-    elif dd == 'ds':
+    elif qq == 'ds':
         mq = parameters['m_s']
+    elif qq == 'uc':
+        mq = parameters['m_c']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
+        KeyError("Not sure what to do with quark mass for flavour {}".format(qq))
     dic = {
-        "C7_" + ddfl : (16 * pi**2) / e / mq * C['F7gamma' + dd],
-        "C8_" + ddfl : (16 * pi**2) / gs / mq * C['F8g' + dd],
-        "C7p_" + ddfl : (16 * pi**2) / e / mq * C['F7pgamma' + dd],
-        "C8p_" + ddfl : (16 * pi**2) / gs / mq * C['F8pg' + dd]
+        "C7_" + qqfl : (16 * pi**2) / e / mq * C['F7gamma' + qq],
+        "C8_" + qqfl : (16 * pi**2) / gs / mq * C['F8g' + qq],
+        "C7p_" + qqfl : (16 * pi**2) / e / mq * C['F7pgamma' + qq],
+        "C8p_" + qqfl : (16 * pi**2) / gs / mq * C['F8pg' + qq]
             }
     prefactor = sqrt(2)/p['GF']/xi/4
     return {k: prefactor * v for k, v in dic.items()}
 
 
-def Flavio_to_Fierz_chrom(C, dd, parameters):
+def Flavio_to_Fierz_chrom(C, qq, parameters):
     """From Flavio to chromomagnetic Fierz basis for Class V.
-    dd should be of the form 'sb', 'db' etc."""
+    qq should be of the form 'sb', 'db' etc."""
     p = parameters
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
-    if dd == 'sb':
+    if qq == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
-    elif dd == 'db':
+    elif qq == 'db':
         xi = V[2, 2] * V[2, 0].conj()
-    elif dd == 'ds':
+    elif qq == 'ds':
         xi = V[2, 1] * V[2, 0].conj()
+    elif qq == 'uc':
+        xi = V[1, 2].conj() * V[0, 2]
     else:
-        raise ValueError("Unexpected flavours: {}".format(dd))
-    ddfl = dd[::-1]
+        raise ValueError("Unexpected flavours: {}".format(qq))
+    qqfl = qq[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
-    if dd == 'sb' or dd == 'db':
+    if qq == 'sb' or qq == 'db':
         mq = parameters['m_b']
-    elif dd == 'ds':
+    elif qq == 'ds':
         mq = parameters['m_s']
+    elif qq == 'uc':
+        mq = parameters['m_c']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
+        KeyError("Not sure what to do with quark mass for flavour {}".format(qq))
     dic = {
-        'F7gamma' + dd: C["C7_" + ddfl] / ((16 * pi**2) / e / mq),
-        'F8g' + dd: C["C8_" + ddfl] / ((16 * pi**2) / gs / mq),
-        'F7pgamma' + dd: C["C7p_" + ddfl] / ((16 * pi**2) / e / mq),
-        'F8pg' + dd: C["C8p_" + ddfl] / ((16 * pi**2) / gs / mq)
+        'F7gamma' + qq: C["C7_" + qqfl] / ((16 * pi**2) / e / mq),
+        'F8g' + qq: C["C8_" + qqfl] / ((16 * pi**2) / gs / mq),
+        'F7pgamma' + qq: C["C7p_" + qqfl] / ((16 * pi**2) / e / mq),
+        'F8pg' + qq: C["C8p_" + qqfl] / ((16 * pi**2) / gs / mq)
             }
     prefactor = sqrt(2)/p['GF']/xi/4
     return {k: v / prefactor for k, v in dic.items()}
@@ -1557,10 +1681,17 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
                                             'ds'+'l_'+l+'nu_'+lp),
                                             'ds'+'l_'+l+'nu_'+lp, p,
                                             norm_gf=True))
+            # uull
+            if sectors is None or ('cu' in sectors and l == lp):
+                if l == lp:
+                    d.update(Fierz_to_Flavio_lep(JMS_to_Fierz_lep(C,
+                                                'uc'+'l_'+l+'nu_'+lp),
+                                                'uc'+'l_'+l+'nu_'+lp, p,
+                                                norm_gf=True))
 
     # Class V non-leptonic
-    for qq1 in ['ds', 'sb', 'db']:
-        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+    for qq1 in ['ds', 'sb', 'db', 'uc']:
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors) or (qq1 == 'uc' and 'cu' in sectors):
             for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
                 qqqq = qq1 + qq2
                 d.update(_Fierz_to_Flavio_V(_JMS_to_Fierz_III_IV_V(C, qqqq),
@@ -1573,6 +1704,8 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
         d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'db'), 'db', p))
     if sectors is None or 'sd' in sectors:
         d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'ds'), 'ds', p))
+    if sectors is None or 'cu' in sectors:
+        d.update(Fierz_to_Flavio_chrom(JMS_to_Fierz_chrom(C, 'uc'), 'uc', p))
 
     # Class VII
     if sectors is None or 'dF=0' in sectors or 'ffnunu' in sectors:
@@ -1902,11 +2035,17 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
                 d.update(Fierz_to_JMS_nunu(Flavio_to_Fierz_nunu(C,
                                             'ds'+'l_'+l+'nu_'+lp, p),
                                             'ds'+'l_'+l+'nu_'+lp))
+            # uull
+            if sectors is None or ('cu' in sectors and l == lp):
+                if  l == lp:
+                    d.update(Fierz_to_JMS_lep(Flavio_to_Fierz_lep(C,
+                                                'uc'+'l_'+l+'nu_'+lp, p),
+                                                'uc'+'l_'+l+'nu_'+lp))
 
 
     # Class V non-leptonic
-    for qq1 in ['ds', 'sb', 'db']:
-        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors):
+    for qq1 in ['ds', 'sb', 'db', 'uc']:
+        if sectors is None or qq1 in sectors or (qq1 == 'ds' and 'sd' in sectors) or (qq1 == 'uc' and 'cu' in sectors):
             for qq2 in ['uu', 'dd', 'ss', 'cc', 'bb']:
                 qqqq = qq1 + qq2
                 d.update(_Fierz_to_JMS_III_IV_V(_Flavio_to_Fierz_V(C, qqqq, p),
@@ -1919,6 +2058,8 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
         d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'db', p), 'db'))
     if sectors is None or 'sd' in sectors:
         d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'ds', p), 'ds'))
+    if sectors is None or 'cu' in sectors:
+        d.update(Fierz_to_JMS_chrom(Flavio_to_Fierz_chrom(C, 'uc', p), 'uc'))
 
     # Class VII
     if sectors is None or 'dF=0' in sectors or 'ffnunu' in sectors:

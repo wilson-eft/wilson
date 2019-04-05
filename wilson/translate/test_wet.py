@@ -166,7 +166,12 @@ class TestFlavio2JMS(unittest.TestCase):
                   for i in '123'
                   for j in '123'
                   for k in '123'
-                  for l in '123']
+                  for l in '123'
+                  ] + ['TeuRR_{}{}{}{}'.format(i, j, k, l)
+                            for i in '123'
+                            for j in '123'
+                            for k in '123'
+                            for l in '123']
         _test_missing(self, self.to_wc, 'flavio',
                       ignore_coeffs=ignore,
                       ignore_sec=('dF=0',))
@@ -349,7 +354,7 @@ class TestBern2flavio(unittest.TestCase):
         fkeys = set(self.to_wc.values.keys())
         fkeys_all = set([k for sname, s in wcxf.Basis['WET', 'flavio'].sectors.items()
                          for k in s
-                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu', 'etauemu', 'muemutau']])  # LFV, dF=0 not in Bern
+                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu', 'etauemu', 'muemutau', 'cu']])  # LFV, dF=0, dC=1 not in Bern
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2Bern(unittest.TestCase):
