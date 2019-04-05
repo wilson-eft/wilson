@@ -1,4 +1,4 @@
-<a href="https://travis-ci.org/wilson-eft/wilson">![Build Status](https://travis-ci.org/wilson-eft/wilson.svg?branch=master)</a> [![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson) 
+<a href="https://travis-ci.org/wilson-eft/wilson">![Build Status](https://travis-ci.org/wilson-eft/wilson.svg?branch=master)</a> [![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson)
 
 # wilson – running and matching beyond the Standard Model
 
@@ -46,6 +46,7 @@ Please submit bugs and feature requests using
 In alphabetical order:
 
 - Jason Aebischer
+- Danny van Dyk
 - Jacky Kumar
 - Xuanyou Pan
 - Matthias Schöffel
