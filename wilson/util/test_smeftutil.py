@@ -5,6 +5,8 @@ from wilson.run.smeft import beta
 from wilson.util import smeftutil
 from wilson.run.smeft.tests import test_beta
 from wilson.test_wilson import get_random_wc
+import wcxf
+from numbers import Number
 
 C = test_beta.C.copy()
 for i in C:
@@ -76,3 +78,11 @@ class TestSymm(unittest.TestCase):
         d = smeftutil.arrays2wcxf_nonred(C)
         for k, v in wc.dict.items():
             self.assertAlmostEqual(v, d[k], msg="Failed for {}".format(k))
+
+    def test_wcxf2array_incomplete(self):
+        wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'G': 1e-10})
+        C = smeftutil.wcxf2arrays_symmetrized(wc.dict)
+        d = smeftutil.arrays2wcxf_nonred(C)
+        for k, v in d.items():
+            self.assertEqual(v, wc[k], msg="Failed for {}".format(k))
+            self.assertIsInstance(v, Number)
