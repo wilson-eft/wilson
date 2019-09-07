@@ -172,7 +172,7 @@ class Wilson(ConfigurableClass):
             if eft == 'SMEFT':
                 smeft = SMEFT(self.wc.translate('Warsaw'))
                 # if input and output EFT ist SMEFT, just run.
-                wc_out = smeft.run(scale, accuracy=smeft_accuracy)
+                wc_out = smeft.run(scale, accuracy=smeft_accuracy).translate(basis)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
                 return wc_out
             else:
