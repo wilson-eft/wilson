@@ -18,7 +18,7 @@ p['alpha_s'] = 0.1185
 p['Vus'] = 0.2243
 p['Vub'] = 3.62e-3
 p['Vcb'] = 4.221e-2
-p['gamma'] = 1.27
+p['delta'] = 1.27
 p['m_e'] = 0.000511
 p['m_mu'] = 0.1057
 p['m_tau'] = 1.777
@@ -121,7 +121,7 @@ def smeftpar(scale, C, basis):
     c['g'] = g
     c['gp'] = gp
     c['gs'] = gs
-    K = ckmutil.ckm.ckm_tree(p['Vus'], p['Vub'], p['Vcb'], p['gamma'])
+    K = ckmutil.ckm.ckm_tree(p['Vus'], p['Vub'], p['Vcb'], p['delta'])
     if basis == 'Warsaw':
         Mu = K.conj().T @ np.diag([p['m_u'], p['m_c'], p['m_t']])
         Md = np.diag([p['m_d'], p['m_s'], p['m_b']])
@@ -173,7 +173,7 @@ def smpar(C):
     sm['Vub'] = abs(K[0, 2])
     sm['Vcb'] = abs(K[1, 2])
     sm['Vus'] = abs(K[0, 1])
-    sm['gamma'] = phase(-K[0, 0] * K[0, 2].conj()
+    sm['delta'] = phase(-K[0, 0] * K[0, 2].conj()
                         / (K[1, 0] * K[1, 2].conj()))
     # sm['U'] = Uu
     sm['m_W'] = MW

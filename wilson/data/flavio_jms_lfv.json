@@ -220,5 +220,17 @@
   "TedRR_1333": "CTRR_tauebb",
   "TedRR_3111": "CTRR_etaudd",
   "TedRR_3122": "CTRR_etauss",
-  "TedRR_3133": "CTRR_etaubb"
+  "TedRR_3133": "CTRR_etaubb",
+  "VeeLL_1232": "CVLL_muemutau",
+  "VeeRR_1232": "CVRR_muemutau",
+  "VeeLR_1232": "CVLR_muemutau",
+  "VeeLR_2321": "CVLR_taumuemu",
+  "SeeRR_1232": "CSRR_muemutau",
+  "SeeRR_2123": "CSRR_emutaumu",
+  "VeeLL_1213": "CVLL_muetaue",
+  "VeeRR_1213": "CVRR_muetaue",
+  "VeeLR_1213": "CVLR_muetaue",
+  "VeeLR_1312": "CVLR_tauemue",
+  "SeeRR_1213": "CSRR_muetaue",
+  "SeeRR_2131": "CSRR_emuetau"
 }

@@ -5,6 +5,7 @@ import numpy as np
 import pkgutil
 from wilson.parameters import p
 import ckmutil.ckm, ckmutil.diag
+import voluptuous as vol
 
 
 np.random.seed(235)
@@ -77,11 +78,11 @@ class TestWilson(unittest.TestCase):
         for eft in ['WET', 'WET-4', 'WET-3']:
             wc = wcxf.WC(eft, 'flavio', 120, {'CVLL_sdsd': {'Im': 1}})
             ww = wilson.Wilson.from_wc(wc)
-            self.assertEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertEqual(ww.match_run(120, eft, 'flavio', ('sdsd',)).dict['CVLL_sdsd'], 1j)
             wc = wcxf.WC(eft, 'JMS', 120, {'VddLL_1212': {'Im': 1}})
             wc.validate()
             ww = wilson.Wilson.from_wc(wc)
-            self.assertAlmostEqual(ww.match_run(120, eft, 'flavio', 'sdsd').dict['CVLL_sdsd'], 1j)
+            self.assertAlmostEqual(ww.match_run(120, eft, 'flavio', ('sdsd',)).dict['CVLL_sdsd'], 1j)
 
     def tets_repr(self):
         wc = wilson.Wilson.from_wc(wc)
@@ -149,6 +150,22 @@ class TestWilsonConfig(unittest.TestCase):
         self.assertEqual(w.get_option('smeft_accuracy'), 'leadinglog')
         with self.assertRaises(KeyError):
             w.get_option('my_config_doesntexist')
+
+    def test_config_parameters(self):
+        w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
+        with self.assertRaises(vol.MultipleInvalid):
+            # value must be dict
+            w.set_option('parameters', 4)
+        with self.assertRaises(vol.MultipleInvalid):
+            # dict value must be number
+            w.set_option('parameters', {'bla': 'blo'})
+        # int should be OK but corced to float
+        w.set_option('parameters', {'bla': 1})
+        self.assertTrue(type(w.get_option('parameters')['bla']), float)
+        self.assertEqual(w.get_option('parameters'), {'bla': 1.})
+        w.set_option('parameters', {'m_b': 4.0})
+        self.assertEqual(w.get_option('parameters'), {'m_b': 4.0})
+        self.assertEqual(w.parameters['m_b'], 4.0)
 
     def test_clearcache(self):
         w = wilson.Wilson({'CVLL_sdsd': 1}, 160, 'WET', 'flavio')

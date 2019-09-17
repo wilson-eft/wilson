@@ -77,7 +77,6 @@ class SMEFT(object):
         if get_smpar:
             self.C_in.update(self._get_sm_scale_in())
 
-
     def _to_wcxf(self, C_out, scale_out):
         """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
 
@@ -161,6 +160,21 @@ class SMEFT(object):
         C_SM_high = smeft_sm._rgevolve(self.scale_in, newphys=False, rtol=0.001, atol=1)
         C_SM_high = self._rotate_defaultbasis(C_SM_high)
         return {k: v for k, v in C_SM_high.items() if k in SM_keys}
+
+    def get_smpar(self, accuracy='integrate', scale_sm=91.1876):
+        """Compute the SM MS-bar parameters at the electroweak scale.
+
+        This method can be used to validate the accuracy of the iterative
+        extraction of SM parameters. If successful, the values returned by this
+        method should agree with the values in the dictionary
+        `wilson.run.smeft.smpar.p`."""
+        if accuracy == 'integrate':
+            C_out = self._rgevolve(scale_sm)
+        elif accuracy == 'leadinglog':
+            C_out = self._rgevolve_leadinglog(scale_sm)
+        else:
+            raise ValueError("'{}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').".format(accuracy))
+        return smpar.smpar(C_out)
 
     def _get_sm_scale_in(self, scale_sm=91.1876):
         """Get an estimate of the SM parameters at the input scale by running

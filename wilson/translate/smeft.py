@@ -32,7 +32,7 @@ def smeft_fromarray(wc_name, C):
     return wc_dict
 
 
-def warsaw_to_warsawmass(C, parameters=None):
+def warsaw_to_warsawmass(C, parameters=None, sectors=None):
     """Translate from the Warsaw basis to the 'Warsaw mass' basis.
 
     Parameters used:
@@ -50,7 +50,7 @@ def warsaw_to_warsawmass(C, parameters=None):
     C_rotate_u = ['uphi', 'uG', 'uW', 'uB']
     for name in C_rotate_u:
         _array = smeft_toarray(name, C)
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
         UuL = V.conj().T
         _array = UuL.conj().T @ _array
         _dict = smeft_fromarray(name, _array)
@@ -63,7 +63,7 @@ def warsaw_to_warsawmass(C, parameters=None):
     return C_out
 
 
-def warsaw_to_warsaw_up(C, parameters=None):
+def warsaw_to_warsaw_up(C, parameters=None, sectors=None):
     """Translate from the Warsaw basis to the 'Warsaw mass' basis.
 
     Parameters used:
@@ -77,7 +77,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     Uu = Ud = Ul = Ue = np.eye(3)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     Uq = V.conj().T
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
@@ -86,7 +86,7 @@ def warsaw_to_warsaw_up(C, parameters=None):
     return {k: v for k, v in C_out.items() if k in allkeys}
 
 
-def warsaw_up_to_warsaw(C, parameters=None):
+def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
     """Translate from the 'Warsaw up' basis to the Warsaw basis.
 
     Parameters used:
@@ -100,7 +100,7 @@ def warsaw_up_to_warsaw(C, parameters=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     Uu = Ud = Ul = Ue = np.eye(3)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     Uq = V
     C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)

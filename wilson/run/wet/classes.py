@@ -6,7 +6,7 @@ import wcxf
 import wilson
 from wilson.util import qcd
 from wilson.run.wet import rge, definitions
-from wilson.run.wet.parameters import p as default_parameters
+from wilson.parameters import p as default_parameters
 from collections import OrderedDict
 import numpy as np
 

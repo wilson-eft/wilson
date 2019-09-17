@@ -58,6 +58,15 @@ class TestJMS2Flavio(unittest.TestCase):
         # the output WC instance should contain only one as well
         self.assertEqual(list(flavio_wc.dict.keys()), ['CVRR_bsbs'])
 
+    def test_sectors(self):
+        jms_wc = get_random_wc('WET', 'JMS')
+        sectors = wcxf.Basis['WET', 'flavio'].sectors.keys()
+        flavio_wc_1 = jms_wc.translate('flavio')
+        flavio_wc_2 = jms_wc.translate('flavio', sectors=None)
+        flavio_wc_3 = jms_wc.translate('flavio', sectors=sectors)
+        self.assertDictEqual(flavio_wc_1.dict, flavio_wc_2.dict)
+        self.assertDictEqual(flavio_wc_1.dict, flavio_wc_3.dict)
+
 
 class TestJMS2FlavioWET3(unittest.TestCase):
 
@@ -157,7 +166,12 @@ class TestFlavio2JMS(unittest.TestCase):
                   for i in '123'
                   for j in '123'
                   for k in '123'
-                  for l in '123']
+                  for l in '123'
+                  ] + ['TeuRR_{}{}{}{}'.format(i, j, k, l)
+                            for i in '123'
+                            for j in '123'
+                            for k in '123'
+                            for l in '123']
         _test_missing(self, self.to_wc, 'flavio',
                       ignore_coeffs=ignore,
                       ignore_sec=('dF=0',))
@@ -340,7 +354,7 @@ class TestBern2flavio(unittest.TestCase):
         fkeys = set(self.to_wc.values.keys())
         fkeys_all = set([k for sname, s in wcxf.Basis['WET', 'flavio'].sectors.items()
                          for k in s
-                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu']])  # LFV, dF=0 not in Bern
+                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu', 'etauemu', 'muemutau', 'cu']])  # LFV, dF=0, dC=1 not in Bern
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2Bern(unittest.TestCase):

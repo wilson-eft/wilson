@@ -80,10 +80,16 @@ def _antisymm_12(C):
     return C
 
 
-def JMS_to_array(C):
+def JMS_to_array(C, sectors=None):
     """For a dictionary with JMS Wilson coefficients, return a dictionary
     of arrays."""
-    wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    if sectors is None:
+        wc_keys = wcxf.Basis['WET', 'JMS'].all_wcs
+    else:
+        try:
+            wc_keys = [k for s in sectors for k in wcxf.Basis['WET', 'JMS'].sectors[s]]
+        except KeyError:
+            print(sectors)
     # fill in zeros for missing coefficients
     C_complete = {k: C.get(k, 0) for k in wc_keys}
     Ca = _scalar2array(C_complete)
@@ -147,8 +153,9 @@ def rotate_down(C_in, p):
     C_in is expected to be an array-valued dictionary containg a key
     for all Wilson coefficient matrices."""
     C = C_in.copy()
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     UdL = V
+    ## B conserving operators
     # type dL dL dL dL
     for k in ['VddLL']:
         C[k] = np.einsum('ia,jb,kc,ld,ijkl->abcd',
@@ -165,7 +172,7 @@ def rotate_down(C_in, p):
                          UdL.conj(), UdL,
                          C_in[k])
     # type dL X dL X
-    for k in ['S1ddRR', ]:
+    for k in ['S1ddRR', 'S8ddRR']:
         C[k] = np.einsum('ia,kc,ijkl->ajcl',
                          UdL.conj(), UdL.conj(),
                          C_in[k])
@@ -184,6 +191,22 @@ def rotate_down(C_in, p):
     for k in ['SedRL', ]:
         C[k] = np.einsum('ld,ijkl->ijkd',
                          UdL,
+                         C_in[k])
+    ## DeltaB=DeltaL=1 operators
+    # type dL X X X
+    for k in ['SduuLL',  'SduuLR']:
+        C[k] = np.einsum('ia,ijkl->ajkl',
+                         UdL,
+                         C_in[k])
+    # type X X dL X
+    for k in ['SuudRL', 'SdudRL']:
+        C[k] = np.einsum('kc,ijkl->ijcl',
+                         UdL,
+                         C_in[k])
+    # type X dL dL X
+    for k in ['SuddLL']:
+        C[k] = np.einsum('jb,kc,ijkl->ibcl',
+                         UdL, UdL,
                          C_in[k])
     return C
 

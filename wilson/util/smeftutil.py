@@ -661,7 +661,11 @@ def add_missing(C):
     """Add arrays with zeros for missing Wilson coefficient keys"""
     C_out = C.copy()
     for k in (set(WC_keys) - set(C.keys())):
-        C_out[k] = np.zeros(C_keys_shape[k])
+        s = C_keys_shape[k]
+        if s == 1:
+            C_out[k] = 0
+        else:
+            C_out[k] = np.zeros(C_keys_shape[k])
     return C_out
 
 

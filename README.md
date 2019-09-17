@@ -1,4 +1,4 @@
-<a href="https://travis-ci.org/wilson-eft/wilson">![Build Status](https://travis-ci.org/wilson-eft/wilson.svg?branch=master)</a> [![pipeline status](https://hepcode.net/wilson/wilson/badges/master/pipeline.svg)](https://hepcode.net/wilson/wilson/commits/master) [![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson) [![coverage report](https://hepcode.net/wilson/wilson/badges/master/coverage.svg)](https://hepcode.net/wilson/wilson/commits/master)
+<a href="https://travis-ci.org/wilson-eft/wilson">![Build Status](https://travis-ci.org/wilson-eft/wilson.svg?branch=master)</a> [![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson)
 
 # wilson – running and matching beyond the Standard Model
 
@@ -15,7 +15,7 @@ python3 -m pip install wilson
 
 ## Documentation
 
-A brief user manual can be found in the paper cited below. More information can be found on the [project web site](https://wilson.github.io).
+A brief user manual can be found in the paper cited below. More information can be found on the [project web site](https://wilson-eft.github.io).
 
 ## Citation
 
@@ -46,11 +46,13 @@ Please submit bugs and feature requests using
 In alphabetical order:
 
 - Jason Aebischer
+- Danny van Dyk
 - Jacky Kumar
 - Xuanyou Pan
 - Matthias Schöffel
 - Peter Stangl
 - David M. Straub
+- Jean-Loup Tastet
 
 ## License
 
