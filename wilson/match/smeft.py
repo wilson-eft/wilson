@@ -38,7 +38,7 @@ def _match_all_array(C, p):
     # Eq. (2.26)
     eb = g2b*sb - 1/2.*cb*g2b* vT**2*C["phiWB"]
     gzb = eb/(sb*cb) * (1 + (g1b**2+g2b**2)/(2*g1b*g2b)*vT**2*C["phiWB"])
-
+    
     # Eq. (2.30)
     wl = np.eye(3)+vT**2*C["phil3"]
     wq = np.eye(3)+vT**2*C["phiq3"]
@@ -75,6 +75,10 @@ def _match_all_array(C, p):
     # Table 13
     c["VnunuLL"] = C["ll"]-gzb**2/(4*p["m_Z"]**2)*np.einsum('pr,st',znu,znu)-gzb**2/(4*p["m_Z"]**2)*np.einsum('pt,sr',znu,znu)
     c["VeeLL"] = C["ll"]-gzb**2/(4*p["m_Z"]**2)*np.einsum('pr,st',zel,zel)-gzb**2/(4*p["m_Z"]**2)*np.einsum('pt,sr',zel,zel)
+
+    c["VnunuLL"] = (c["VnunuLL"] + np.einsum('ilkj', c["VnunuLL"])) / 2
+    c["VeeLL"] = (c["VeeLL"] + np.einsum('ilkj', c["VeeLL"])) / 2
+
     c["VnueLL"] = C["ll"]+np.einsum('stpr',C["ll"])-g2b**2/(2*p["m_W"]**2)*np.einsum('pt,rs',wl,wl.conjugate())-gzb**2/(p["m_Z"]**2)*np.einsum('pr,st',znu,zel)
 
     c["VnuuLL"] = C["lq1"]+C["lq3"]-gzb**2/(p["m_Z"]**2)*np.einsum('pr,st',znu,zul)
@@ -154,12 +158,12 @@ def _match_all_array(C, p):
 
     # # Table 18
     # c["SnunuLL"] = np.zeros((3,3,3,3))
-    #
+    
     # # Table 19
     # c["SnueLL"] = np.zeros((3,3,3,3))
     # c["TnueLL"] = np.zeros((3,3,3,3))
     # c["SnueLR"] = np.zeros((3,3,3,3))
-    #
+    
     # c["SnuuLL"] = np.zeros((3,3,3,3))
     # c["TnuuLL"] = np.zeros((3,3,3,3))
     # c["SnuuLR"] = np.zeros((3,3,3,3))
