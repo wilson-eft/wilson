@@ -38,7 +38,7 @@ def _match_all_array(C, p):
     # Eq. (2.26)
     eb = g2b*sb - 1/2.*cb*g2b* vT**2*C["phiWB"]
     gzb = eb/(sb*cb) * (1 + (g1b**2+g2b**2)/(2*g1b*g2b)*vT**2*C["phiWB"])
-    
+
     # Eq. (2.30)
     wl = np.eye(3)+vT**2*C["phil3"]
     wq = np.eye(3)+vT**2*C["phiq3"]
@@ -158,12 +158,12 @@ def _match_all_array(C, p):
 
     # # Table 18
     # c["SnunuLL"] = np.zeros((3,3,3,3))
-    
+
     # # Table 19
     # c["SnueLL"] = np.zeros((3,3,3,3))
     # c["TnueLL"] = np.zeros((3,3,3,3))
     # c["SnueLR"] = np.zeros((3,3,3,3))
-    
+
     # c["SnuuLL"] = np.zeros((3,3,3,3))
     # c["TnuuLL"] = np.zeros((3,3,3,3))
     # c["SnuuLR"] = np.zeros((3,3,3,3))
@@ -177,8 +177,8 @@ def _match_all_array(C, p):
     # c["VnueduRR"] = np.zeros((3,3,3,3))
 
     # Table 20
-    c["SuddLL"] = -C["qqql"]-np.einsum('rpst',C["qqql"])
-    c["SduuLL"] = -C["qqql"]-np.einsum('rpst',C["qqql"])
+    c["SuddLL"] = np.einsum('srpt',C["qqql"])-np.einsum('rspt',C["qqql"])+np.einsum('rpst',C["qqql"])
+    c["SduuLL"] = c["SuddLL"]
     c["SuudLR"] = np.zeros((3,3,3,3))
     c["SduuLR"] = -C["qque"]-np.einsum('rpst',C["qque"])
     c["SuudRL"] = np.zeros((3,3,3,3))
