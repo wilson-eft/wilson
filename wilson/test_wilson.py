@@ -103,18 +103,18 @@ class TestWilson(unittest.TestCase):
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
         wc = w.match_run(160, 'SMEFT', 'Warsaw up')
         wc.validate()        
-        
+
+ 
     def test__translate_warsaw_to_warsawup(self):
-        w_in = wilson.Wilson({'qd1_1211': 1e-6}, 91, 'SMEFT', 'Warsaw')
-        wc_out = w_in.match_run(91, 'SMEFT', 'Warsaw up')
+        w_in = wilson.Wilson({'qd1_1211': 1e-6}, 1e3, 'SMEFT', 'Warsaw')
+        wc_out = w_in.match_run(1e3, 'SMEFT', 'Warsaw up')
         V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
-#       Warsaw to Warsaw-up =>  C -> V. C. V^+        
-#        self.assertAlmostEqual(wc_out.dict['qd1_1111'], V[0,0]*np.conj(V[0,1])*1e-6)
-        self.assertAlmostEqual(wc_out.dict['qd1_1211'], V[0,0]*np.conj(V[1,1])*1e-6)
-#        self.assertAlmostEqual(wc_out.dict['qd1_1311'], V[0,0]*np.conj(V[2,1])*1e-6)
-#        self.assertAlmostEqual(wc_out.dict['qd1_2211'], V[1,0]*np.conj(V[1,1])*1e-6)
-#        self.assertAlmostEqual(wc_out.dict['qd1_2311'], V[1,0]*np.conj(V[2,1])*1e-6)
-#        self.assertAlmostEqual(wc_out.dict['qd1_3311'], V[2,0]*np.conj(V[2,1])*1e-6)
+        self.assertAlmostEqual(wc_out.dict['qd1_1111'], V[0, 1] * V[0, 0].conjugate() * 1e-6 + V[0, 0] * V[0, 1].conjugate() * 1e-6,places=11)
+        self.assertAlmostEqual(wc_out.dict['qd1_1211'], V[0, 1] * V[1, 0].conjugate() * 1e-6 + V[0, 0] * V[1, 1].conjugate() * 1e-6,places=11)
+        self.assertAlmostEqual(wc_out.dict['qd1_1311'], V[0, 1] * V[2, 0].conjugate() * 1e-6 + V[0, 0] * V[2, 1].conjugate() * 1e-6,places=11)
+        self.assertAlmostEqual(wc_out.dict['qd1_2211'], V[1, 1] * V[1, 0].conjugate() * 1e-6 + V[1, 0] * V[1, 1].conjugate() * 1e-6,places=11)
+        self.assertAlmostEqual(wc_out.dict['qd1_2311'], V[1, 1] * V[2, 0].conjugate() * 1e-6 + V[1, 0] * V[2, 1].conjugate() * 1e-6,places=11)
+        self.assertAlmostEqual(wc_out.dict['qd1_3311'], V[2, 1] * V[2, 0].conjugate() * 1e-6 + V[2, 0] * V[2, 1].conjugate() * 1e-6,places=11)
 
 
 class TestRGsolution(unittest.TestCase):
