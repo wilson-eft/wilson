@@ -17,7 +17,7 @@ from wilson.util import smeftutil, wetutil
 Nc = 3
 
 def _match_all_array(C, p):
-
+    
     # AUXILIARY FUNCTIONS
 
     # Eq. (6.4)
@@ -31,9 +31,10 @@ def _match_all_array(C, p):
     alpha_e = p['alpha_e']
     eb = sqrt(4*pi*alpha_e)
     g1b = eb*g2b/sqrt(g2b**2-eb**2) + eb**2*g2b/(g2b**2-eb**2) * eps
-
     sb = g1b/sqrt(g1b**2+g2b**2) * (1 + eps/2. * g2b/g1b * ((g2b**2-g1b**2)/(g1b**2+g2b**2)))
     cb = g2b/sqrt(g1b**2+g2b**2) * (1 - eps/2. * g1b/g2b * ((g2b**2-g1b**2)/(g1b**2+g2b**2)))
+
+    p['m_Z'] = sqrt(vT**2 / 4 * (1 + vT**2 / 2 * C["phiD"]) * (g2b**2 + g1b**2) + vT**2 / 2 * eps * g1b * g2b)
 
     # Eq. (2.26)
     eb = g2b*sb - 1/2.*cb*g2b* vT**2*C["phiWB"]
@@ -75,6 +76,10 @@ def _match_all_array(C, p):
     # Table 13
     c["VnunuLL"] = C["ll"]-gzb**2/(4*p["m_Z"]**2)*np.einsum('pr,st',znu,znu)-gzb**2/(4*p["m_Z"]**2)*np.einsum('pt,sr',znu,znu)
     c["VeeLL"] = C["ll"]-gzb**2/(4*p["m_Z"]**2)*np.einsum('pr,st',zel,zel)-gzb**2/(4*p["m_Z"]**2)*np.einsum('pt,sr',zel,zel)
+
+    c["VnunuLL"] = (c["VnunuLL"] + np.einsum('ilkj', c["VnunuLL"])) / 2
+    c["VeeLL"] = (c["VeeLL"] + np.einsum('ilkj', c["VeeLL"])) / 2
+
     c["VnueLL"] = C["ll"]+np.einsum('stpr',C["ll"])-g2b**2/(2*p["m_W"]**2)*np.einsum('pt,rs',wl,wl.conjugate())-gzb**2/(p["m_Z"]**2)*np.einsum('pr,st',znu,zel)
 
     c["VnuuLL"] = C["lq1"]+C["lq3"]-gzb**2/(p["m_Z"]**2)*np.einsum('pr,st',znu,zul)
@@ -154,12 +159,12 @@ def _match_all_array(C, p):
 
     # # Table 18
     # c["SnunuLL"] = np.zeros((3,3,3,3))
-    #
+
     # # Table 19
     # c["SnueLL"] = np.zeros((3,3,3,3))
     # c["TnueLL"] = np.zeros((3,3,3,3))
     # c["SnueLR"] = np.zeros((3,3,3,3))
-    #
+
     # c["SnuuLL"] = np.zeros((3,3,3,3))
     # c["TnuuLL"] = np.zeros((3,3,3,3))
     # c["SnuuLR"] = np.zeros((3,3,3,3))
@@ -173,8 +178,8 @@ def _match_all_array(C, p):
     # c["VnueduRR"] = np.zeros((3,3,3,3))
 
     # Table 20
-    c["SuddLL"] = -C["qqql"]-np.einsum('rpst',C["qqql"])
-    c["SduuLL"] = -C["qqql"]-np.einsum('rpst',C["qqql"])
+    c["SuddLL"] = np.einsum('srpt',C["qqql"])-np.einsum('rspt',C["qqql"])+np.einsum('rpst',C["qqql"])
+    c["SduuLL"] = c["SuddLL"]
     c["SuudLR"] = np.zeros((3,3,3,3))
     c["SduuLR"] = -C["qque"]-np.einsum('rpst',C["qque"])
     c["SuudRL"] = np.zeros((3,3,3,3))
@@ -210,7 +215,6 @@ def match_all(d_SMEFT, parameters=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     C = wilson.util.smeftutil.wcxf2arrays_symmetrized(d_SMEFT)
-    C['vT'] = 246.22
     C_WET = match_all_array(C, p)
     C_WET = wilson.translate.wet.rotate_down(C_WET, p)
     C_WET = wetutil.unscale_dict_wet(C_WET)

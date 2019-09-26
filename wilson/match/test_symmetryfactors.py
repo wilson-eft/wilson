@@ -1,10 +1,24 @@
 import unittest
 import numpy as np
+import numpy.testing as npt
 import wcxf
 import wilson
 from wilson.parameters import p
 import ckmutil
 from math import pi, log
+from wilson.util.wetutil import C_symm_keys
+
+
+np.random.seed(39)
+
+# generate a random WC instance for the SMEFT Warsaw basis
+C_Warsaw_random = {}
+basis = wcxf.Basis['SMEFT', 'Warsaw']
+for sector, wcs in basis.sectors.items():
+    for name, d in wcs.items():
+         C_Warsaw_random[name] = 1e-6*np.random.rand()
+         if 'real' not in d or d['real'] == False:
+             C_Warsaw_random[name] += 1j*1e-6*np.random.rand()
 
 
 class TestMatch(unittest.TestCase):
@@ -80,3 +94,29 @@ class TestRun(unittest.TestCase):
         sf = 2  # symmetry factor since our 2333 is 2* larger
         self.assertAlmostEqual(wc['ll_2333'],
         sf * 1e-6 / (16 * pi**2) * (-g**2) * log(100 / 1000))
+
+
+class TestMatchingSymmetryFactors(unittest.TestCase):
+    def test_match_symmfac(self):
+        """Test that the WET WCs coming out of the matching fulfill
+        the correct symmetry relations (namely, have the same symmetries
+        as the operators)."""
+        C_SMEFT = wilson.util.smeftutil.wcxf2arrays_symmetrized(C_Warsaw_random)
+        C = wilson.match.smeft.match_all_array(C_SMEFT, p)
+        for k in C:
+            if k in C_symm_keys[41] + C_symm_keys[4] + C_symm_keys[6]:
+                a = np.einsum('klij', C[k]) # C_ijkl = C_klij
+                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+            if k in C_symm_keys[5] + C_symm_keys[4] + C_symm_keys[6]:
+                a = np.einsum('jilk', C[k]).conj() # C_ijkl = C_jilk*
+                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+            if k in C_symm_keys[4] + C_symm_keys[6]:
+                a = np.einsum('lkji', C[k]).conj() # C_ijkl = C_lkji*
+                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+            if k in C_symm_keys[6]:
+                a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
+                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                                              decimal=20)
+            if k in C_symm_keys[9]:
+                a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
+                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
