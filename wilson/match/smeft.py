@@ -17,7 +17,7 @@ from wilson.util import smeftutil, wetutil
 Nc = 3
 
 def _match_all_array(C, p):
-
+    
     # AUXILIARY FUNCTIONS
 
     # Eq. (6.4)
@@ -31,9 +31,10 @@ def _match_all_array(C, p):
     alpha_e = p['alpha_e']
     eb = sqrt(4*pi*alpha_e)
     g1b = eb*g2b/sqrt(g2b**2-eb**2) + eb**2*g2b/(g2b**2-eb**2) * eps
-
     sb = g1b/sqrt(g1b**2+g2b**2) * (1 + eps/2. * g2b/g1b * ((g2b**2-g1b**2)/(g1b**2+g2b**2)))
     cb = g2b/sqrt(g1b**2+g2b**2) * (1 - eps/2. * g1b/g2b * ((g2b**2-g1b**2)/(g1b**2+g2b**2)))
+
+    p['m_Z'] = sqrt(vT**2 / 4 * (1 + vT**2 / 2 * C["phiD"]) * (g2b**2 + g1b**2) + vT**2 / 2 * eps * g1b * g2b)
 
     # Eq. (2.26)
     eb = g2b*sb - 1/2.*cb*g2b* vT**2*C["phiWB"]
@@ -214,7 +215,6 @@ def match_all(d_SMEFT, parameters=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     C = wilson.util.smeftutil.wcxf2arrays_symmetrized(d_SMEFT)
-    C['vT'] = 246.22
     C_WET = match_all_array(C, p)
     C_WET = wilson.translate.wet.rotate_down(C_WET, p)
     C_WET = wetutil.unscale_dict_wet(C_WET)
