@@ -7,9 +7,9 @@ import numpy as np
 from math import sqrt, pi
 import wcxf
 import wilson
-from wilson.parameters import p as default_parameters
+from wilson.run.smeft.smpar import p as default_parameters
 from wilson.util import smeftutil, wetutil
-from wilson.match import smeft_tree
+from wilson.match import smeft_tree, smeft_loop
 
 
 def match_all(d_SMEFT, parameters=None):
@@ -19,7 +19,12 @@ def match_all(d_SMEFT, parameters=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     C = wilson.util.smeftutil.wcxf2arrays_symmetrized(d_SMEFT)
-    C_WET = smeft_tree.match_all_array(C, p)
+    C_WET_tree = smeft_tree.match_all_array(C, p)
+    if parameters and parameters.get('loop_order') == 1:
+        C_WET_loop = smeft_loop.match_all_array(C, p, scale=parameters['scale'])
+        C_WET = {k: np.array(C_WET_tree[k] + C_WET_loop[k], complex) for k in C_WET_tree}
+    else:
+        C_WET = C_WET_tree
     C_WET = wilson.translate.wet.rotate_down(C_WET, p)
     C_WET = wetutil.unscale_dict_wet(C_WET)
     d_WET = wilson.util.smeftutil.arrays2wcxf(C_WET)
