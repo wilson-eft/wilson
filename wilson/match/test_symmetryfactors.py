@@ -102,21 +102,25 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
         the correct symmetry relations (namely, have the same symmetries
         as the operators)."""
         C_SMEFT = wilson.util.smeftutil.wcxf2arrays_symmetrized(C_Warsaw_random)
-        C = wilson.match.smeft.match_all_array(C_SMEFT, p)
+        C = wilson.match.smeft_tree.match_all_array(C_SMEFT, p)
         for k in C:
             if k in C_symm_keys[41] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('klij', C[k]) # C_ijkl = C_klij
-                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                                              decimal=20)
             if k in C_symm_keys[5] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('jilk', C[k]).conj() # C_ijkl = C_jilk*
-                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                                              decimal=20)
             if k in C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('lkji', C[k]).conj() # C_ijkl = C_lkji*
-                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                                              decimal=20)
             if k in C_symm_keys[6]:
                 a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
                 npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
                                               decimal=20)
             if k in C_symm_keys[9]:
                 a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
-                npt.assert_array_equal(C[k], a, err_msg="Failed for {}".format(k))
+                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                                              decimal=20)
