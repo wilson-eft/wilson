@@ -8,7 +8,9 @@ kd = np.eye(3)
 kdkd = einsum("pr,st",kd,kd)
 
 
-def _match_all_array(C, p):
+def _match_all_array(_C, p):
+
+    C = _C.copy()
 
     # AUXILIARY FUNCTIONS
 
@@ -29,7 +31,7 @@ def _match_all_array(C, p):
     g1bar = g1b
 
     # DEFINE DAGGERED WCs
-    for _f in ['ude']:
+    for _f in 'ude':
         for _b in ['B', 'G', 'phi', 'W' ]:
             if _f + _b in C:
                 C[_f + _b + 'Dag'] = C[_f + _b].conjugate().T
