@@ -135,8 +135,6 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
         C = wilson.match.smeft_loop.match_all_array(C_SMEFT, p, scale=120)
         for k in C:
             if k in C_symm_keys[41] + C_symm_keys[4] + C_symm_keys[6]:
-                if k == 'VddLL':
-                    continue
                 a = np.einsum('klij', C[k]) # C_ijkl = C_klij
                 npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
                                               decimal=20)
