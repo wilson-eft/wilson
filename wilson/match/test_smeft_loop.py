@@ -19,15 +19,16 @@ _mW = 80.4
 _vT = 246
 _g2b = 2 * _mW / _vT
 # Here it is assumed that phiWB and phiD vanish!
-p = {
+p = wilson.run.smeft.smpar.p.copy()
+p.update({
     "GF": 1 / sqrt(2) / _vT**2,
     "m_W": _mW, "m_h": 125, "m_t": 173,
     "alpha_s": 1.2**2 / (4 * pi),
     "alpha_e": (_g1b**2 * _g2b**2) / (4 * pi *(_g1b**2 + _g2b**2)),
     "mZ": _vT / 2 * sqrt(_g1b**2 + _g2b**2),
     "m_d": 0.005, "m_s": 0.1, "m_b": 4.2, "m_u": 0.004, "m_c": 1.2,
-    "m_e": 0.0005, "m_mu": 0.1, "m_tau": 1.8
-    }
+    "m_e": 0.0005, "m_mu": 0.1, "m_tau": 1.8,
+    })
 
 
 test_dicts = {
