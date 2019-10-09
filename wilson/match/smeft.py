@@ -12,7 +12,7 @@ from wilson.util import smeftutil, wetutil
 from wilson.match import smeft_tree, smeft_loop
 
 
-def match_all(d_SMEFT, parameters=None):
+def match_all(d_SMEFT, scale, parameters=None):
     """Match the SMEFT Warsaw basis onto the WET JMS basis."""
     p = default_parameters.copy()
     if parameters is not None:
@@ -21,7 +21,7 @@ def match_all(d_SMEFT, parameters=None):
     C = wilson.util.smeftutil.wcxf2arrays_symmetrized(d_SMEFT)
     C_WET_tree = smeft_tree.match_all_array(C, p)
     if parameters and parameters.get('loop_order') == 1:
-        C_WET_loop = smeft_loop.match_all_array(C, p, scale=parameters['scale'])
+        C_WET_loop = smeft_loop.match_all_array(C, p, scale=scale)
         C_WET = {k: np.array(C_WET_tree[k] + C_WET_loop[k], complex) for k in C_WET_tree}
     else:
         C_WET = C_WET_tree
