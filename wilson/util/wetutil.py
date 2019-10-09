@@ -156,6 +156,11 @@ def rotate_down(C_in, p):
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     UdL = V
     ## B conserving operators
+    # type dL dR (dipoles)
+    for k in ['dgamma', 'dG']:
+        C[k] = np.einsum('ia,ij->aj',
+                         UdL.conj(),
+                         C_in[k])
     # type dL dL dL dL
     for k in ['VddLL']:
         C[k] = np.einsum('ia,jb,kc,ld,ijkl->abcd',
