@@ -13,7 +13,14 @@ from wilson.match import smeft_tree, smeft_loop
 
 
 def match_all(d_SMEFT, scale, parameters=None):
-    """Match the SMEFT Warsaw basis onto the WET JMS basis."""
+    """Match the SMEFT Warsaw basis onto the WET JMS basis.
+    
+    The optional `parameters` dictionary allows to overwrite the default
+    numerical input parameters (such as CKM elements and quark masses).
+    Moreover, there is a key `'loop_order'` which, if set to 1, allows
+    to switch on the one-loop matching contributions (which are)
+    omitted by default.
+    """
     p = default_parameters.copy()
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
@@ -21,6 +28,7 @@ def match_all(d_SMEFT, scale, parameters=None):
     C = wilson.util.smeftutil.wcxf2arrays_symmetrized(d_SMEFT)
     C_WET_tree = smeft_tree.match_all_array(C, p)
     if parameters and parameters.get('loop_order') == 1:
+        # One loop matching only added if 'loop_order' is 1!
         C_WET_loop = smeft_loop.match_all_array(C, p, scale=scale)
         C_WET = {k: np.array(C_WET_tree[k] + C_WET_loop[k], complex) for k in C_WET_tree}
     else:
