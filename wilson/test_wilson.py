@@ -196,3 +196,18 @@ class TestWilsonConfig(unittest.TestCase):
         w.match_run(1, 'WET-3', 'JMS')
         self.assertEqual(w.get_option('mb_matchingscale'), 4)
         self.assertEqual(w.get_option('mc_matchingscale'), 2)
+
+    def test_smeft_matching_order(self):
+        # with tree-level matching (and no SMEFT running): no effect
+        w = wilson.Wilson({'uG_33': 1e-8}, 100, 'SMEFT', 'Warsaw')
+        w.set_option('smeft_accuracy', 'leadinglog')
+        w.set_option('smeft_matchingscale', 100)
+        wc = w.match_run(5, 'WET', 'JMS')
+        self.assertEqual(wc['dG_23'], 0)
+        # now with 1-loop matching
+        w = wilson.Wilson({'uG_33': 1e-8}, 100, 'SMEFT', 'Warsaw')
+        w.set_option('smeft_accuracy', 'leadinglog')
+        w.set_option('smeft_matchingscale', 100)
+        w.set_option('smeft_matching_order', 1)
+        wc = w.match_run(5, 'WET', 'JMS')
+        self.assertNotEqual(wc['dG_23'], 0)

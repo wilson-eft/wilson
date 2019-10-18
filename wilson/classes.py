@@ -85,6 +85,7 @@ class Wilson(ConfigurableClass):
     _default_options = {'smeft_accuracy': 'integrate',
                         'qed_order': 1,
                         'qcd_order': 1,
+                        'smeft_matching_order': 0,
                         'smeft_matchingscale': 91.1876,
                         'mb_matchingscale': 4.2,
                         'mc_matchingscale': 1.3,
@@ -97,6 +98,7 @@ class Wilson(ConfigurableClass):
         'smeft_accuracy': vol.In(['integrate','leadinglog']),
         'qed_order': vol.In([0,1]),
         'qcd_order': vol.In([0,1]),
+        'smeft_matching_order':  vol.In([0,1]),
         'smeft_matchingscale': vol.Coerce(float),
         'mb_matchingscale': vol.Coerce(float),
         'mc_matchingscale': vol.Coerce(float),
@@ -148,11 +150,22 @@ class Wilson(ConfigurableClass):
 
     @property
     def parameters(self):
+        """Parameters to be used for running and translation."""
         # start with a copy of the default parameters
         p = parameters.p.copy()
         # overwrite by the user defined parameters, if any
         p.update(self.get_option('parameters'))
         return p
+
+    @property
+    def matching_parameters(self):
+        """Parameters to be used for the SMEFT->WET matching."""
+        # start with a copy of the numerical parameters
+        p = self.parameters.copy()
+        # properly set 'loop_order' for `match.smeft.match_all`
+        p['loop_order'] = self.get_option('smeft_matching_order')
+        return p
+
 
     def _wetrun_opt(self):
         """Return a dictionary of options to pass to a `run.wet.WETrunner`
@@ -202,10 +215,10 @@ class Wilson(ConfigurableClass):
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
                     if self.wc.scale == scale_ew:
-                        wc_ew = self.wc.match('WET', 'JMS', parameters=self.parameters)  # no need to run
+                        wc_ew = self.wc.match('WET', 'JMS', parameters=self.matching_parameters)  # no need to run
                     else:
                         smeft = SMEFT(self.wc.translate('Warsaw', parameters=self.parameters))
-                        wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS', parameters=self.parameters)
+                        wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS', parameters=self.matching_parameters)
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew, **self._wetrun_opt())
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
@@ -217,21 +230,21 @@ class Wilson(ConfigurableClass):
             self._set_cache(sectors, scale, eft, basis, wc_out)
             return wc_out
         elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.parameters)
+            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
             wet4 = WETrunner(wc_mb, **self._wetrun_opt())
             wc_out = wet4.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
             self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
             return wc_out
         elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
-            wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.parameters)
+            wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
             wet3 = WETrunner(wc_mc, **self._wetrun_opt())
             wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
             return wc_out
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.parameters)
+            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
             wet4 = WETrunner(wc_mb, **self._wetrun_opt())
-            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.parameters)
+            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
             wet3 = WETrunner(wc_mc, **self._wetrun_opt())
             wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)

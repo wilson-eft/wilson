@@ -9,39 +9,39 @@ from . import smeft
 
 @wcxf.matcher('SMEFT', 'Warsaw up', 'WET', 'JMS')
 def warsaw_up_to_jms(C, scale, parameters):
-    return smeft.match_all(C, parameters)
+    return smeft.match_all(C, scale, parameters)
 
 
 @wcxf.matcher('SMEFT', 'Warsaw', 'WET', 'JMS')
 def warsaw_to_jms(C, scale, parameters):
     C_warsawup = wilson.translate.smeft.warsaw_to_warsaw_up(C, parameters)
-    return smeft.match_all(C_warsawup, parameters)
+    return smeft.match_all(C_warsawup, scale, parameters)
 
 
 @wcxf.matcher('SMEFT', 'Warsaw', 'WET', 'flavio')
 def warsaw_to_flavio(C, scale, parameters):
     C_warsawup = wilson.translate.smeft.warsaw_to_warsaw_up(C, parameters)
-    C_JMS = smeft.match_all(C_warsawup, parameters)
+    C_JMS = smeft.match_all(C_warsawup, scale, parameters)
     return wilson.translate.JMS_to_flavio(C_JMS, scale, parameters)
 
 
 @wcxf.matcher('SMEFT', 'Warsaw up', 'WET', 'flavio')
 def warsaw_up_to_flavio(C, scale, parameters):
-    C_JMS = smeft.match_all(C, parameters)
+    C_JMS = smeft.match_all(C, scale, parameters)
     return wilson.translate.JMS_to_flavio(C_JMS, scale, parameters)
 
 
 @wcxf.matcher('SMEFT', 'Warsaw', 'WET', 'EOS')
 def warsaw_to_eos(C, scale, parameters):
     C_warsawup = wilson.translate.smeft.warsaw_to_warsaw_up(C, parameters)
-    C_JMS = smeft.match_all(C_warsawup, parameters)
+    C_JMS = smeft.match_all(C_warsawup, scale, parameters)
     return wilson.translate.JMS_to_EOS(C_JMS, scale, parameters)
 
 
 @wcxf.matcher('SMEFT', 'Warsaw', 'WET', 'Bern')
 def warsaw_to_bern(C, scale, parameters):
     C_warsawup = wilson.translate.smeft.warsaw_to_warsaw_up(C, parameters)
-    C_JMS = smeft.match_all(C_warsawup, parameters)
+    C_JMS = smeft.match_all(C_warsawup, scale, parameters)
     return wilson.translate.JMS_to_Bern(C_JMS, scale, parameters)
 
 
