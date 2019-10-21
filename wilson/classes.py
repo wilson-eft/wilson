@@ -202,6 +202,10 @@ class Wilson(ConfigurableClass):
         mc = self.get_option('mc_matchingscale')
         if self.wc.basis == basis and self.wc.eft == eft and scale == self.wc.scale:
             return self.wc  # nothing to do
+        if self.wc.eft == eft and scale == self.wc.scale:
+            wc_out = self.wc.translate(basis, sectors=translate_sectors, parameters=self.parameters)  # only translation necessary
+            self._set_cache(sectors, scale, eft, basis, wc_out)
+            return wc_out
         if self.wc.eft == 'SMEFT':
             smeft_accuracy = self.get_option('smeft_accuracy')
             if eft == 'SMEFT':
