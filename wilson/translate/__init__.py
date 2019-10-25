@@ -2,9 +2,30 @@
 `wcxf` Python package."""
 
 
-from . import smeft
+from . import smeft, smeft_higgs
 from . import wet
 from wilson import wcxf
+
+
+@wcxf.translator('SMEFT', 'Higgs-Warsaw up', 'Warsaw up')
+def higgs_up_to_warsaw_up(C, scale, parameters, sectors=None):
+    return smeft_higgs.higgslike_to_warsaw_up(C, parameters, sectors)
+
+
+@wcxf.translator('SMEFT', 'Higgs-Warsaw up', 'Warsaw')
+def higgs_up_to_warsaw(C, scale, parameters, sectors=None):
+    C = smeft_higgs.higgslike_to_warsaw_up(C, parameters, sectors)
+    return smeft.warsaw_up_to_warsaw(C, sectors)
+
+
+@wcxf.translator('SMEFT', 'Warsaw up', 'Higgs-Warsaw up')
+def warsaw_up_to_higgs_up(C, scale, parameters, sectors=None):
+    return smeft_higgs.warsaw_up_to_higgslike(C, parameters, sectors)
+
+@wcxf.translator('SMEFT', 'Warsaw', 'Higgs-Warsaw up')
+def warsaw_up_to_higgs_up(C, scale, parameters, sectors=None):
+    C = smeft.warsaw_to_warsaw_up(C, sectors)
+    return smeft_higgs.warsaw_up_to_higgslike(C, parameters, sectors)
 
 
 @wcxf.translator('SMEFT', 'Warsaw', 'Warsaw mass')

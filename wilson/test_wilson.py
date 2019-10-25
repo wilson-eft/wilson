@@ -18,7 +18,7 @@ def get_random_wc(eft, basis, scale, cmax=1e-6):
     for s in basis_obj.sectors.values():
         for name, d in s.items():
             _wc[name] = cmax * np.random.rand()
-            if 'real' not in d or not d['real']:
+            if not d or 'real' not in d or not d['real']:
                 _wc[name] += 1j * cmax * np.random.rand()
     return wcxf.WC(eft, basis, scale, wcxf.WC.dict2values(_wc))
 
