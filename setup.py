@@ -39,4 +39,13 @@ setup(
         "voluptuous",
     ],
     extras_require={"testing": ["nose"]},
+    entry_points={
+        "console_scripts": [
+            "wcxf = wilson.wcxf.cli:wcxf_cli",
+            "wcxf2eos = wilson.wcxf.cli:eos",
+            "wcxf2dsixtools = wilson.wcxf.cli:wcxf2dsixtools",
+            "dsixtools2wcxf = wilson.wcxf.cli:dsixtools2wcxf",
+            "wcxf2smeftsim = wilson.wcxf.cli:smeftsim",
+        ]
+    },
 )
