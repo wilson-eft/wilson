@@ -1,0 +1,24 @@
+# input file
+eft: WET
+basis: flavio
+scale: 4.8
+values:
+#   Class-I 
+    CVLL_sdsd: 1.0
+    CVLL_bsbs: 1.0
+    CVLL_bdbd: 1.0
+#   Class-II
+    CVL_dumunumu: 1.0
+    CVL_sumunumu: 1.0
+    CVL_bumunumu: 1.0 
+    CVL_dcmunumu: 1.0
+    CVL_scmunumu: 1.0
+    CVL_bcmunumu: 1.0
+# Class-V(semileptonic)
+    C9_bsmumu: 1.0
+    C9_bdmumu: 1.0
+## Class-V(chromomagnetic)
+    C7_bs: 1.0
+    C8_bs: 1.0
+    C7_bd: 1.0
+    C8_bd: 1.0

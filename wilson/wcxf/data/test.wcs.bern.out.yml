@@ -1,0 +1,51 @@
+# output file : translated by hand
+eft: WET
+basis: Bern
+scale: 4.8
+values:
+#   Class-I 
+    1sbsb: 30312.05821859348
+    1dbdb: 30312.05821859348
+    1dsds: 30312.05821859348
+#   Class-II
+    1udmumu: 
+        Re: -0.974513419918
+        Im:  0.0
+    1usmumu:    
+        Re: -0.2243
+        Im:  0.0
+    1ubmumu:   
+        Re: -0.00107253675999
+        Im:  0.00345746509722
+    1cdmumu:    
+        Re:  0.224145679321
+        Im:  0.00014222196414
+    1csmumu:   
+        Re: -0.973641108953
+        Im:  3.27346816417e-05
+    1cbmumu: 
+        Re: -0.04221
+        Im:  0.0
+# Class-V(semileptonic)
+    1sbmumu: 
+        Re: -2.57198626387e-05
+        Im:  4.81650697852e-07
+    1dbmumu: 
+        Re: 5.23630194213e-06
+        Im: 2.09262179567e-06
+# Class-V(chromomagnetic)
+    7gammasb: 
+        Re: -0.000714327615426
+        Im:  1.33770696717e-05
+    8gsb:     
+        Re: -0.000714327615426
+        Im:  1.33770696717e-05
+    7gammadb: 
+        Re: 0.000145429823344
+        Im: 5.81191882044e-05
+    8gdb:     
+        Re: 0.000145429823344
+        Im: 5.81191882044e-05
+
+
+

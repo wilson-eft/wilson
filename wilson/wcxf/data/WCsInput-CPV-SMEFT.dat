@@ -1,0 +1,20 @@
+Block WC4
+6 1.0		# phiBtilde
+Block IMWCDPHI
+1 1 0.1		# dphi(1,1)
+1 2 0.2		# dphi(1,2)
+1 3 0.3		# dphi(1,3)
+2 1 0.1		# dphi(2,1)
+2 2 0.2		# dphi(2,2)
+2 3 0.3		# dphi(2,3)
+3 1 0.4		# dphi(3,1)
+3 2 0.5		# dphi(3,2)
+3 3 0.6		# dphi(3,3)
+Block WCDD
+2 3 2 3 1.0	# dd(2,3,2,3)
+Block WCPHIQ3
+1 3 1.0		# phiq3(1,3)
+Block WCLLPHIPHI
+1 1 0.2		# llphiphi(1,1)
+1 2 -0.4	# llphiphi(1,2)
+3 3 1.0		# llphiphi(3,3)

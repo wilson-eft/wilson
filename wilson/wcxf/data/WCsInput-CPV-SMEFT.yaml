@@ -1,0 +1,47 @@
+eft: SMEFT
+basis: Warsaw
+scale: 10000.0
+values:
+  phiBtilde: 1.0E-8
+  dphi_11:
+    Re: 0.0
+    Im: 1.0E-9
+  dphi_12:
+    Re: 0.0
+    Im: 2.0E-9
+  dphi_13:
+    Re: 0.0
+    Im: 3.0E-9
+  dphi_21:
+    Re: 0.0
+    Im: 1.0E-9
+  dphi_22:
+    Re: 0.0
+    Im: 2.0E-9
+  dphi_23:
+    Re: 0.0
+    Im: 3.0E-9
+  dphi_31:
+    Re: 0.0
+    Im: 4.0E-9
+  dphi_32:
+    Re: 0.0
+    Im: 5.0E-9
+  dphi_33:
+    Re: 0.0
+    Im: 6.0E-9
+  dd_2323:
+    Re: 1.0E-8
+    Im: 0.0
+  phiq3_13:
+    Re: 1.0E-8
+    Im: 0.0
+  llphiphi_11:
+    Re: 2.0E-5
+    Im: 0.0
+  llphiphi_12:
+    Re: -4.0E-5
+    Im: 0.0
+  llphiphi_33:
+    Re: 1.0E-4
+    Im: 0.0

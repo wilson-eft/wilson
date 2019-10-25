@@ -1,0 +1,12 @@
+eft: MyOtherEFT
+basis: MyOtherBasis 1
+sectors:
+  My other Sector 1:
+    D_1:
+      real: true
+    D_2:
+  My other Sector 2:
+    D_3:
+  My other Sector 3:
+    D_4:
+      real: true
