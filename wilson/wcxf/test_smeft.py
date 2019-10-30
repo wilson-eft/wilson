@@ -4,7 +4,7 @@ import numpy.testing as npt
 import yaml
 import json
 import pkgutil
-import wcxf
+from wilson import wcxf
 
 class TestSMEFT(unittest.TestCase):
     def test_smeft_number(self):

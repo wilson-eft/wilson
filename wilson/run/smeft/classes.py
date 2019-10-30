@@ -8,7 +8,7 @@ import numpy as np
 import ckmutil.phases, ckmutil.diag
 import wilson
 from wilson.util import smeftutil
-import wcxf
+from wilson import wcxf
 
 
 class SMEFT(object):

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-import wcxf
+from wilson import wcxf
 from wcxf.converters import eos
 import os
 

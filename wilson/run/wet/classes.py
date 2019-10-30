@@ -2,7 +2,7 @@
 package."""
 
 
-import wcxf
+from wilson import wcxf
 import wilson
 from wilson.util import qcd
 from wilson.run.wet import rge, definitions

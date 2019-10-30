@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-import wcxf
+from wilson import wcxf
 import wilson
 from wilson.run.smeft.smpar import p
 import ckmutil

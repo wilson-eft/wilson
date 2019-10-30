@@ -1,5 +1,5 @@
 import unittest
-import wcxf
+from wilson import wcxf
 
 class TestBases(unittest.TestCase):
     def test_bases(self):

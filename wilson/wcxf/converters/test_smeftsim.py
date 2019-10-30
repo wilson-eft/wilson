@@ -4,7 +4,7 @@ from tempfile import mkdtemp
 import subprocess
 import pylha
 from shutil import rmtree
-import wcxf
+from wilson import wcxf
 
 
 my_path = os.path.dirname(os.path.realpath(__file__))

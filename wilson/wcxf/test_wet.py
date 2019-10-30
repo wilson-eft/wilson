@@ -1,5 +1,5 @@
 import unittest
-import wcxf
+from wilson import wcxf
 import pkgutil
 class TestWET(unittest.TestCase):
     def test_bern(self):

@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from math import sqrt, pi
-import wcxf
+from wilson import wcxf
 import wilson
 import wilson.match.smeft_loop
 from copy import deepcopy

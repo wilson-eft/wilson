@@ -4,7 +4,7 @@ import numpy.testing as npt
 import yaml
 import json
 import pkgutil
-import wcxf
+from wilson import wcxf
 from wcxf import translators
 
 class TestBasis(unittest.TestCase):

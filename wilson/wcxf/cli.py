@@ -1,5 +1,5 @@
 import argparse
-import wcxf
+from wilson import wcxf
 import sys
 import logging
 import os

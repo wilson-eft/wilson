@@ -1,4 +1,4 @@
-import wcxf
+from wilson import wcxf
 import yaml
 import json
 import logging

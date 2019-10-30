@@ -4,7 +4,7 @@ import numpy.testing as npt
 import yaml
 import json
 import pkgutil
-import wcxf
+from wilson import wcxf
 import subprocess
 import tempfile
 import os

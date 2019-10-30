@@ -5,7 +5,7 @@ Based on arXiv:1908.05295."""
 
 import numpy as np
 from math import sqrt, pi
-import wcxf
+from wilson import wcxf
 import wilson
 from wilson.run.smeft.smpar import p as default_parameters
 from wilson.util import smeftutil, wetutil

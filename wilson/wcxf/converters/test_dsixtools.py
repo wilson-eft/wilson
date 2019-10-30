@@ -1,5 +1,5 @@
 import unittest
-import wcxf
+from wilson import wcxf
 from wcxf.converters import dsixtools
 import os
 import subprocess
