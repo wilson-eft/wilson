@@ -249,7 +249,7 @@ class SMEFTio(object):
           value will be used, or the scale attribute of the WC instance will
           be used.
         """
-        import wcxf
+        from wilson import wcxf
         if wc.eft != 'SMEFT':
             raise ValueError("Wilson coefficients use wrong EFT.")
         if wc.basis != 'Warsaw':
@@ -289,7 +289,7 @@ class SMEFTio(object):
         and are assumed to be in the weak basis used for the Warsaw basis as
         defined in WCxf, i.e. in the basis where the down-type and charged
         lepton mass matrices are diagonal."""
-        import wcxf
+        from wilson import wcxf
         wc = wcxf.WC.load(stream)
         self.set_initial_wcxf(wc)
 
@@ -316,7 +316,7 @@ class SMEFTio(object):
         Note that the Wilson coefficients are rotated into the Warsaw basis
         as defined in WCxf, i.e. to the basis where the down-type and charged
         lepton mass matrices are diagonal."""
-        import wcxf
+        from wilson import wcxf
         # C = self.rotate_defaultbasis(C_out)
         C = C_out.copy()  # FIXME
         d = smeftutil.arrays2wcxf(C)
