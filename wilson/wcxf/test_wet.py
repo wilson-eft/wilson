@@ -112,14 +112,14 @@ class TestWET(unittest.TestCase):
 
 #   Unit test for Bern to flavio translator
     def test_wc1(self):
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.bern.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.bern.yml').decode('utf-8')
         wc0 = wcxf.WC.load(f)
         wc0.validate()
         self.assertEqual(wc0.eft, 'WET')
         self.assertEqual(wc0.basis, 'Bern')
         self.assertEqual(wc0.scale, 4.8)
         wc1= wc0.translate('flavio')
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.flavio.out.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.flavio.out.yml').decode('utf-8')
         wc2 = wcxf.WC.load(f)
         self.assertEqual(wc2.eft, 'WET')
         self.assertEqual(wc2.basis, 'flavio')
@@ -143,14 +143,14 @@ class TestWET(unittest.TestCase):
 
 #   Unit test for flavio to Bern translator
     def test_wc2(self):
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.flavio.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.flavio.yml').decode('utf-8')
         wc0 = wcxf.WC.load(f)
         wc0.validate()
         self.assertEqual(wc0.eft, 'WET')
         self.assertEqual(wc0.basis, 'flavio')
         self.assertEqual(wc0.scale, 4.8)
         wc1= wc0.translate('Bern')
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.bern.out.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.bern.out.yml').decode('utf-8')
         wc2 = wcxf.WC.load(f)
         self.assertEqual(wc2.eft, 'WET')
         self.assertEqual(wc2.basis, 'Bern')
@@ -174,14 +174,14 @@ class TestWET(unittest.TestCase):
 
 #   Unit test for JMS to Bern translator
     def test_wc3(self):
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.jms.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.jms.yml').decode('utf-8')
         wc0 = wcxf.WC.load(f)
         wc0.validate()
         self.assertEqual(wc0.eft, 'WET')
         self.assertEqual(wc0.basis, 'JMS')
         self.assertEqual(wc0.scale, 4.8)
         wc1= wc0.translate('Bern')
-        f = pkgutil.get_data('wcxf', 'data/test.wcs.bern2.out.yml').decode('utf-8')
+        f = pkgutil.get_data('wilson', 'wcxf/data/test.wcs.bern2.out.yml').decode('utf-8')
         wc2 = wcxf.WC.load(f)
         self.assertEqual(wc2.eft, 'WET')
         self.assertEqual(wc2.basis, 'Bern')

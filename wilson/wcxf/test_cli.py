@@ -19,7 +19,7 @@ def _del_files(fs):
 
 class TestCLI(unittest.TestCase):
     def test_convert(self):
-        yml1 = pkgutil.get_data('wcxf', 'data/test.basis1.yml').decode('utf-8')
+        yml1 = pkgutil.get_data('wilson', 'wcxf/data/test.basis1.yml').decode('utf-8')
         d_yml1 = yaml.safe_load(yml1)
         # YAML stdin -> JSON stdout
         res = subprocess.run(['wcxf', 'convert', 'json', '-'],
