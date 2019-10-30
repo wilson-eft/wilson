@@ -5,7 +5,7 @@ import yaml
 import json
 import pkgutil
 from wilson import wcxf
-from wcxf import translators
+from wilson.wcxf import translators
 
 class TestBasis(unittest.TestCase):
     def test_eft(self):

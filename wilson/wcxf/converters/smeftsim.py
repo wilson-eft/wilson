@@ -2,7 +2,7 @@
 
 from numpy import angle
 from collections import OrderedDict
-from wcxf.converters.SMEFTsim_param_card_elements import *
+from wilson.wcxf.converters.SMEFTsim_param_card_elements import *
 from wilson.util import smeftutil
 
 

@@ -82,7 +82,7 @@ def wcxf_cli():
 
 
 def convert(args):
-    from wcxf.converters.yamljson import convert_json, convert_yaml
+    from wilson.wcxf.converters.yamljson import convert_json, convert_yaml
     if args.FORMAT.lower() == 'json':
         convert_json(args.FILE, args.output)
     if args.FORMAT.lower() == 'yaml':
@@ -118,7 +118,7 @@ def validate(args):
 
 
 def eos():
-    from wcxf.converters.eos import wcxf2eos, get_sm_wcs
+    from wilson.wcxf.converters.eos import wcxf2eos, get_sm_wcs
     parser = argparse.ArgumentParser(description="""Command line script to convert a WCxf file to an EOS Wilson coefficient parameter file.""",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("FILE", nargs='?', help="Input file. If \"-\", read from standard input",
@@ -155,7 +155,7 @@ def eos():
 
 
 def smeftsim():
-    from wcxf.converters.smeftsim import initialize_smeftsim_card, smeftsim_card_fill, smeftsim_card_text
+    from wilson.wcxf.converters.smeftsim import initialize_smeftsim_card, smeftsim_card_fill, smeftsim_card_text
     parser = argparse.ArgumentParser(description="""Command line script to convert a WCxf file to a MadGraph param_card file for SMEFTsim.""",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("FILE", nargs='?', help="Input file. Must be specified.",
@@ -197,7 +197,7 @@ Press 'i' to ignore this warning or any other key to exit.''')
 
 
 def wcxf2dsixtools():
-    from wcxf.converters import dsixtools
+    from wilson.wcxf.converters import dsixtools
     parser = argparse.ArgumentParser(description="""Command line script to convert a WCxf file to a DsixTools Wilson coefficient file.""",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("FILE", nargs='?', help="Input file. If \"-\", read from standard input",
@@ -212,7 +212,7 @@ def wcxf2dsixtools():
 
 
 def dsixtools2wcxf():
-    from wcxf.converters import dsixtools
+    from wilson.wcxf.converters import dsixtools
     parser = argparse.ArgumentParser(description="""Command line script to convert DsixTools output files to a WCxf file.""",
                                      formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("FILE", nargs='+', help="Input file(s).",

@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from wilson import wcxf
-from wcxf.converters import eos
+from wilson.wcxf.converters import eos
 import os
 
 my_path = os.path.dirname(os.path.realpath(__file__))

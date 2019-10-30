@@ -1,6 +1,6 @@
 import unittest
 from wilson import wcxf
-from wcxf.converters import dsixtools
+from wilson.wcxf.converters import dsixtools
 import os
 import subprocess
 
