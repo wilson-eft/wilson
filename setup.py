@@ -32,9 +32,10 @@ setup(
     install_requires=[
         "scipy>=1.0",
         "numpy",
+        "pandas",
         "pylha>=0.2",
         "pyyaml",
-        "ckmutil>=0.3",
+        "ckmutil>=0.3.2",
         "rundec>=0.5",
         "voluptuous",
     ],
