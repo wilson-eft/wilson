@@ -303,12 +303,14 @@ class Basis(WCxf, NamedInstanceClass):
                 # fractions of line width (default: 72)
                 md += "|" + 18 * "-" + "|" + 48 * "-" + "|" + 6 * "-" + "|\n"
                 for name, d in wcs.items():
+                    if d is None:
+                        d = {}
                     if 'real' not in d or not d['real']:
                         t = 'C'
                     else:
                         t = 'R'
                     md += "| `{}` | ${}$ | {} |\n".format(name,
-                                                          d.get('tex', ''), t)
+                                                          d.get('tex', '~'), t)
         return md
 
     def __str__(self):
