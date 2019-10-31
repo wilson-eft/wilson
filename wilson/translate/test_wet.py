@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import wcxf
+from wilson import wcxf
 from . import wet
 from math import sqrt
 import wilson

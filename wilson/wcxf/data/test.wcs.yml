@@ -1,0 +1,9 @@
+eft: MyEFT
+basis: MyBasis 1
+scale: 1e16
+values:
+    C_1: 0.12
+    C_2:
+      Re: 0.3156
+      Im: -0.53
+    C_4: 0.32

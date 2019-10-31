@@ -5,7 +5,7 @@ from wilson.run.smeft import beta
 from wilson.util import smeftutil
 from wilson.run.smeft.tests import test_beta
 from wilson.test_wilson import get_random_wc
-import wcxf
+from wilson import wcxf
 from numbers import Number
 
 C = test_beta.C.copy()

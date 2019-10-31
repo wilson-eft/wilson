@@ -1,0 +1,51 @@
+Block GAUGE
+1 0.629787	# g
+2 0.345367	# gp
+3 1.218232	# gs
+Block SCALAR
+1 0.257736	# lambda
+2 7812.500000	# m2 [GeV^2]
+Block GU
+1 1 1.23231E-5	# Gamma_u(1,1)
+1 2 -1.64149E-3	# Gamma_u(1,2)
+1 3 8.01698E-3	# Gamma_u(1,3)
+2 1 2.84527E-6	# Gamma_u(2,1)
+2 2 7.10740E-3	# Gamma_u(2,2)
+2 3 -4.13674E-2	# Gamma_u(2,3)
+3 1 1.90048E-8	# Gamma_u(3,1)
+3 2 3.08758E-4	# Gamma_u(3,2)
+3 3 0.994858	# Gamma_u(3,3)
+Block IMGU
+1 1 0		# Gamma_u(1,1)
+1 2 1.01061E-6	# Gamma_u(1,2)
+1 3 3.25631E-3	# Gamma_u(1,3)
+2 1 0		# Gamma_u(2,1)
+2 2 2.33338E-7	# Gamma_u(2,2)
+2 3 7.51845E-4	# Gamma_u(2,3)
+3 1 4.24857E-8	# Gamma_u(3,1)
+3 2 0		# Gamma_u(3,2)
+3 3 0		# Gamma_u(3,3)
+Block GD
+1 1 2.70195E-5	# Gamma_d(1,1)
+1 2 0		# Gamma_d(1,2)
+1 3 0		# Gamma_d(1,3)
+2 1 0		# Gamma_d(2,1)
+2 2 5.51888E-4	# Gamma_d(2,2)
+2 3 0		# Gamma_d(2,3)
+3 1 0	  	# Gamma_d(3,1)
+3 2 0  		# Gamma_d(3,2)
+3 3 2.403012E-2	# Gamma_d(3,3)
+Block GE
+1 1 2.93766E-6	# Gamma_e(1,1)
+1 2 0		# Gamma_e(1,2)
+1 3 0		# Gamma_e(1,3)
+2 1 0		# Gamma_e(2,1)
+2 2 6.07422E-4	# Gamma_e(2,2)
+2 3 0		# Gamma_e(2,3)
+3 1 0		# Gamma_e(3,1)
+3 2 0		# Gamma_e(3,2)
+3 3 1.02157E-2	# Gamma_e(3,3)
+Block THETA
+1 0		# theta
+2 0 		# thetap
+3 0		# thetas

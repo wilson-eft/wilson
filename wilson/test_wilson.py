@@ -1,5 +1,5 @@
 import unittest
-import wcxf
+from wilson import wcxf
 import wilson
 import numpy as np
 import pkgutil

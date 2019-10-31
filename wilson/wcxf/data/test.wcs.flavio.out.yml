@@ -1,0 +1,42 @@
+# output file: translated by hand
+eft: WET
+basis: flavio
+scale: 4.8
+values:
+#   Class-I 
+    CVLL_sdsd: 3.2990171528061985e-05  
+    CVLL_bsbs: 3.2990171528061985e-05
+    CVLL_bdbd: 3.2990171528061985e-05
+#   Class-II
+    CVL_dumunumu: -1.02615313403
+    CVL_sumunumu: -4.4583147570
+    CVL_bumunumu: 
+         Re: -81.845545007
+         Im: -263.840015355
+    CVL_dcmunumu:  
+         Re:  4.46138243856
+         Im: -0.00283077762245
+    CVL_scmunumu: 
+         Re: -1.02707249075
+         Im: -3.45310923075e-05 
+    CVL_bcmunumu: -23.6910684672
+# Class-V semileptonic
+    C9_bsmumu: 
+        Re: -38866.8261563
+        Im: -727.851241058
+    C9_bdmumu: 
+        Re:  164674.3334774109
+        Im: -65810.01310290069
+## Class-V chromomagnetic
+    C7_bs: 
+        Re: -1399.42710929
+        Im: -26.2067901859
+    C8_bs:
+        Re: -1399.42710929
+        Im: -26.2067901859
+    C7_bd:  
+        Re:  5929.21391487
+        Im: -2369.53529544
+    C8_bd:  
+        Re:  5929.21391487
+        Im: -2369.53529544

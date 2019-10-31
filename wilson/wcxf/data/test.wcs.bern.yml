@@ -1,0 +1,32 @@
+# To do : check scale dependence
+eft: WET
+basis: Bern
+scale: 4.8
+values:
+#   Class-I 
+    1sbsb: 1.0
+    1dbdb: 1.0
+    1dsds: 1.0
+#   Class-II
+    1udmumu: 1.0 
+    1usmumu: 1.0   
+    1ubmumu: 1.0   
+    1cdmumu: 1.0   
+    1csmumu: 1.0   
+    1cbmumu: 1.0   
+# Class-V(Semileptonic)
+    1sbmumu: 
+        Re: 1.0
+        Im: 0.0
+    1dbmumu: 
+        Re: 1.0
+        Im: 0.0
+    1dsmumu: 
+        Re: 1.0
+        Im: 0.0
+# Class-V chromomagnetic
+    7gammasb: 1.0
+    8gsb:     1.0
+    7gammadb: 1.0
+    8gdb:     1.0
+

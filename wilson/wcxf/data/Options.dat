@@ -1,0 +1,13 @@
+Block SCALES
+1 10000		# UV scale [GeV]
+2 80.385	# EW scale [GeV]
+Block OPTIONS
+1 1	# CPV=0: all parameters and WCs are assumed to be real
+2 1	# ReadRGEs: 0 (RGEs reconstructed) or 1 (RGEs read from a file)
+3 2	# Method to solve RGEs : 1 (NDSolve) or 2 (leading log)
+4 0	# Export RGEs
+5 1	# Use SM RGEs to compute SM parameters at the high-energy scale
+6 1	# Export SMEFTrunner results
+7 1	# Export EWmatcher results
+8 1	# Export WETrunner results
+9 1	# Type of input WCs: 1 (SMEFT) or 2 (WET)

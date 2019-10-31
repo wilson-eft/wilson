@@ -1,7 +1,7 @@
 """Utility functions and dictionaries useful for the manipulation of WET Wilson coefficients.
 """
 
-import wcxf
+from wilson import wcxf
 import numpy as np
 import ckmutil
 from wilson.util.smeftutil import _d_4, _d_6, _d_7

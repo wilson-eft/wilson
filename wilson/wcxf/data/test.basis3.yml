@@ -1,0 +1,7 @@
+eft: MyEFT
+basis: MyBasis 2
+parent: MyBasis 1
+sectors:
+  My Sector 1:
+    C_1:
+      real: true

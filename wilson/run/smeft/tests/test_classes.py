@@ -4,7 +4,7 @@ import numpy.testing as npt
 from wilson.run.smeft import SMEFT, beta
 from wilson.test_wilson import get_random_wc
 from wilson.util.smeftutil import SM_keys
-import wcxf
+from wilson import wcxf
 
 
 class TestSMEFT(unittest.TestCase):

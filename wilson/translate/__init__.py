@@ -4,7 +4,7 @@
 
 from . import smeft
 from . import wet
-import wcxf
+from wilson import wcxf
 
 
 @wcxf.translator('SMEFT', 'Warsaw', 'Warsaw mass')

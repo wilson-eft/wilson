@@ -1,9 +1,0 @@
-test:
-  image: python:3.6
-  before_script:
-    - pip install nose
-    - pip install coverage
-  script:
-    - pip install .
-    - nosetests --with-coverage --cover-package=wilson
-  coverage: '/TOTAL.*\s+(\d+\%)/'

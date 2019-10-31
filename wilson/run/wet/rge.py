@@ -8,7 +8,7 @@ import numpy as np
 from functools import lru_cache
 from wilson.run.wet import adm
 from math import log, sqrt, pi
-import wcxf
+from wilson import wcxf
 
 @lru_cache(maxsize=32)
 def get_permissible_wcs(classname, f):

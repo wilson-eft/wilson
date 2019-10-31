@@ -2,7 +2,7 @@
 can be used with the `wcxf` Python package."""
 
 
-import wcxf
+from wilson import wcxf
 import wilson
 from . import smeft
 

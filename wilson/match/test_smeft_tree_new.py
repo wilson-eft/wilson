@@ -4,7 +4,7 @@ to the old one based on arXiv:1709.04486."""
 import unittest
 import numpy as np
 import numpy.testing as npt
-import wcxf
+from wilson import wcxf
 import wilson
 from wilson.test_wilson import get_random_wc
 import wilson.match._smeft_old

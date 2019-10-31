@@ -1,6 +1,6 @@
 import unittest
 from wilson.run import wet
-import wcxf
+from wilson import wcxf
 import numpy as np
 import numpy.testing as npt
 from wilson.run.wet import rge

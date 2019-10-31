@@ -1,0 +1,4 @@
+eft: MyEFT
+basis: MyBasis 2
+parent: MyBasis 1
+sectors: {}

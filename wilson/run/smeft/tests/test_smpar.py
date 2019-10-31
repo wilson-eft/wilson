@@ -1,5 +1,5 @@
 import unittest
-import wcxf
+from wilson import wcxf
 import numpy as np
 from wilson.run.smeft import smpar, SMEFT
 from math import sqrt, pi

@@ -1,4 +1,4 @@
-import wcxf
+from wilson import wcxf
 from wilson.parameters import p as default_parameters
 import ckmutil.ckm
 import ckmutil.diag

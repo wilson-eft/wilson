@@ -13,7 +13,7 @@ from wilson.run.wet import WETrunner
 from wilson import parameters
 import numpy as np
 from math import log, e
-import wcxf
+from wilson import wcxf
 import voluptuous as vol
 
 class ConfigurableClass(object):
