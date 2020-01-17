@@ -253,11 +253,16 @@ def _BernII_to_EOS_II(C, udlnu, parameters):
     ind2 = udlnu[0]+udlnu[4:udlnu.find('n')]+'nu'+udlnu[
                                                 udlnu.find('_',5)+1:len(udlnu)]
     dic = {
-        'b->' + ind2 + '::cVL': C['1' + ind],
-        'b->' + ind2 + '::cVR': C['1p' + ind],
-        'b->' + ind2 + '::cSR': C['5' + ind],
-        'b->' + ind2 + '::cSL': C['5p' + ind],
-        'b->' + ind2 + '::cT': C['7p' + ind]
+        'b->' + ind2 + '::Re{cVL}' : np.real(C['1'  + ind]),
+        'b->' + ind2 + '::Im{cVL}' : np.imag(C['1'  + ind]),
+        'b->' + ind2 + '::Re{cVR}' : np.real(C['1p' + ind]),
+        'b->' + ind2 + '::Im{cVR}' : np.imag(C['1p' + ind]),
+        'b->' + ind2 + '::Re{cSR}' : np.real(C['5'  + ind]),
+        'b->' + ind2 + '::Im{cSR}' : np.imag(C['5'  + ind]),
+        'b->' + ind2 + '::Re{cSL}' : np.real(C['5p' + ind]),
+        'b->' + ind2 + '::Im{cSL}' : np.imag(C['5p' + ind]),
+        'b->' + ind2 + '::Re{cT}'  : np.real(C['7p' + ind]),
+        'b->' + ind2 + '::Im{cT}'  : np.imag(C['7p' + ind])
         }
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     prefactor = -sqrt(2) / p['GF'] / V[u, d] / 4
@@ -888,44 +893,62 @@ def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
     Vts = V[2,1]
     """From Fierz to the EOS basis for b -> s transitions.
     The arguments are dictionaries of the corresponding Fierz bases """
+    c1 = (
+        - Fsbbb['Fsbbb1']/3 + 2 * Fsbcc['Fsbcc1']
+        - 2 * Fsbdd['Fsbdd1'] / 3 + Fsbdd['Fsbdd2'] / 3
+        - Fsbss['Fsbss1'] / 3 - 2 * Fsbuu['Fsbuu1'] / 3
+        + Fsbuu['Fsbuu2'] / 3
+    )
+    c2 = (
+        - 2 * Fsbbb['Fsbbb1'] / 9 + Fsbcc['Fsbcc1'] / 3
+        + Fsbcc['Fsbcc2'] + Fsbdd['Fsbdd1'] / 18
+        - 5 * Fsbdd['Fsbdd2'] / 18 - 2 * Fsbss['Fsbss1'] / 9
+        + Fsbuu['Fsbuu1'] / 18 - 5 * Fsbuu['Fsbuu2'] / 18
+    )
+    c3 = (
+        - 2 * Fsbbb['Fsbbb1'] / 27 + 4 * Fsbbb['Fsbbb3'] / 15
+        + 4 * Fsbbb['Fsbbb4'] / 45 + 4 * Fsbcc['Fsbcc3'] / 15
+        + 4 * Fsbcc['Fsbcc4'] / 45 - 5 * Fsbdd['Fsbdd1'] / 54
+        + Fsbdd['Fsbdd2'] / 54 + 4 * Fsbdd['Fsbdd3'] / 15
+        + 4 * Fsbdd['Fsbdd4'] / 45 - 2 * Fsbss['Fsbss1'] / 27
+        + 4 * Fsbss['Fsbss3'] / 15 + 4 * Fsbss['Fsbss4'] / 45
+        - 5 * Fsbuu['Fsbuu1'] / 54 + Fsbuu['Fsbuu2'] / 54
+        + 4 * Fsbuu['Fsbuu3'] / 15 + 4 * Fsbuu['Fsbuu4'] / 45
+    )
+    c4 = (
+        - Fsbbb['Fsbbb1'] / 9 + 8 * Fsbbb['Fsbbb4'] / 15
+        + 8 * Fsbcc['Fsbcc4'] / 15 + Fsbdd['Fsbdd1'] / 9
+        - 2 * Fsbdd['Fsbdd2'] / 9 + 8 * Fsbdd['Fsbdd4'] / 15
+        - Fsbss['Fsbss1'] / 9 + 8 * Fsbss['Fsbss4'] / 15
+        + Fsbuu['Fsbuu1'] / 9 - 2 * Fsbuu['Fsbuu2'] / 9
+        + 8 * Fsbuu['Fsbuu4'] / 15
+    )
+    c5 = (
+        + Fsbbb['Fsbbb1'] / 54 - Fsbbb['Fsbbb3'] / 60
+        - Fsbbb['Fsbbb4'] / 180 - Fsbcc['Fsbcc3'] / 60
+        - Fsbcc['Fsbcc4'] / 180 + 5 * Fsbdd['Fsbdd1'] / 216
+        - Fsbdd['Fsbdd2'] / 216 - Fsbdd['Fsbdd3'] / 60
+        - Fsbdd['Fsbdd4'] / 180 + Fsbss['Fsbss1'] / 54
+        - Fsbss['Fsbss3'] / 60 - Fsbss['Fsbss4'] / 180
+        + 5 * Fsbuu['Fsbuu1'] / 216 - Fsbuu['Fsbuu2'] / 216
+        - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180,
+    )
+    c6 = (
+        + Fsbbb['Fsbbb1'] / 36 - Fsbbb['Fsbbb4'] / 30
+        - Fsbcc['Fsbcc4'] / 30 - Fsbdd['Fsbdd1'] / 36
+        + Fsbdd['Fsbdd2'] / 18 - Fsbdd['Fsbdd4'] / 30
+        + Fsbss['Fsbss1'] / 36 - Fsbss['Fsbss4'] / 30
+        - Fsbuu['Fsbuu1'] / 36 + Fsbuu['Fsbuu2'] / 18
+        - Fsbuu['Fsbuu4'] / 30
+    )
     dic = {
-    'b->s::c1' :  -Fsbbb['Fsbbb1']/3 + 2*Fsbcc['Fsbcc1']
-                    - 2 * Fsbdd['Fsbdd1'] / 3 + Fsbdd['Fsbdd2']/3 -
-                    Fsbss['Fsbss1'] / 3 - 2 * Fsbuu['Fsbuu1'] / 3
-                    + Fsbuu['Fsbuu2'] / 3,
-     'b->s::c2' : -2 * Fsbbb['Fsbbb1'] / 9 + Fsbcc['Fsbcc1'] / 3
-                    + Fsbcc['Fsbcc2'] + Fsbdd['Fsbdd1'] / 18
-                    - 5 * Fsbdd['Fsbdd2'] / 18 - 2 * Fsbss['Fsbss1'] / 9
-                    + Fsbuu['Fsbuu1'] / 18 - 5 * Fsbuu['Fsbuu2'] / 18,
-     'b->s::c3' : -2 * Fsbbb['Fsbbb1'] / 27 + 4 * Fsbbb['Fsbbb3'] / 15
-                    + 4 * Fsbbb['Fsbbb4'] / 45 + 4 * Fsbcc['Fsbcc3'] / 15
-                    + 4 * Fsbcc['Fsbcc4'] / 45 - 5 * Fsbdd['Fsbdd1'] / 54
-                    + Fsbdd['Fsbdd2'] / 54 + 4 * Fsbdd['Fsbdd3'] / 15
-                    + 4 * Fsbdd['Fsbdd4'] / 45 - 2 * Fsbss['Fsbss1'] / 27
-                    + 4 * Fsbss['Fsbss3'] / 15 + 4 * Fsbss['Fsbss4'] / 45
-                    - 5 * Fsbuu['Fsbuu1'] / 54 + Fsbuu['Fsbuu2'] / 54
-                    + 4 * Fsbuu['Fsbuu3'] / 15 + 4 * Fsbuu['Fsbuu4'] / 45,
-     'b->s::c4' : -Fsbbb['Fsbbb1'] / 9 + 8 * Fsbbb['Fsbbb4'] / 15
-                    + 8 * Fsbcc['Fsbcc4'] / 15 + Fsbdd['Fsbdd1'] / 9
-                    - 2 * Fsbdd['Fsbdd2'] / 9 + 8 * Fsbdd['Fsbdd4'] / 15
-                    - Fsbss['Fsbss1'] / 9 + 8 * Fsbss['Fsbss4'] / 15
-                    + Fsbuu['Fsbuu1'] / 9 - 2 * Fsbuu['Fsbuu2'] / 9
-                    + 8 * Fsbuu['Fsbuu4'] / 15,
-     'b->s::c5' : Fsbbb['Fsbbb1'] / 54 - Fsbbb['Fsbbb3'] / 60
-                 - Fsbbb['Fsbbb4'] / 180 - Fsbcc['Fsbcc3'] / 60
-                 - Fsbcc['Fsbcc4'] / 180 + 5 * Fsbdd['Fsbdd1'] / 216
-                 - Fsbdd['Fsbdd2'] / 216 - Fsbdd['Fsbdd3'] / 60
-                 - Fsbdd['Fsbdd4'] / 180 + Fsbss['Fsbss1'] / 54
-                 - Fsbss['Fsbss3'] / 60 - Fsbss['Fsbss4'] / 180
-                 + 5 * Fsbuu['Fsbuu1'] / 216 - Fsbuu['Fsbuu2'] / 216
-                 - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180,
-     'b->s::c6' : Fsbbb['Fsbbb1'] / 36 - Fsbbb['Fsbbb4'] / 30
-                  - Fsbcc['Fsbcc4'] / 30 - Fsbdd['Fsbdd1'] / 36
-                  + Fsbdd['Fsbdd2'] / 18 - Fsbdd['Fsbdd4'] / 30
-                  + Fsbss['Fsbss1'] / 36 - Fsbss['Fsbss4'] / 30
-                  - Fsbuu['Fsbuu1'] / 36 + Fsbuu['Fsbuu2'] / 18
-                  - Fsbuu['Fsbuu4'] / 30
-                  }
+        'b->s::c1' : np.real(c1),
+        'b->s::c2' : np.real(c2),
+        'b->s::c3' : np.real(c3),
+        'b->s::c4' : np.real(c4),
+        'b->s::c5' : np.real(c5),
+        'b->s::c6' : np.real(c6)
+    }
     prefactor = sqrt(2)/p['GF']/Vtb/Vts.conj()/4
     return {k: prefactor * v for k,v in dic.items()}
 
@@ -1265,17 +1288,27 @@ def Fierz_to_EOS_lep(C, ddll, parameters):
     ind2 = ddll.replace('l_','').replace('nu_','')[2::]
     e = sqrt(4* pi * parameters['alpha_e'])
     dic = {
-        'b->s' + ind2 + '::c9' : (16 * pi**2) / e**2 * C['F' + ind + '9'],
-        'b->s' + ind2 + "::c9'" : (16 * pi**2) / e**2 * C['F' + ind + '9p'],
-        'b->s' + ind2 + "::c10" : (16 * pi**2) / e**2 * C['F' + ind + '10'],
-        'b->s' + ind2 + "::c10'" : (16 * pi**2) / e**2 * C['F' + ind + '10p'],
-        'b->s' + ind2 + "::cS" : (16 * pi**2) / e**2  * C['F' + ind + 'S'],
-        'b->s' + ind2 + "::cS'" : (16 * pi**2) / e**2 * C['F' + ind + 'Sp'],
-        'b->s' + ind2 + "::cP" : (16 * pi**2) / e**2  * C['F' + ind + 'P'],
-        'b->s' + ind2 + "::cP'" : (16 * pi**2) / e**2  * C['F' + ind + 'Pp'],
-        'b->s' + ind2 + "::cT"  : (16 * pi**2) / e**2  * C['F' + ind + 'T'],
-        'b->s' + ind2 + "::cT5"  : (16 * pi**2) / e**2  * C['F' + ind + 'T5']
-        }
+        'b->s' + ind2 + '::Re{c9}'   : np.real((16 * pi**2) / e**2 * C['F' + ind + '9'  ]),
+        'b->s' + ind2 + '::Im{c9}'   : np.imag((16 * pi**2) / e**2 * C['F' + ind + '9'  ]),
+        'b->s' + ind2 + "::Re{c9'}"  : np.real((16 * pi**2) / e**2 * C['F' + ind + '9p' ]),
+        'b->s' + ind2 + "::Im{c9'}"  : np.imag((16 * pi**2) / e**2 * C['F' + ind + '9p' ]),
+        'b->s' + ind2 + "::Re{c10}"  : np.real((16 * pi**2) / e**2 * C['F' + ind + '10' ]),
+        'b->s' + ind2 + "::Im{c10}"  : np.imag((16 * pi**2) / e**2 * C['F' + ind + '10' ]),
+        'b->s' + ind2 + "::Re{c10'}" : np.real((16 * pi**2) / e**2 * C['F' + ind + '10p']),
+        'b->s' + ind2 + "::Im{c10'}" : np.imag((16 * pi**2) / e**2 * C['F' + ind + '10p']),
+        'b->s' + ind2 + "::Re{cS}"   : np.real((16 * pi**2) / e**2 * C['F' + ind + 'S'  ]),
+        'b->s' + ind2 + "::Im{cS}"   : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'S'  ]),
+        'b->s' + ind2 + "::Re{cS'}"  : np.real((16 * pi**2) / e**2 * C['F' + ind + 'Sp' ]),
+        'b->s' + ind2 + "::Im{cS'}"  : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'Sp' ]),
+        'b->s' + ind2 + "::Re{cP}"   : np.real((16 * pi**2) / e**2 * C['F' + ind + 'P'  ]),
+        'b->s' + ind2 + "::Im{cP}"   : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'P'  ]),
+        'b->s' + ind2 + "::Re{cP'}"  : np.real((16 * pi**2) / e**2 * C['F' + ind + 'Pp' ]),
+        'b->s' + ind2 + "::Im{cP'}"  : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'Pp' ]),
+        'b->s' + ind2 + "::Re{cT}"   : np.real((16 * pi**2) / e**2 * C['F' + ind + 'T'  ]),
+        'b->s' + ind2 + "::Im{cT}"   : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'T'  ]),
+        'b->s' + ind2 + "::Re{cT5}"  : np.real((16 * pi**2) / e**2 * C['F' + ind + 'T5' ]),
+        'b->s' + ind2 + "::Im{cT5}"  : np.imag((16 * pi**2) / e**2 * C['F' + ind + 'T5' ])
+    }
     prefactor = sqrt(2)/p['GF']/Vtb/Vts.conj()/4
     return {k: prefactor * v for k,v in dic.items()}
 
@@ -1469,11 +1502,14 @@ def Fierz_to_EOS_chrom(C, dd, parameters):
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
     mb = parameters['m_b']
-    dic = {"b->s::c7": 16 * pi**2 / mb / e * C["F7gamma" + dd],
-            "b->s::c7'": 16 * pi**2 / mb / e * C["F7pgamma" + dd],
-            "b->s::c8": 16 * pi**2 / mb / gs * C["F8g" + dd],
-            "b->s::c8'": 16 * pi**2 / mb / gs * C["F8pg" + dd]
-                }
+    dic = {
+        "b->s::Re{c7}"  : np.real(16 * pi**2 / mb / e  * C["F7gamma"  + dd]),
+        "b->s::Im{c7}"  : np.imag(16 * pi**2 / mb / e  * C["F7gamma"  + dd]),
+        "b->s::Re{c7'}" : np.real(16 * pi**2 / mb / e  * C["F7pgamma" + dd]),
+        "b->s::Im{c7'}" : np.imag(16 * pi**2 / mb / e  * C["F7pgamma" + dd]),
+        "b->s::c8"      : np.real(16 * pi**2 / mb / gs * C["F8g"      + dd]),
+        "b->s::c8'"     : np.real(16 * pi**2 / mb / gs * C["F8pg"     + dd])
+    }
     prefactor = sqrt(2)/p['GF']/Vtb/Vts.conj()/4
     return {k: prefactor * v for k,v in dic.items()}
 
