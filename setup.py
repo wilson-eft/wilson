@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 with open("wilson/_version.py") as f:
     exec(f.read())
 
-with open("README.md") as f:
+with open("README.md", encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
 setup(
