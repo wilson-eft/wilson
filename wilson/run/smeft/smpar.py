@@ -40,11 +40,11 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
     given the parameters of the Higgs potential."""
     try:
         v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-             (sqrt(2) * Lambda**(5 / 2)) * C['phi'])
+             (sqrt(2) * Lambda**(5 / 2)) * C['phi'].real)
     except ValueError:
         v = 0
-    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'] - 4 * Lambda * C['phiBox'] +
-                                        Lambda * C['phiD']))
+    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
+                                        Lambda * C['phiD'].real))
     return {'v': v, 'Mh2': Mh2}
 
 def _vMh2_to_m2Lambda_SM(v, Mh2):
@@ -86,7 +86,7 @@ def get_gpbar(ebar, gbar, v, C):
         def f0(x):  # we want the root of this function
             gpb = x
             gb = gbar
-            eps = C['phiWB'] * (v**2)
+            eps = C['phiWB'].real * (v**2)
             ebar_calc = (gb * gpb / sqrt(gb**2 + gpb**2) *
                         (1 - eps * gb * gpb / (gb**2 + gpb**2)))
             return (ebar_calc - ebar).real
@@ -94,7 +94,7 @@ def get_gpbar(ebar, gbar, v, C):
             gpbar = scipy.optimize.brentq(f0, 0, 3)
         except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
             raise ValueError("No solution for gp found. This problem can be caused by very large values for one or several Wilson coefficients.")
-    return gpbar * (1 - C['phiB'] * (v**2))
+    return gpbar * (1 - C['phiB'].real * (v**2))
 
 
 def smeftpar(scale, C, basis):
@@ -110,9 +110,9 @@ def smeftpar(scale, C, basis):
     m2 = _d['m2'].real
     Lambda = _d['Lambda'].real
     gsbar = sqrt(4 * pi * p['alpha_s'])
-    gs = (1 - C['phiG'] * (v**2)) * gsbar
+    gs = (1 - C['phiG'].real * (v**2)) * gsbar
     gbar = 2 * MW / v
-    g = gbar * (1 - C['phiW'] * (v**2))
+    g = gbar * (1 - C['phiW'].real * (v**2))
     ebar = sqrt(4 * pi * p['alpha_e'])
     gp = get_gpbar(ebar, gbar, v, C)
     c = {}
@@ -142,16 +142,16 @@ def smpar(C):
     m2 = C['m2'].real
     Lambda = C['Lambda'].real
     v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-         (sqrt(2) * Lambda**(5 / 2)) * C['phi'])
+         (sqrt(2) * Lambda**(5 / 2)) * C['phi'].real)
     GF = 1 / (sqrt(2) * v**2)  # TODO
-    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'] - 4 * Lambda * C['phiBox'] +
-                                       Lambda * C['phiD']))
-    eps = C['phiWB'] * (v**2)
-    gb = (C['g'] / (1 - C['phiW'] * (v**2))).real
-    gpb = (C['gp'] / (1 - C['phiB'] * (v**2))).real
-    gsb = (C['gs'] / (1 - C['phiG'] * (v**2))).real
+    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
+                                       Lambda * C['phiD'].real))
+    eps = C['phiWB'].real * (v**2)
+    gb = (C['g'] / (1 - C['phiW'].real * (v**2))).real
+    gpb = (C['gp'] / (1 - C['phiB'].real * (v**2))).real
+    gsb = (C['gs'] / (1 - C['phiG'].real * (v**2))).real
     MW = gb * v / 2
-    ZG0 = 1 + C['phiD'] * (v**2) / 4
+    ZG0 = 1 + C['phiD'].real * (v**2) / 4
     MZ = (sqrt(gb**2 + gpb**2) / 2 * v
           * (1 + eps * gb * gpb / (gb**2 + gpb**2)) * ZG0)
     Mnup = -(v**2) * C['llphiphi']
