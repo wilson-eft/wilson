@@ -43,7 +43,7 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
              (sqrt(2) * Lambda**(5 / 2)) * C['phi'].real)
     except ValueError:
         v = 0
-    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
+    Mh2 = 2 * m2 * (1 - m2 / Lambda**2 * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
                                         Lambda * C['phiD'].real))
     return {'v': v, 'Mh2': Mh2}
 
