@@ -43,13 +43,13 @@ class TestMh2v(unittest.TestCase):
     def test_sm(self):
         v = 246
         Mh2 = 125**2
-        d = smpar._vMh2_to_m2Lambda_SM(v, Mh2)
-        self.assertAlmostEqual(d['m2'], Mh2/2)
-        self.assertAlmostEqual(d['Lambda'], Mh2/v**2)
         C = {k: 0 for k in ['phi', 'phiBox', 'phiD']}
         d = smpar.vMh2_to_m2Lambda(v, Mh2, C)
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
         self.assertAlmostEqual(d['m2'], Mh2/2)
         self.assertAlmostEqual(d['Lambda'], Mh2/v**2)
+        self.assertAlmostEqual(d2['v'], v)
+        self.assertAlmostEqual(d2['Mh2'], Mh2)
 
     def test_Cphi0(self):
         v = 246
@@ -70,12 +70,13 @@ class TestMh2v(unittest.TestCase):
         self.assertAlmostEqual(d2['v'], v, places=6)
         self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
 
-    def test_noconvergence(self):
-        v = 246
-        Mh2 = 125**2
-        C = {k: 0 for k in ['phi', 'phiBox']}
-        C['phiD'] = 9.678e-06
-        self.assertWarns(Warning, smpar.vMh2_to_m2Lambda, v, Mh2, C)
+    def test_vreal(self):
+        m2 = 7812
+        Lambda = 0.258
+        C = {k: 0 for k in ['phiD', 'phiBox']}
+        C['phi'] = 1e-6
+        with self.assertRaises(ValueError):
+            smpar.m2Lambda_to_vMh2(m2, Lambda, C)
 
 class TestSMpar(unittest.TestCase):
     def test_smeftpar_small(self):

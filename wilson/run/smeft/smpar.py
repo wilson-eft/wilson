@@ -38,44 +38,28 @@ p['m_h'] = 130.6
 def m2Lambda_to_vMh2(m2, Lambda, C):
     """Function to numerically determine the  physical Higgs VEV and mass
     given the parameters of the Higgs potential."""
-    try:
-        v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-             (sqrt(2) * Lambda**(5 / 2)) * C['phi'].real)
-    except ValueError:
-        v = 0
-    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
-                                        Lambda * C['phiD'].real))
-    return {'v': v, 'Mh2': Mh2}
-
-def _vMh2_to_m2Lambda_SM(v, Mh2):
-    m2 = Mh2/2
-    Lambda = 2 * m2 / v**2
-    return {'m2': m2, 'Lambda': Lambda}
+    Cphi = C['phi'].real
+    Ckin = C['phiBox'].real - C['phiD'].real / 4
+    if abs(Cphi) < 1e-16:
+        v2 = 2 * m2 / Lambda
+    else:
+        sqrt_arg = Lambda**2 - 12 * Cphi * m2
+        if not sqrt_arg >= 0:
+            raise ValueError("'Lambda**2 - 12 * Cphi * m2' must be positive.")
+        v2 = ( Lambda - sqrt(sqrt_arg) )/( 3 * Cphi )
+    Mh2 = ( v2 * ( 1 + Ckin * v2 )**2 * ( Lambda - 3 * Cphi * v2 ) )
+    return {'v': sqrt(v2), 'Mh2': Mh2}
 
 def vMh2_to_m2Lambda(v, Mh2, C):
     """Function to numerically determine the parameters of the Higgs potential
     given the physical Higgs VEV and mass."""
-    if C['phi'] == 0 and C['phiBox'] == 0 and C['phiD'] == 0:
-        return _vMh2_to_m2Lambda_SM(v, Mh2)
-    else:
-        def f0(x):  # we want the root of this function
-            m2, Lambda = x
-            d = m2Lambda_to_vMh2(m2=m2.real, Lambda=Lambda.real,
-                                 C=C)
-            return np.array([d['v'] - v, d['Mh2'] - Mh2])
-        dSM = _vMh2_to_m2Lambda_SM(v, Mh2)
-        x0 = np.array([dSM['m2'], dSM['Lambda']])
-        try:
-            xres = scipy.optimize.newton_krylov(f0, x0)
-        except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
-            warnings.warn('Standard optimization method did not converge. The GMRES method is used instead.', Warning)
-            try:
-                xres = scipy.optimize.newton_krylov(f0, x0, method='gmres',
-                                                    f_tol=1e-7)
-            except (scipy.optimize.nonlin.NoConvergence, ValueError) as e:
-                raise ValueError("No solution for m^2 and Lambda found. This problem can be caused by very large values for one or several Wilson coefficients.")
-        return {'m2': xres[0], 'Lambda': xres[1]}
-
+    v2 = v**2
+    Cphi = C['phi'].real
+    Ckin = C['phiBox'].real - C['phiD'].real / 4
+    Ckin_factor = ( 1 + Ckin * v2 )**2
+    Lambda = ( Mh2 + 3 * Cphi * v2**2 * Ckin_factor ) / ( v2 * Ckin_factor )
+    m2 = Lambda * v2 / 2 - 3/4 * Cphi * v2**2
+    return {'m2': m2, 'Lambda': Lambda}
 
 def get_gpbar(ebar, gbar, v, C):
     r"""Function to numerically determine the hypercharge gauge coupling
@@ -141,11 +125,10 @@ def smpar(C):
     """Get the running effective SM parameters."""
     m2 = C['m2'].real
     Lambda = C['Lambda'].real
-    v = (sqrt(2 * m2 / Lambda) + 3 * m2**(3 / 2) /
-         (sqrt(2) * Lambda**(5 / 2)) * C['phi'].real)
+    vMh2 = m2Lambda_to_vMh2(m2, Lambda, C)
+    v = vMh2['v']
+    Mh2 = vMh2['Mh2']
     GF = 1 / (sqrt(2) * v**2)  # TODO
-    Mh2 = 2 * m2 * (1 - m2 / Lambda * (3 * C['phi'].real - 4 * Lambda * C['phiBox'].real +
-                                       Lambda * C['phiD'].real))
     eps = C['phiWB'].real * (v**2)
     gb = (C['g'] / (1 - C['phiW'].real * (v**2))).real
     gpb = (C['gp'] / (1 - C['phiB'].real * (v**2))).real
