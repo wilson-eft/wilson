@@ -30,8 +30,8 @@ setup(
         ]
     },
     install_requires=[
+        "numpy>=1.16.5",
         "scipy>=1.0",
-        "numpy",
         "pandas",
         "pylha>=0.2",
         "pyyaml",
