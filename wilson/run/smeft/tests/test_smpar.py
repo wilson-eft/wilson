@@ -78,6 +78,21 @@ class TestMh2v(unittest.TestCase):
         with self.assertRaises(ValueError):
             smpar.m2Lambda_to_vMh2(m2, Lambda, C)
 
+    def test_args_positive(self):
+        v = 246
+        Mh2 = 125**2
+        m2 = 7812
+        Lambda = 0.258
+        C = {k: 0 for k in ['phi', 'phiBox', 'phiD']}
+        with self.assertRaises(ValueError):
+            smpar.vMh2_to_m2Lambda(-v, Mh2, C)
+        with self.assertRaises(ValueError):
+            smpar.vMh2_to_m2Lambda(v, -Mh2, C)
+        with self.assertRaises(ValueError):
+            smpar.m2Lambda_to_vMh2(-m2, Lambda, C)
+        with self.assertRaises(ValueError):
+            smpar.m2Lambda_to_vMh2(m2, -Lambda, C)
+
 class TestSMpar(unittest.TestCase):
     def test_smeftpar_small(self):
         wc = get_random_wc('SMEFT', 'Warsaw', cmax=1e-24)

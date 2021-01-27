@@ -44,6 +44,8 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
     linear order in the Wilson coefficients while the all-order expressions are
     implemented here.
     """
+    if not m2 > 0 or not Lambda > 0:
+        raise ValueError('`m2` and `Lambda` are expected to be positive.')
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
     if abs(Cphi) < 1e-16:
@@ -64,6 +66,8 @@ def vMh2_to_m2Lambda(v, Mh2, C):
     in eq. (3.1) of arXiv:1704.03888. This paper presents results expanded up to
     linear order in the Wilson coefficients while the all-order expressions are
     implemented here."""
+    if not v > 0 or not Mh2 > 0:
+        raise ValueError('`v` and `Mh2` are expected to be positive.')
     v2 = v**2
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
