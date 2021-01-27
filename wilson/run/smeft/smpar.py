@@ -37,7 +37,13 @@ p['m_h'] = 130.6
 
 def m2Lambda_to_vMh2(m2, Lambda, C):
     """Function to numerically determine the  physical Higgs VEV and mass
-    given the parameters of the Higgs potential."""
+    given the parameters of the Higgs potential.
+
+    The relations used by this function have been derived from the Lagrangian
+    in eq. (3.1) of arXiv:1704.03888. This paper presents results expanded up to
+    linear order in the Wilson coefficients while the all-order expressions are
+    implemented here.
+    """
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
     if abs(Cphi) < 1e-16:
@@ -52,7 +58,12 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
 
 def vMh2_to_m2Lambda(v, Mh2, C):
     """Function to numerically determine the parameters of the Higgs potential
-    given the physical Higgs VEV and mass."""
+    given the physical Higgs VEV and mass.
+
+    The relations used by this function have been derived from the Lagrangian
+    in eq. (3.1) of arXiv:1704.03888. This paper presents results expanded up to
+    linear order in the Wilson coefficients while the all-order expressions are
+    implemented here."""
     v2 = v**2
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
