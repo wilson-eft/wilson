@@ -55,7 +55,7 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
         if not sqrt_arg >= 0:
             raise ValueError("'Lambda**2 - 12 * Cphi * m2' must be positive.")
         v2 = ( Lambda - sqrt(sqrt_arg) )/( 3 * Cphi )
-    Mh2 = v2 * ( 1 + Ckin * v2 )**2 * ( Lambda - 3 * Cphi * v2 )
+    Mh2 = v2 / ( 1 - 2 * Ckin * v2 ) * ( Lambda - 3 * Cphi * v2 )
     return {'v': sqrt(v2), 'Mh2': Mh2}
 
 def vMh2_to_m2Lambda(v, Mh2, C):
@@ -71,8 +71,7 @@ def vMh2_to_m2Lambda(v, Mh2, C):
     v2 = v**2
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
-    Ckin_factor = ( 1 + Ckin * v2 )**2
-    Lambda = ( Mh2 + 3 * Cphi * v2**2 * Ckin_factor ) / ( v2 * Ckin_factor )
+    Lambda = Mh2 / v2 - 2 * Ckin * Mh2 + 3 * Cphi * v2
     m2 = Lambda * v2 / 2 - 3/4 * Cphi * v2**2
     return {'m2': m2, 'Lambda': Lambda}
 
