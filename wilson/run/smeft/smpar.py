@@ -44,8 +44,6 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
     linear order in the Wilson coefficients while the all-order expressions are
     implemented here.
     """
-    if not m2 > 0 or not Lambda > 0:
-        raise ValueError('`m2` and `Lambda` are expected to be positive.')
     Cphi = C['phi'].real
     Ckin = C['phiBox'].real - C['phiD'].real / 4
     if abs(Cphi) < 1e-16:
@@ -55,7 +53,11 @@ def m2Lambda_to_vMh2(m2, Lambda, C):
         if not sqrt_arg >= 0:
             raise ValueError("'Lambda**2 - 12 * Cphi * m2' must be positive.")
         v2 = ( Lambda - sqrt(sqrt_arg) )/( 3 * Cphi )
+    if not v2 > 0:
+        raise ValueError('No solution with positive v2.')
     Mh2 = v2 / ( 1 - 2 * Ckin * v2 ) * ( Lambda - 3 * Cphi * v2 )
+    if not Mh2 > 0:
+        raise ValueError('No solution with positive Mh2.')
     return {'v': sqrt(v2), 'Mh2': Mh2}
 
 def vMh2_to_m2Lambda(v, Mh2, C):

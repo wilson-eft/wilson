@@ -70,6 +70,27 @@ class TestMh2v(unittest.TestCase):
         self.assertAlmostEqual(d2['v'], v, places=6)
         self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
 
+    def test_negative_m2Lambda(self):
+        v = 246
+        Mh2 = 125**2
+        C = {k: 0 for k in ['phi', 'phiD']}
+        C['phiBox'] = 1e-5
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C) # m2 and Lambda negative
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
+        self.assertAlmostEqual(d2['v'], v, places=6)
+        self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
+        C = {k: 0 for k in ['phiBox', 'phiD']}
+        C['phi'] = -2e-6
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C) # Lambda negative
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
+        self.assertAlmostEqual(d2['v'], v, places=6)
+        self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
+        C['phi'] = -3e-6
+        d = smpar.vMh2_to_m2Lambda(v, Mh2, C) # m2 and Lambda negative
+        d2 = smpar.m2Lambda_to_vMh2(d['m2'], d['Lambda'], C)
+        self.assertAlmostEqual(d2['v'], v, places=6)
+        self.assertAlmostEqual(d2['Mh2'], Mh2, places=6)
+
     def test_vreal(self):
         m2 = 7812
         Lambda = 0.258
@@ -78,7 +99,7 @@ class TestMh2v(unittest.TestCase):
         with self.assertRaises(ValueError):
             smpar.m2Lambda_to_vMh2(m2, Lambda, C)
 
-    def test_args_positive(self):
+    def test_vMh2_positive(self):
         v = 246
         Mh2 = 125**2
         m2 = 7812
@@ -89,9 +110,10 @@ class TestMh2v(unittest.TestCase):
         with self.assertRaises(ValueError):
             smpar.vMh2_to_m2Lambda(v, -Mh2, C)
         with self.assertRaises(ValueError):
-            smpar.m2Lambda_to_vMh2(-m2, Lambda, C)
+            smpar.m2Lambda_to_vMh2(-m2, -Lambda, C)
         with self.assertRaises(ValueError):
             smpar.m2Lambda_to_vMh2(m2, -Lambda, C)
+
 
 class TestSMpar(unittest.TestCase):
     def test_smeftpar_small(self):
