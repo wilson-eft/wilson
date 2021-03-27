@@ -32,6 +32,7 @@ A brief user manual can be found in the paper cited below. More information can 
 - The SMEFT RGE implementation was ported from the [DSixTools](https://dsixtools.github.io/) Mathematica package ([arXiv:1704.04504](https://arxiv.org/abs/1704.04504)).
 - The SMEFT to WET matching is based on [arXiv:1709.04486](https://arxiv.org/abs/1709.04486).
 - The QCD and QED running is based on [arXiv:1704.06639](https://arxiv.org/abs/1704.06639) and [arXiv:1711.05270](https://arxiv.org/abs/1711.05270).
+- The running and matching of the strong coupling constant and the quark masses is performed using CRunDec3 ([arXiv:1703.03751](https://arxiv.org/abs/1703.03751)).
 
 
 
