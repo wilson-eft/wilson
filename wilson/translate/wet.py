@@ -82,6 +82,33 @@ def _Bern_to_JMS_I(C, qq):
             d[VXY + '_1212'] = d.pop(VXY + '_2121').conjugate()
     return d
 
+def _JMS_to_EOS_I(C, qq, p):
+    """
+    From JMS to EOS basis (= traditional SUSY basis in this case) for $\Delta F=2$ operators.
+    `qq` should be one of 'sb', 'db'.
+    """
+    if qq in ['sb', 'db']:
+        dd = 'dd'
+        ij = tuple(dflav[q] for q in qq)
+    else:
+        raise ValueError("not in EOS_I: ".format(qq))
+    ji = (ij[1], ij[0])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    prefactor = sqrt(2) / p['GF'] / 4 / (V[2, ij[1]] * V[2, ij[0]].conj())**2
+    d = {
+        2 * qq + '::c1'   : prefactor * C["V{}LL".format(dd)][ij + ij],
+        2 * qq + '::c2'   : prefactor * (C["S1{}RR".format(dd)][ji + ji].conj()
+                          - C["S8{}RR".format(dd)][ji + ji].conj() / (2 * Nc)),
+        2 * qq + '::c3'   : prefactor * C["S8{}RR".format(dd)][ji + ji].conj() / 2,
+        2 * qq + '::c4'   : prefactor * -C["V8{}LR".format(dd)][ij + ij],
+        2 * qq + '::c5'   : prefactor * (-2 * C["V1{}LR".format(dd)][ij + ij]
+                          + C["V8{}LR".format(dd)][ij + ij] / Nc),
+        2 * qq + '::c1\'' : prefactor * C["V{}RR".format(dd)][ij + ij],
+        2 * qq + '::c2\'' : prefactor * (C["S1{}RR".format(dd)][ij + ij]
+                          - C["S8{}RR".format(dd)][ij + ij] / (2 * Nc)),
+        2 * qq + '::c3\'' : prefactor * C["S8{}RR".format(dd)][ij + ij] / 2
+    }
+    return d
 
 def _BernI_to_Flavio_I(C, qq):
     """From BernI to FlavioI basis for $\Delta F=2$ operators.
@@ -248,21 +275,14 @@ def _BernII_to_EOS_II(C, udlnu, parameters):
     d = dflav[udlnu[1]]
     l = lflav[udlnu[4:udlnu.find('n')]]
     lp = lflav[udlnu[udlnu.find('_',5)+1:len(udlnu)]]
-    ind = udlnu[0]+udlnu[1]+udlnu[4:udlnu.find('n')]+udlnu[udlnu.find('_',5)+1
-                                                                    :len(udlnu)]
-    ind2 = udlnu[0]+udlnu[4:udlnu.find('n')]+'nu'+udlnu[
-                                                udlnu.find('_',5)+1:len(udlnu)]
+    ind = udlnu[0]+udlnu[1]+udlnu[4:udlnu.find('n')]+udlnu[udlnu.find('_',5)+1:len(udlnu)]
+    ind2 = udlnu[0:2]+udlnu[4:udlnu.find('n')]+'nu'+udlnu[udlnu.find('_',5)+1:len(udlnu)]
     dic = {
-        'b->' + ind2 + '::Re{cVL}' : np.real(C['1'  + ind]),
-        'b->' + ind2 + '::Im{cVL}' : np.imag(C['1'  + ind]),
-        'b->' + ind2 + '::Re{cVR}' : np.real(C['1p' + ind]),
-        'b->' + ind2 + '::Im{cVR}' : np.imag(C['1p' + ind]),
-        'b->' + ind2 + '::Re{cSR}' : np.real(C['5'  + ind]),
-        'b->' + ind2 + '::Im{cSR}' : np.imag(C['5'  + ind]),
-        'b->' + ind2 + '::Re{cSL}' : np.real(C['5p' + ind]),
-        'b->' + ind2 + '::Im{cSL}' : np.imag(C['5p' + ind]),
-        'b->' + ind2 + '::Re{cT}'  : np.real(C['7p' + ind]),
-        'b->' + ind2 + '::Im{cT}'  : np.imag(C['7p' + ind])
+        ind2 + '::cVL' : C['1'  + ind],
+        ind2 + '::cVR' : C['1p' + ind],
+        ind2 + '::cSR' : C['5'  + ind],
+        ind2 + '::cSL' : C['5p' + ind],
+        ind2 + '::cT'  : C['7p' + ind]
         }
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     prefactor = -sqrt(2) / p['GF'] / V[u, d] / 4
@@ -774,6 +794,81 @@ def _Bern_to_Fierz_III_IV_V(C, qqqq):
                 'F' + qqqq + '9': (8 * C['10' + qqqq]) / 3 + C['7' + qqqq] - C['8' + qqqq] / 6 - 16 * C['9' + qqqq],
                 'F' + qqqq + '9p': (8 * C['10p' + qqqq]) / 3 + C['7p' + qqqq] - C['8p' + qqqq] / 6 - 16 * C['9p' + qqqq],
                 }
+    raise ValueError("Case not implemented: {}".format(qqqq))
+
+def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
+    """
+    From Fierz to 4-quark EOS basis for Classes III, IV and V.
+    `qqqq` should be of the form 'sbcu', 'dbcu', etc.
+    """
+    pf = sqrt(2.0) / 4.0 / p['GF']
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    # generic case: dduu
+    d1 = dflav[qqqq[0]]
+    d2 = dflav[qqqq[1]]
+    u1 = uflav[qqqq[2]]
+    u2 = uflav[qqqq[3]]
+    if qqqq in ['sbcu', 'dbcu']:
+        pf_ckm = pf / (V[u1, d2] * V[u2, d1].conj())
+        d = {
+            qqqq + '::c1'    : -Fqqqq['F' + qqqq + '1']/3 + 4 * Fqqqq['F' + qqqq + '3'] / 3
+                             - Fqqqq['F' + qqqq + '2']/(3 * Nc)
+                             + 4 * Fqqqq['F' + qqqq + '4'] / (3 * Nc),
+            qqqq + '::c2'    : -2 * Fqqqq['F' + qqqq + '2'] / 3
+                             + 8 * Fqqqq['F' + qqqq + '4'] / 3,
+            qqqq + '::c3'    : Fqqqq['F' + qqqq + '1'] / 12
+                             - Fqqqq['F' + qqqq + '3'] / 12
+                             + Fqqqq['F' + qqqq + '2'] / (12 * Nc)
+                             - Fqqqq['F' + qqqq + '4'] / (12 * Nc),
+            qqqq + '::c4'    : Fqqqq['F' + qqqq + '2'] / 6 - Fqqqq['F' + qqqq + '4'] / 6,
+            qqqq + '::c5'    : -Fqqqq['F' + qqqq + '5'] / 3
+                             + 4 * Fqqqq['F' + qqqq + '7'] / 3
+                             - Fqqqq['F' + qqqq + '6']/(3 * Nc)
+                             + 4 * Fqqqq['F' + qqqq + '8']/(3 * Nc),
+            qqqq + '::c6'    : -2 * Fqqqq['F' + qqqq + '6'] / 3
+                             + 8 * Fqqqq['F' + qqqq + '8'] / 3,
+            qqqq + '::c7'    : Fqqqq['F' + qqqq + '5'] / 3 - Fqqqq['F' + qqqq + '7'] / 3
+                             + Fqqqq['F' + qqqq + '9'] + Fqqqq['F' + qqqq + '10'] / Nc
+                             + Fqqqq['F' + qqqq + '6']/(3 * Nc)
+                             - Fqqqq['F' + qqqq + '8']/(3 * Nc),
+            qqqq + '::c8'    : 2*Fqqqq['F' + qqqq + '10'] + 2 * Fqqqq['F' + qqqq + '6'] / 3
+                             - 2 * Fqqqq['F' + qqqq + '8'] / 3,
+            qqqq + '::c9'    : Fqqqq['F' + qqqq + '5'] / 48 - Fqqqq['F' + qqqq + '7'] / 48
+                             + Fqqqq['F' + qqqq + '6'] / (48 * Nc)
+                             - Fqqqq['F' + qqqq + '8'] / (48 * Nc),
+            qqqq + '::c10'   : Fqqqq['F' + qqqq + '6'] / 24 - Fqqqq['F' + qqqq + '8'] / 24,
+            qqqq + '::c1\''  : -Fqqqq['F' + qqqq + '1p'] / 3
+                             + 4 * Fqqqq['F' + qqqq + '3p'] / 3
+                             - Fqqqq['F' + qqqq + '2p'] / (3 * Nc)
+                             + 4 * Fqqqq['F' + qqqq + '4p'] / (3 * Nc),
+            qqqq + '::c2\''  : -2 * Fqqqq['F' + qqqq + '2p'] / 3
+                             + 8 * Fqqqq['F' + qqqq + '4p'] / 3,
+            qqqq + '::c3\''  : Fqqqq['F' + qqqq + '1p'] / 12
+                             - Fqqqq['F' + qqqq + '3p'] / 12
+                             + Fqqqq['F' + qqqq + '2p'] / (12 * Nc)
+                             - Fqqqq['F' + qqqq + '4p'] / (12 * Nc),
+            qqqq + '::c4\''  : Fqqqq['F' + qqqq + '2p'] / 6 - Fqqqq['F' + qqqq + '4p'] / 6,
+            qqqq + '::c5\''  : -Fqqqq['F' + qqqq + '5p'] / 3
+                             + 4 * Fqqqq['F' + qqqq + '7p'] / 3
+                             - Fqqqq['F' + qqqq + '6p'] / (3 * Nc)
+                             + 4 * Fqqqq['F' + qqqq + '8p'] / (3 * Nc),
+            qqqq + '::c6\''  : -2 * Fqqqq['F' + qqqq + '6p'] / 3
+                             + 8 * Fqqqq['F' + qqqq + '8p'] / 3,
+            qqqq + '::c7\''  : Fqqqq['F' + qqqq + '5p'] / 3 - Fqqqq['F' + qqqq + '7p'] / 3
+                             + Fqqqq['F' + qqqq + '9p'] + Fqqqq['F' + qqqq + '10p'] / Nc
+                             + Fqqqq['F' + qqqq + '6p']/(3 * Nc)
+                             - Fqqqq['F' + qqqq + '8p']/(3 * Nc),
+            qqqq + '::c8\''  : 2 * Fqqqq['F' + qqqq + '10p']
+                             + 2 * Fqqqq['F' + qqqq + '6p'] / 3
+                             - 2 * Fqqqq['F' + qqqq + '8p'] / 3,
+            qqqq + '::c9\''  : Fqqqq['F' + qqqq + '5p'] / 48
+                             - Fqqqq['F' + qqqq + '7p'] / 48
+                             + Fqqqq['F' + qqqq + '6p'] / (48 * Nc)
+                             - Fqqqq['F' + qqqq + '8p'] / (48 * Nc),
+            qqqq + '::c10\'' : Fqqqq['F' + qqqq + '6p'] / 24
+                             - Fqqqq['F' + qqqq + '8p'] / 24
+        }
+        return {k: v * pf_ckm for k, v in d.items()}
     raise ValueError("Case not implemented: {}".format(qqqq))
 
 def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
@@ -1634,14 +1729,22 @@ def JMS_to_EOS(Cflat, scale, parameters=None, sectors=None):
     C = JMS_to_array(Cflat, sectors=sectors)
     d={}
 
+    # Class I
+    for qq in ['sb']:
+        d.update(_JMS_to_EOS_I(C, qq, p))
+
     # Class II
-    for l in ['e','mu']:
+    for l in ['e','mu','tau']:
         d.update(_BernII_to_EOS_II(_JMS_to_Bern_II(C, 'ub'+'l_'+l+'nu_'+l),
                                           'ub'+'l_'+l+'nu_'+l,
                                         p))
         d.update(_BernII_to_EOS_II(_JMS_to_Bern_II(C, 'cb'+'l_'+l+'nu_'+l),
                                           'cb'+'l_'+l+'nu_'+l,
                                         p))
+
+    # Class III
+    for qqqq in ['sbcu', 'dbcu']:
+        d.update(_Fierz_to_EOS_III(_JMS_to_Fierz_III_IV_V(C, qqqq), qqqq, p))
 
     # Class V
     Fsbuu = _JMS_to_Fierz_III_IV_V(C, 'sbuu')
