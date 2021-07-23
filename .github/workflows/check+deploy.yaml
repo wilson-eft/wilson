@@ -1,0 +1,61 @@
+on:
+    push:
+        branches: [ master ]
+
+    pull_request:
+
+name: Check & Deploy
+
+jobs:
+    check-and-deploy:
+        name: Check & Deploy on Ubuntu (latest)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout git repository
+              uses: actions/checkout@v2
+              with:
+                submodules: true
+                path: _src/
+
+            - name: Install dependencies
+              shell: bash
+              run: |
+                pushd _src
+                python3 -m pip install --upgrade nose
+                popd
+
+            - name: Run checks
+              shell: bash
+              run: |
+                pushd _src
+                python3 -m pip install .
+                python3 -m nose
+                popd
+
+            - name: Build bdist
+              shell: bash
+              run: |
+                mkdir dist
+                pushd _src
+                python3 ./setup.py sdist -d ../dist/
+                python3 ./setup.py bdist_wheel -d ../dist/
+                popd
+
+            - name: Upload build as artifact
+              uses: actions/upload-artifact@v1
+              with:
+                name: wilson-dist-${{ github.sha }}
+                path: dist
+
+            - name: Upload to PyPI
+              if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+              shell: bash
+              env:
+                TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+                TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+              run: |
+                if [[ ${TWINE_USERNAME} == "" ]] ; then
+                    echo "skipping deployment due to empty TWINE_USERNAME"
+                    exit 0
+                fi
+                python3 -m twine upload dist/*.whl dist/*.tar.gz
