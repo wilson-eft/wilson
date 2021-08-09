@@ -1,4 +1,5 @@
-<a href="https://travis-ci.org/wilson-eft/wilson">![Build Status](https://travis-ci.org/wilson-eft/wilson.svg?branch=master)</a> [![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson)
+[![gh actions](https://github.com/wilson-eft/wilson/actions/workflows/check+deploy.yaml/badge.svg)](https://github.com/wilson-eft/wilson/actions)
+[![Coverage Status](https://coveralls.io/repos/github/wilson-eft/wilson/badge.svg)](https://coveralls.io/github/wilson-eft/wilson)
 
 # wilson – running and matching beyond the Standard Model
 
