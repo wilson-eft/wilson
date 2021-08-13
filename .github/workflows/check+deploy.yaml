@@ -44,6 +44,11 @@ jobs:
                 python3 ./setup.py bdist_wheel -d ../dist/
                 popd
 
+            - name: Test installing the wheel
+              shell: bash
+              run: |
+                python3 -m pip install dist/wilson-*.whl
+
             - name: Upload build as artifact
               uses: actions/upload-artifact@v1
               with:
