@@ -57,13 +57,7 @@ jobs:
 
             - name: Upload to PyPI
               if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-              shell: bash
-              env:
-                TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-                TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-              run: |
-                if [[ ${TWINE_USERNAME} == "" ]] ; then
-                    echo "skipping deployment due to empty TWINE_USERNAME"
-                    exit 0
-                fi
-                python3 -m twine upload dist/*.whl dist/*.tar.gz
+              uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                user:     ${{ secrets.TWINE_USERNAME }}
+                password: ${{ secrets.TWINE_PASSWORD }}
