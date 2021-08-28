@@ -14,9 +14,9 @@ all_bases = glob.glob(os.path.join(_root, 'bases', '*.basis.json'))
 child_bases = glob.glob(os.path.join(_root, 'bases', 'child', '*.basis.json'))
 
 for eft in all_efts:
-    with open(eft, 'r') as f:
+    with open(eft) as f:
         EFT.load(f)
 
 for basis in all_bases + child_bases:
-    with open(basis, 'r') as f:
+    with open(basis) as f:
         Basis.load(f)

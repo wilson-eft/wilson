@@ -129,7 +129,7 @@ def smeftpar(scale, C, basis):
         Mu = np.diag([p['m_u'], p['m_c'], p['m_t']])
         Md = K @ np.diag([p['m_d'], p['m_s'], p['m_b']])
     else:
-        raise ValueError("Basis '{}' not supported".format(basis))
+        raise ValueError(f"Basis '{basis}' not supported")
     Me = np.diag([p['m_e'], p['m_mu'], p['m_tau']])
     c['Gd'] = Md / (v / sqrt(2)) + C['dphi'] * (v**2) / 2
     c['Gu'] = Mu / (v / sqrt(2)) + C['uphi'] * (v**2) / 2

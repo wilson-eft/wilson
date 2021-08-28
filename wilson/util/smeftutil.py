@@ -799,11 +799,11 @@ for i in range(3):
         for k in range(3):
             for l in range(3):
                 # class 4: symmetric under interachange of currents
-                _d_4[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j)]))
+                _d_4[i, j, k, l] = len({(i, j, k, l), (k, l, i, j)})
                 # class 6: symmetric under interachange of currents + Fierz
-                _d_6[i, j, k, l] = len(set([(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)]))
+                _d_6[i, j, k, l] = len({(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)})
                 # class 7: symmetric under interachange of first two indices
-                _d_7[i, j, k, l] = len(set([(i, j, k, l), (j, i, k, l)]))
+                _d_7[i, j, k, l] = len({(i, j, k, l), (j, i, k, l)})
 
 
 _scale_dict = C_array2dict(np.ones(9999))

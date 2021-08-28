@@ -27,7 +27,7 @@ def _test_missing(self, wc, from_basis, ignore_sec=[], ignore_coeffs=[]):
             continue
         to_keys_all = set(coeffs.keys())
         self.assertSetEqual(to_keys_all - to_keys - set(ignore_coeffs), set(),
-                            msg="Missing coefficients in sector {}".format(sec))
+                            msg=f"Missing coefficients in sector {sec}")
 
 
 class TestJMS2Flavio(unittest.TestCase):
@@ -42,12 +42,12 @@ class TestJMS2Flavio(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.flavio_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         fkeys = set(self.flavio_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET', 'flavio'].sectors.values()
-                         for k in s])
+        fkeys_all = {k for s in wcxf.Basis['WET', 'flavio'].sectors.values()
+                         for k in s}
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
     def test_incomplete_input(self):
@@ -80,12 +80,12 @@ class TestJMS2FlavioWET3(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.flavio_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         fkeys = set(self.flavio_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET-3', 'flavio'].sectors.values()
-                         for k in s])
+        fkeys_all = {k for s in wcxf.Basis['WET-3', 'flavio'].sectors.values()
+                         for k in s}
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
     def test_incomplete_input(self):
@@ -109,13 +109,13 @@ class TestJMS2Bern(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.bern_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         bkeys = set(self.bern_wc.values.keys())
-        bkeys_all = set([k for sname, s in wcxf.Basis['WET', 'Bern'].sectors.items()
+        bkeys_all = {k for sname, s in wcxf.Basis['WET', 'Bern'].sectors.items()
                          for k in s
-                         if sname not in ['dF=0', ]])
+                         if sname not in ['dF=0', ]}
         self.assertSetEqual(bkeys_all - bkeys, set(), msg="Missing coefficients")
 
 
@@ -131,7 +131,7 @@ class TestBern2JMS(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         _test_missing(self, self.to_wc, 'Bern',
@@ -143,7 +143,7 @@ class TestBern2JMS(unittest.TestCase):
         for k, v in round_wc.dict.items():
             self.assertAlmostEqual(v, self.from_wc.dict[k],
                                    delta=1e-12,
-                                   msg="Failed for {}".format(k))
+                                   msg=f"Failed for {k}")
 
 
 class TestFlavio2JMS(unittest.TestCase):
@@ -158,16 +158,16 @@ class TestFlavio2JMS(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         # ignore tensor coeffs
-        ignore = ['TedRR_{}{}{}{}'.format(i, j, k, l)
+        ignore = [f'TedRR_{i}{j}{k}{l}'
                   for i in '123'
                   for j in '123'
                   for k in '123'
                   for l in '123'
-                  ] + ['TeuRR_{}{}{}{}'.format(i, j, k, l)
+                  ] + [f'TeuRR_{i}{j}{k}{l}'
                             for i in '123'
                             for j in '123'
                             for k in '123'
@@ -181,7 +181,7 @@ class TestFlavio2JMS(unittest.TestCase):
         for k, v in round_wc.dict.items():
             self.assertAlmostEqual(v, self.from_wc.dict[k],
                                    delta=1e-12,
-                                   msg="Failed for {}".format(k))
+                                   msg=f"Failed for {k}")
 
 
 class TestJMS2BernWET3(unittest.TestCase):
@@ -196,13 +196,13 @@ class TestJMS2BernWET3(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.bern_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         bkeys = set(self.bern_wc.values.keys())
-        bkeys_all = set([k for s in wcxf.Basis['WET-3', 'Bern'].sectors.values()
+        bkeys_all = {k for s in wcxf.Basis['WET-3', 'Bern'].sectors.values()
                          for k in s
-                         if 'b' in k]) # for the time being, only look at b operators
+                         if 'b' in k} # for the time being, only look at b operators
         self.assertSetEqual(bkeys_all - bkeys, set(), msg="Missing coefficients")
 
 
@@ -218,12 +218,12 @@ class TestJMS2EOS(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.eos_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         fkeys = set(self.eos_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET', 'EOS'].sectors.values()
-                         for k in s])
+        fkeys_all = {k for s in wcxf.Basis['WET', 'EOS'].sectors.values()
+                         for k in s}
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class TestJMS2FormFlavor(unittest.TestCase):
@@ -238,12 +238,12 @@ class TestJMS2FormFlavor(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.formflavor_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def test_missing(self):
         fkeys = set(self.formflavor_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET', 'formflavor'].sectors.values()
-                         for k in s])
+        fkeys_all = {k for s in wcxf.Basis['WET', 'formflavor'].sectors.values()
+                         for k in s}
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 
@@ -258,7 +258,7 @@ class TestFlavorKit2JMS(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.jms_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.jms_wc.dict), len(self.fk_wc.dict))
@@ -284,15 +284,15 @@ class TestJMS2FlavorKit(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.fk_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.fk_wc.dict), len(self.fk_wc.dict))
 
     def test_missing(self):
         fkeys = set(self.fk_wc.values.keys())
-        fkeys_all = set([k for s in wcxf.Basis['WET', 'FlavorKit'].sectors.values()
-                         for k in s])
+        fkeys_all = {k for s in wcxf.Basis['WET', 'FlavorKit'].sectors.values()
+                         for k in s}
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
     def test_incomplete_input(self):
@@ -316,7 +316,7 @@ class TestBern2flavio(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.to_wc.dict), len(self.to_wc.dict))
@@ -327,7 +327,7 @@ class TestBern2flavio(unittest.TestCase):
             if k[0] != '7':  # to avoid problem with flavio tensors missing
                 self.assertAlmostEqual(v, self.from_wc.dict[k],
                                        delta=1e-12,
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
     def test_jms(self):
         jms_wc = get_random_wc('WET', 'JMS')
@@ -337,7 +337,7 @@ class TestBern2flavio(unittest.TestCase):
             if k in jms_indirect.dict:
                 self.assertAlmostEqual(v, jms_indirect.dict[k],
                                        delta=1e-5,
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
     def test_incomplete_input(self):
         # generate and input WC instance with just 1 non-zero coeff.
@@ -352,9 +352,9 @@ class TestBern2flavio(unittest.TestCase):
 
     def test_missing(self):
         fkeys = set(self.to_wc.values.keys())
-        fkeys_all = set([k for sname, s in wcxf.Basis['WET', 'flavio'].sectors.items()
+        fkeys_all = {k for sname, s in wcxf.Basis['WET', 'flavio'].sectors.items()
                          for k in s
-                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu', 'etauemu', 'muemutau', 'cu']])  # LFV, dF=0, dC=1 not in Bern
+                         if sname not in ['mue', 'mutau', 'taue', 'nunumue', 'nunumutau', 'nunutaue', 'dF=0', 'ffnunu', 'etauemu', 'muemutau', 'cu']}  # LFV, dF=0, dC=1 not in Bern
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2Bern(unittest.TestCase):
@@ -368,7 +368,7 @@ class Testflavio2Bern(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.to_wc.dict), len(self.to_wc.dict))
@@ -378,7 +378,7 @@ class Testflavio2Bern(unittest.TestCase):
         for k, v in round_wc.dict.items():
             self.assertAlmostEqual(v, self.from_wc.dict[k],
                                    delta=1e-12,
-                                   msg="Failed for {} {}".format(k, v))
+                                   msg=f"Failed for {k} {v}")
 
     def test_jms(self):
         jms_wc = get_random_wc('WET', 'JMS')
@@ -389,7 +389,7 @@ class Testflavio2Bern(unittest.TestCase):
                 if k[0] != '7':  # to avoid problem with flavio tensors missing
                     self.assertAlmostEqual(v, jms_indirect.dict[k],
                                            delta=1e-8,
-                                           msg="Failed for {}".format(k))
+                                           msg=f"Failed for {k}")
 
 
     def test_incomplete_input(self):
@@ -415,7 +415,7 @@ class TestBern2flavioWET3(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.to_wc.dict), len(self.to_wc.dict))
@@ -426,7 +426,7 @@ class TestBern2flavioWET3(unittest.TestCase):
             if k[0] != '7':  # to avoid problem with flavio tensors missing
                 self.assertAlmostEqual(v, self.from_wc.dict[k],
                                        delta=1e-12,
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
     def test_jms(self):
         jms_wc = get_random_wc('WET-3', 'JMS')
@@ -436,7 +436,7 @@ class TestBern2flavioWET3(unittest.TestCase):
             if k in jms_indirect.dict:
                 self.assertAlmostEqual(v, jms_indirect.dict[k],
                                        delta=1e-4,
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
     def test_incomplete_input(self):
         # generate and input WC instance with just 1 non-zero coeff.
@@ -451,9 +451,9 @@ class TestBern2flavioWET3(unittest.TestCase):
 
     def test_missing(self):
         fkeys = set(self.to_wc.values.keys())
-        fkeys_all = set([k for sname, s in wcxf.Basis['WET-3', 'flavio'].sectors.items()
+        fkeys_all = {k for sname, s in wcxf.Basis['WET-3', 'flavio'].sectors.items()
                          for k in s
-                         if sname not in ['mue', 'nunumue', 'dF=0', 'ffnunu']])  # LFV, dF=0 not in Bern
+                         if sname not in ['mue', 'nunumue', 'dF=0', 'ffnunu']}  # LFV, dF=0 not in Bern
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
 
 class Testflavio2BernWET3(unittest.TestCase):
@@ -467,7 +467,7 @@ class Testflavio2BernWET3(unittest.TestCase):
 
     def test_nan(self):
         for k, v in self.to_wc.dict.items():
-            self.assertFalse(np.isnan(v), msg="{} is NaN".format(k))
+            self.assertFalse(np.isnan(v), msg=f"{k} is NaN")
 
     def count_nonzero(self):
         self.assertEqual(len(self.to_wc.dict), len(self.to_wc.dict))
@@ -477,7 +477,7 @@ class Testflavio2BernWET3(unittest.TestCase):
         for k, v in round_wc.dict.items():
             self.assertAlmostEqual(v, self.from_wc.dict[k],
                                    delta=1e-12,
-                                   msg="Failed for {} {}".format(k, v))
+                                   msg=f"Failed for {k} {v}")
 
     def test_jms(self):
         jms_wc = get_random_wc('WET-3', 'JMS')
@@ -488,7 +488,7 @@ class Testflavio2BernWET3(unittest.TestCase):
                 if k[0] != '7':  # to avoid problem with flavio tensors missing
                     self.assertAlmostEqual(v, jms_indirect.dict[k],
                                            delta=1e-8,
-                                           msg="Failed for {}".format(k))
+                                           msg=f"Failed for {k}")
 
 
     def test_incomplete_input(self):
@@ -517,4 +517,4 @@ class TestFlavorKit2flavio(unittest.TestCase):
         to_wc_2 = self.from_wc.translate('JMS').translate('flavio')
         for k, v in self.to_wc.dict.items():
             self.assertEqual(v, to_wc_2.dict[k],
-                             msg="Failed for {}".format(k))
+                             msg=f"Failed for {k}")

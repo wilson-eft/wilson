@@ -28,7 +28,7 @@ class TestDef(unittest.TestCase):
             allkeys = wcxf.Basis['WET', 'JMS'].sectors[sname].keys()
             # for c in clist:
                 # self.assertIn(c, allkeys, msg="{} not found in {}".format(c, sname))
-            self.assertSetEqual(set(clist), set(allkeys), msg="Failed for {}".format(sname))
+            self.assertSetEqual(set(clist), set(allkeys), msg=f"Failed for {sname}")
 
 
 class TestClass(unittest.TestCase):
@@ -59,7 +59,7 @@ class TestClass(unittest.TestCase):
         # (not vice versa as RGE can generate them from zero)
         for k in self.wet.C_in:
             self.assertTrue(k in C_out,
-                            msg='{} missing in output'.format(k))
+                            msg=f'{k} missing in output')
 
 
 class TestEvolutionMatrices(unittest.TestCase):
@@ -69,7 +69,7 @@ class TestEvolutionMatrices(unittest.TestCase):
         for c in ['I', 'II', 'III', 'IV', 'IVe', 'sb', 'db', 'sd', 'mue', 'cu', 'Vb']:
             npt.assert_array_almost_equal(rge.getUs(c, 0.123, *args),
                                           np.linalg.inv(rge.getUs(c, 1/0.123, *args),),
-                                          err_msg="Failed for {}".format(c))
+                                          err_msg=f"Failed for {c}")
 
 
 class TestClassWET4(unittest.TestCase):
@@ -89,7 +89,7 @@ class TestClassWET4(unittest.TestCase):
         # (not vice versa as RGE can generate them from zero)
         for k in self.wet.C_in:
             self.assertTrue(k in C_out,
-                            msg='{} missing in output'.format(k))
+                            msg=f'{k} missing in output')
 
 class TestOrder(unittest.TestCase):
     @classmethod
@@ -109,18 +109,18 @@ class TestOrder(unittest.TestCase):
         wc_hi = self.wet_11.run(160, ('sbsb',))
         wc_lo = self.wet_00.run(4, ('sbsb',))
         for k, v in wc_lo.dict.items():
-            self.assertAlmostEqual(v, wc_hi[k], msg="Failed for {}".format(k))
+            self.assertAlmostEqual(v, wc_hi[k], msg=f"Failed for {k}")
 
     def test_10(self):
         # running without QED = running with alpha_e = 0
         wc_10 = self.wet_10.run(4, ('sbsb',))
         wc_11 = self.wet_11_ae0.run(4, ('sbsb',))
         for k, v in wc_10.dict.items():
-            self.assertAlmostEqual(v, wc_11[k], msg="Failed for {}".format(k))
+            self.assertAlmostEqual(v, wc_11[k], msg=f"Failed for {k}")
 
     def test_01(self):
         # running without QED = running with alpha_e = 0
         wc_01 = self.wet_01.run(4, ('sbsb',))
         wc_11 = self.wet_11_as0.run(4, ('sbsb',))
         for k, v in wc_01.dict.items():
-            self.assertAlmostEqual(v, wc_11[k], msg="Failed for {}".format(k))
+            self.assertAlmostEqual(v, wc_11[k], msg=f"Failed for {k}")

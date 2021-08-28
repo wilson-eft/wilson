@@ -16,7 +16,7 @@ from math import log, e
 from wilson import wcxf
 import voluptuous as vol
 
-class ConfigurableClass(object):
+class ConfigurableClass:
     """Class that provides the functionality to set and get configuration
     options.
 
@@ -228,7 +228,7 @@ class Wilson(ConfigurableClass):
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
             wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors), **self._wetrun_opt())
         else:
-            raise ValueError("Input EFT {} unknown or not supported".format(self.wc.eft))
+            raise ValueError(f"Input EFT {self.wc.eft} unknown or not supported")
         if eft == wet.eft:  # just run
             wc_out = wet.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
             self._set_cache(sectors, scale, eft, basis, wc_out)
@@ -254,7 +254,7 @@ class Wilson(ConfigurableClass):
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
             return wc_out
         else:
-            raise ValueError("Running from {} to {} not implemented".format(wet.eft, eft))
+            raise ValueError(f"Running from {wet.eft} to {eft} not implemented")
 
     def clear_cache(self):
         self._cache = {}
@@ -278,7 +278,7 @@ class Wilson(ConfigurableClass):
             self._cache[eft][scale][basis][sector] = wc_out
 
 
-class RGsolution(object):
+class RGsolution:
     """Class representing a continuous (interpolated) solution to the
     SMEFT RGEs to be used for plotting."""
 

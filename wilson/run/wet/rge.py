@@ -28,7 +28,7 @@ def get_permissible_wcs(classname, f):
         sector = 'dF=0'
     else:
         sector = classname
-    perm_keys = wcxf.Basis['WET-{}'.format(f), 'JMS'].sectors[sector].keys()
+    perm_keys = wcxf.Basis[f'WET-{f}', 'JMS'].sectors[sector].keys()
     all_keys = coeffs[sector]
     return [i for i, c in enumerate(all_keys) if c in perm_keys]
 

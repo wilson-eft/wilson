@@ -9,15 +9,15 @@ my_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(my_path, '..', 'data')
 
 
-with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.dat'), 'r') as f:
+with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.dat')) as f:
     wcin_lha = f.read()
-with open(os.path.join(data_path, 'Options.dat'), 'r') as f:
+with open(os.path.join(data_path, 'Options.dat')) as f:
     options = f.read()
-with open(os.path.join(data_path, 'SMInput-CPV.dat'), 'r') as f:
+with open(os.path.join(data_path, 'SMInput-CPV.dat')) as f:
     smin = f.read()
-with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.json'), 'r') as f:
+with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.json')) as f:
     wcin_json = f.read()
-with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.yaml'), 'r') as f:
+with open(os.path.join(data_path, 'WCsInput-CPV-SMEFT.yaml')) as f:
     wcin_yaml = f.read()
 
 
@@ -48,7 +48,7 @@ class TestDsixTools(unittest.TestCase):
         self.assertTrue(d2)
         self.assertEqual(set(d1.keys()), set(d2.keys()))
         for k in d1:
-            self.assertEqual(d1[k], d2[k], msg="Failed for {}".format(k))
+            self.assertEqual(d1[k], d2[k], msg=f"Failed for {k}")
 
     def test_cli_wcxf2dsixtools(self):
         smeftio = dsixtools.SMEFTio()

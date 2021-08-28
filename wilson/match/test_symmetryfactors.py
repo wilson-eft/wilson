@@ -108,23 +108,23 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
         for k in C:
             if k in C_symm_keys[41] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('klij', C[k]) # C_ijkl = C_klij
-                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[5] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('jilk', C[k]).conj() # C_ijkl = C_jilk*
-                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('lkji', C[k]).conj() # C_ijkl = C_lkji*
-                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[6]:
                 a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
-                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[9]:
                 a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
-                npt.assert_array_almost_equal(C[k], a, err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
 
     def test_match_symmfac_loop(self):
@@ -136,21 +136,21 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
         for k in C:
             if k in C_symm_keys[41] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('klij', C[k]) # C_ijkl = C_klij
-                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[5] + C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('jilk', C[k]).conj() # C_ijkl = C_jilk*
-                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[4] + C_symm_keys[6]:
                 a = np.einsum('lkji', C[k]).conj() # C_ijkl = C_lkji*
-                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[6]:
                 a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
-                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
             if k in C_symm_keys[9]:
                 a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
-                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg="Failed for {}".format(k),
+                npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)

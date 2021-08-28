@@ -119,4 +119,4 @@ class TestLoopMatch(unittest.TestCase):
                     v_wet = C_WET[kwet][jj]
                 self.assertAlmostEqual(v_wet / v, 1,
                                        delta=1e-5,
-                                       msg="Failed for {} matching into {}".format(k_ii, kwet_jj))
+                                       msg=f"Failed for {k_ii} matching into {kwet_jj}")

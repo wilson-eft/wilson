@@ -28,7 +28,7 @@ class TestSMEFT(unittest.TestCase):
         for k, v in C_in_sm_2.items():
             if k not in SM_keys:
                 npt.assert_array_equal(v, C_in_sm[k],
-                                       err_msg="Failed for {}".format(k))
+                                       err_msg=f"Failed for {k}")
     #
     # def test_rotation(self):
     #     wcout = pkgutil.get_data('wilson', 'run/smeft/tests/data/Output_SMEFTrunner.dat').decode('utf-8')

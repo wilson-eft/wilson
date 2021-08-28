@@ -201,7 +201,7 @@ def wc_dict2lha(wc, skip_redundant=True, skip_zero=True):
     return {'BLOCK': d}
 
 
-class SMEFTio(object):
+class SMEFTio:
 
     def __init__(self):
         """Initialize the SMEFTio instance."""

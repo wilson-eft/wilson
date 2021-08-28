@@ -7,4 +7,4 @@ class TestBases(unittest.TestCase):
             try:
                 basis.validate()
             except:
-                self.fail("Basis {}-{} failed to validate".format(basis.eft, basis.basis))
+                self.fail(f"Basis {basis.eft}-{basis.basis} failed to validate")

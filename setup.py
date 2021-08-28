@@ -39,6 +39,7 @@ setup(
         "rundec>=0.5",
         "voluptuous",
     ],
+    python_requires=">=3.6",
     extras_require={"testing": ["nose"]},
     entry_points={
         "console_scripts": [

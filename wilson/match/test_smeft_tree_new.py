@@ -41,7 +41,7 @@ class TestSMEFTWETreimpl(unittest.TestCase):
         c_new = wilson.match.smeft_tree.match_all_array(C, p)
         for k in c_old:
             npt.assert_almost_equal(c_old[k], c_new[k], decimal=18,
-                                    err_msg="Failed for {}".format(k))
+                                    err_msg=f"Failed for {k}")
 
     def test_quadratic(self):
         """For WCs entering also quadratically, agreement should be good
@@ -51,4 +51,4 @@ class TestSMEFTWETreimpl(unittest.TestCase):
         c_new = wilson.match.smeft_tree.match_all_array(C, p)
         for k in c_old:
             npt.assert_almost_equal(c_old[k], c_new[k], decimal=10,
-                                    err_msg="Failed for {}".format(k))
+                                    err_msg=f"Failed for {k}")

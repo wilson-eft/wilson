@@ -47,9 +47,9 @@ def alpha_s(scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.nf = 4
         return_value = crd.AlH2AlL(asmc, mc, crd.nfMmu, scale, loop)
     else:
-        raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
+        raise ValueError(f"Invalid input: f={f}, scale={scale}")
     if return_value == 0:
-        raise ValueError("Return value is 0, probably `scale={}` is too small.".format(scale))
+        raise ValueError(f"Return value is 0, probably `scale={scale}` is too small.")
     else:
         return return_value
 
@@ -88,7 +88,7 @@ def m_b(mbmb, scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.nf = 6
         return crd.mL2mH(mbmb, alphas_mb, mbmb, crd.nfMmu, scale, loop)
     else:
-        raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
+        raise ValueError(f"Invalid input: f={f}, scale={scale}")
 
 
 @lru_cache(32)
@@ -114,7 +114,7 @@ def m_c(mcmc, scale, f, alphasMZ=0.1185, loop=3):
         crd.nfMmu.nf = 5
         return crd.mL2mH(mcmc, alphas_mc, mcmc, crd.nfMmu, scale, loop)
     else:
-        raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
+        raise ValueError(f"Invalid input: f={f}, scale={scale}")
 
 
 @lru_cache(32)
@@ -146,4 +146,4 @@ def m_s(ms2, scale, f, alphasMZ=0.1185, loop=3):
         alphas_mc = alpha_s(mc, 4, alphasMZ=alphasMZ, loop=loop)
         return crd.mL2mH(msmc, alphas_mc, mc, crd.nfMmu, scale, loop)
     else:
-        raise ValueError("Invalid input: f={}, scale={}".format(f, scale))
+        raise ValueError(f"Invalid input: f={f}, scale={scale}")

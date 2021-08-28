@@ -158,7 +158,7 @@ class TestSMpar(unittest.TestCase):
         for k in smpar.p:
             if k not in ['m_Z', 'delta']:
                 self.assertAlmostEqual(smpar.p[k], Cback[k],
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
 
     def test_smpar_roundtrip(self):
@@ -173,15 +173,15 @@ class TestSMpar(unittest.TestCase):
         for k in smpar.p:
             if k in ['m_Z']:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
-                                       msg="Failed for {}".format(k),
+                                       msg=f"Failed for {k}",
                                        delta=0.05)
             elif k in ['delta']:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
-                                       msg="Failed for {}".format(k),
+                                       msg=f"Failed for {k}",
                                        delta=1e-3)
             else:
                 self.assertAlmostEqual(smpar.p[k]/Cback[k], 1,
-                                       msg="Failed for {}".format(k),
+                                       msg=f"Failed for {k}",
                                        delta=1e-5)
 
 class TestGetSMpar(unittest.TestCase):
@@ -193,7 +193,7 @@ class TestGetSMpar(unittest.TestCase):
         for k in p_out:
             self.assertAlmostEqual(p_out[k] / smpar.p[k], 1,
                                    delta=0.05,
-                                   msg="Failed for {}".format(k))
+                                   msg=f"Failed for {k}")
 
     def test_wcxf_smpar_incomplete(self):
         wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'qd1_1111': {'Im': 1e-6}})
@@ -207,4 +207,4 @@ class TestGetSMpar(unittest.TestCase):
         p_def = smpar.p
         for k, v in p_out.items():
             self.assertAlmostEqual(v / p_def[k], 1, places=1,
-                                   msg="Failed for {}".format(k))
+                                   msg=f"Failed for {k}")

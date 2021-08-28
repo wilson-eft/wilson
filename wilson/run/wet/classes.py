@@ -11,7 +11,7 @@ from collections import OrderedDict
 import numpy as np
 
 
-class WETrunner(object):
+class WETrunner:
     """Class representing a point in Wilson coefficient space.
 
     Methods:

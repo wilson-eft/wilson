@@ -25,7 +25,7 @@ class TestSMEFTsim(unittest.TestCase):
             outf = os.path.join(tmpdir, 'wcxf2smeftsim_param_card.dat')
             self.assertTrue(os.path.isfile, outf)
             # check if can be imported as LHA
-            with open(outf, 'r') as f:
+            with open(outf) as f:
                 card = pylha.load(f)
             # check dict is not empty
             self.assertTrue(card)
@@ -43,7 +43,7 @@ class TestSMEFTsim(unittest.TestCase):
         # check if file is present
         outf = os.path.join(tmpdir, 'wcxf2smeftsim_param_card.dat')
         self.assertTrue(os.path.isfile, outf)
-        with open(outf, 'r') as f:
+        with open(outf) as f:
             card = pylha.load(f)
         self.assertEqual(dict(card['BLOCK']['FRBlock']['values'])[691],
                          1e6 * 4e-6 / 2,  # symmetry factor of 1 / 2!
