@@ -14,7 +14,7 @@ from wilson.match import smeft_tree, smeft_loop
 
 def match_all(d_SMEFT, scale, parameters=None):
     """Match the SMEFT Warsaw basis onto the WET JMS basis.
-    
+
     The optional `parameters` dictionary allows to overwrite the default
     numerical input parameters (such as CKM elements and quark masses).
     Moreover, there is a key `'loop_order'` which, if set to 1, allows

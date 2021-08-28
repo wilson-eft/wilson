@@ -2,7 +2,7 @@
 
 The code was adapted from the Rosetta package:
 https://github.com/kenmimasu/Rosetta/tree/master/Rosetta
-(c) Adam Falkowski, Benjamin Fuks, Kentarou Mawatari, 
+(c) Adam Falkowski, Benjamin Fuks, Kentarou Mawatari,
 Ken Mimasu, Veronica Sanz & Francesco Riva
 """
 

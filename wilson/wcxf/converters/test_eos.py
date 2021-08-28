@@ -14,7 +14,7 @@ class TestEOS(unittest.TestCase):
         self.assertEqual(eos_sm_dict['b->s::Re{c7}']['central'], -0.33726473)
         self.assertEqual(eos_sm_dict['b->s::c5']['central'], 0.00042854)
         self.assertEqual(eos_sm_dict['b->ulnu::Im{cVL}']['min'], 0.0)
-    
+
     def test_wcxf2eos(self):
         sm_wc_dict = eos.get_sm_wcs(data_path)
         wc_dict = { 'b->s::c7': 0.1,
@@ -27,7 +27,7 @@ class TestEOS(unittest.TestCase):
         self.assertEqual(eos_dict['b->s::c5']['central'], 0.00042854 - 0.03)
         self.assertEqual(eos_dict['b->ulnu::Im{cSL}']['min'], 0.0 + 0.2)
         self.assertEqual(eos_dict['b->ulnu::Re{cVL}']['max'], 1.0 + 0.2)
-        
+
     def test_lfu(self):
         sm_wc_dict = eos.get_sm_wcs(data_path)
         wc_dict = { 'b->uenue::cSL': 0.2j, 'b->umunumu::cSL': 0.1j, }
