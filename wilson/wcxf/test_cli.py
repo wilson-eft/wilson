@@ -41,7 +41,7 @@ class TestCLI(unittest.TestCase):
             f.write(yml1)
         _, fout = tempfile.mkstemp()
         res = subprocess.run(['wcxf', 'convert', 'json', fin, '--output', fout])
-        with open(fout, 'r') as f:
+        with open(fout) as f:
             d_json3 = json.load(f)
         self.assertDictEqual(d_yml1, d_json3)
         # delete temp files
@@ -52,7 +52,7 @@ class TestCLI(unittest.TestCase):
             f.write(json1)
         _, fout = tempfile.mkstemp()
         res = subprocess.run(['wcxf', 'convert', 'yaml', fin, '--output', fout])
-        with open(fout, 'r') as f:
+        with open(fout) as f:
             yml3 = f.read()
         d_yml3 = yaml.safe_load(yml3)
         self.assertDictEqual(d_yml3, d_json1)

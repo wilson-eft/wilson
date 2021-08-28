@@ -13,7 +13,7 @@ def get_sm_wcs(eos_parameter_dir):
     all_wcs = {}
     yamlfiles = glob.glob(os.path.join(eos_parameter_dir, '*.yaml'))
     for yamlfile in yamlfiles:
-        with open(yamlfile, 'r') as f:
+        with open(yamlfile) as f:
             wcs = yaml.safe_load(f)
         meta = wcs.get('@metadata@', {})
         if 'wcxf-relevant' in meta and meta['wcxf-relevant']:

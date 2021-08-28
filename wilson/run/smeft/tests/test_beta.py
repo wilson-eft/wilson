@@ -81,7 +81,7 @@ class TestBeta(unittest.TestCase):
             npt.assert_array_almost_equal(C_out[n]/C_out_ll[n], np.ones((3,3)), decimal=1)
         for n in C4:
             npt.assert_array_almost_equal((C_out[n]/C_out_ll[n]).real, np.ones((3,3,3,3)), decimal=1,
-                err_msg="failed for {}".format(n))
+                err_msg=f"failed for {n}")
 
     def test_sm(self):
         beta_np = beta.beta(C,  HIGHSCALE)

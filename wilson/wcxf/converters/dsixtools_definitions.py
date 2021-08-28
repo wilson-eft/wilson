@@ -1,4 +1,3 @@
-
 # elements that are redundant and can thus be omitted in the input/output
 redundant_elements = {'G': [],
  'Gd': [],

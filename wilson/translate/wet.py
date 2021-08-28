@@ -27,7 +27,7 @@ llflav = {'e': 0, 'm': 1, 't': 2}
 ## Class I (DeltaF = 2)##
 
 def _JMS_to_Bern_I(C, qq):
-    """From JMS to BernI basis (= traditional SUSY basis in this case)
+    r"""From JMS to BernI basis (= traditional SUSY basis in this case)
     for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'cu'"""
     if qq in ['sb', 'db', 'ds']:
@@ -37,26 +37,26 @@ def _JMS_to_Bern_I(C, qq):
         dd = 'uu'
         ij = tuple(uflav[q] for q in qq)
     else:
-        raise ValueError("not in Bern_I: ".format(qq))
+        raise ValueError(f"not in Bern_I: ")
     ji = (ij[1], ij[0])
     d = {
-        '1' + 2 * qq : C["V{}LL".format(dd)][ij + ij],
-        '2' + 2 * qq : C["S1{}RR".format(dd)][ji + ji].conj()
-                       - C["S8{}RR".format(dd)][ji + ji].conj() / (2 * Nc),
-        '3' + 2 * qq : C["S8{}RR".format(dd)][ji + ji].conj() / 2,
-        '4' + 2 * qq : -C["V8{}LR".format(dd)][ij + ij],
-        '5' + 2 * qq : -2 * C["V1{}LR".format(dd)][ij + ij]
-                       + C["V8{}LR".format(dd)][ij + ij] / Nc,
-        '1p' + 2 * qq : C["V{}RR".format(dd)][ij + ij],
-        '2p' + 2 * qq : C["S1{}RR".format(dd)][ij + ij]
-                       - C["S8{}RR".format(dd)][ij + ij] / (2 * Nc),
-        '3p' + 2 * qq : C["S8{}RR".format(dd)][ij + ij] / 2
+        '1' + 2 * qq : C[f"V{dd}LL"][ij + ij],
+        '2' + 2 * qq : C[f"S1{dd}RR"][ji + ji].conj()
+                       - C[f"S8{dd}RR"][ji + ji].conj() / (2 * Nc),
+        '3' + 2 * qq : C[f"S8{dd}RR"][ji + ji].conj() / 2,
+        '4' + 2 * qq : -C[f"V8{dd}LR"][ij + ij],
+        '5' + 2 * qq : -2 * C[f"V1{dd}LR"][ij + ij]
+                       + C[f"V8{dd}LR"][ij + ij] / Nc,
+        '1p' + 2 * qq : C[f"V{dd}RR"][ij + ij],
+        '2p' + 2 * qq : C[f"S1{dd}RR"][ij + ij]
+                       - C[f"S8{dd}RR"][ij + ij] / (2 * Nc),
+        '3p' + 2 * qq : C[f"S8{dd}RR"][ij + ij] / 2
             }
     return d
 
 
 def _Bern_to_JMS_I(C, qq):
-    """From Bern to JMS basis for $\Delta F=2$ operators.
+    r"""From Bern to JMS basis for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'cu'"""
     if qq in ['sb', 'db', 'ds']:
         dd = 'dd'
@@ -65,16 +65,16 @@ def _Bern_to_JMS_I(C, qq):
         dd = 'uu'
         ij = '{}{}'.format(uflav[qq[0]] + 1, uflav[qq[1]] + 1)
     else:
-        raise ValueError("not in Bern_I: ".format(qq))
+        raise ValueError(f"not in Bern_I: ")
     ji = ij[1] + ij[0]
-    d = {"V{}LL_{}{}".format(dd, ij, ij): C['1' + 2 * qq],
-         "S1{}RR_{}{}".format(dd, ji, ji): C['2' + 2 * qq].conjugate() + C['3' + 2 * qq].conjugate() / 3,
-         "S8{}RR_{}{}".format(dd, ji, ji): 2 * C['3' + 2 * qq].conjugate(),
-         "V1{}LR_{}{}".format(dd, ij, ij): -C['4' + 2 * qq] / 6 - C['5' + 2 * qq] / 2,
-         "V8{}LR_{}{}".format(dd, ij, ij): -C['4' + 2 * qq],
-         "V{}RR_{}{}".format(dd, ij, ij): C['1p' + 2 * qq],
-         "S1{}RR_{}{}".format(dd, ij, ij): C['2p' + 2 * qq] + C['3p' + 2 * qq] / 3,
-         "S8{}RR_{}{}".format(dd, ij, ij): 2 * C['3p' + 2 * qq],
+    d = {f"V{dd}LL_{ij}{ij}": C['1' + 2 * qq],
+         f"S1{dd}RR_{ji}{ji}": C['2' + 2 * qq].conjugate() + C['3' + 2 * qq].conjugate() / 3,
+         f"S8{dd}RR_{ji}{ji}": 2 * C['3' + 2 * qq].conjugate(),
+         f"V1{dd}LR_{ij}{ij}": -C['4' + 2 * qq] / 6 - C['5' + 2 * qq] / 2,
+         f"V8{dd}LR_{ij}{ij}": -C['4' + 2 * qq],
+         f"V{dd}RR_{ij}{ij}": C['1p' + 2 * qq],
+         f"S1{dd}RR_{ij}{ij}": C['2p' + 2 * qq] + C['3p' + 2 * qq] / 3,
+         f"S8{dd}RR_{ij}{ij}": 2 * C['3p' + 2 * qq],
          }
     if qq == 'cu':
         # here we need to convert some operators that are not in the basis
@@ -83,7 +83,7 @@ def _Bern_to_JMS_I(C, qq):
     return d
 
 def _JMS_to_EOS_I(C, qq, p):
-    """
+    r"""
     From JMS to EOS basis (= traditional SUSY basis in this case) for $\Delta F=2$ operators.
     `qq` should be one of 'sb', 'db'.
     """
@@ -91,27 +91,27 @@ def _JMS_to_EOS_I(C, qq, p):
         dd = 'dd'
         ij = tuple(dflav[q] for q in qq)
     else:
-        raise ValueError("not in EOS_I: ".format(qq))
+        raise ValueError(f"not in EOS_I: ")
     ji = (ij[1], ij[0])
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     prefactor = sqrt(2) / p['GF'] / 4 / (V[2, ij[1]] * V[2, ij[0]].conj())**2
     d = {
-        2 * qq + '::c1'   : prefactor * C["V{}LL".format(dd)][ij + ij],
-        2 * qq + '::c2'   : prefactor * (C["S1{}RR".format(dd)][ji + ji].conj()
-                          - C["S8{}RR".format(dd)][ji + ji].conj() / (2 * Nc)),
-        2 * qq + '::c3'   : prefactor * C["S8{}RR".format(dd)][ji + ji].conj() / 2,
-        2 * qq + '::c4'   : prefactor * -C["V8{}LR".format(dd)][ij + ij],
-        2 * qq + '::c5'   : prefactor * (-2 * C["V1{}LR".format(dd)][ij + ij]
-                          + C["V8{}LR".format(dd)][ij + ij] / Nc),
-        2 * qq + '::c1\'' : prefactor * C["V{}RR".format(dd)][ij + ij],
-        2 * qq + '::c2\'' : prefactor * (C["S1{}RR".format(dd)][ij + ij]
-                          - C["S8{}RR".format(dd)][ij + ij] / (2 * Nc)),
-        2 * qq + '::c3\'' : prefactor * C["S8{}RR".format(dd)][ij + ij] / 2
+        2 * qq + '::c1'   : prefactor * C[f"V{dd}LL"][ij + ij],
+        2 * qq + '::c2'   : prefactor * (C[f"S1{dd}RR"][ji + ji].conj()
+                          - C[f"S8{dd}RR"][ji + ji].conj() / (2 * Nc)),
+        2 * qq + '::c3'   : prefactor * C[f"S8{dd}RR"][ji + ji].conj() / 2,
+        2 * qq + '::c4'   : prefactor * -C[f"V8{dd}LR"][ij + ij],
+        2 * qq + '::c5'   : prefactor * (-2 * C[f"V1{dd}LR"][ij + ij]
+                          + C[f"V8{dd}LR"][ij + ij] / Nc),
+        2 * qq + '::c1\'' : prefactor * C[f"V{dd}RR"][ij + ij],
+        2 * qq + '::c2\'' : prefactor * (C[f"S1{dd}RR"][ij + ij]
+                          - C[f"S8{dd}RR"][ij + ij] / (2 * Nc)),
+        2 * qq + '::c3\'' : prefactor * C[f"S8{dd}RR"][ij + ij] / 2
     }
     return d
 
 def _BernI_to_Flavio_I(C, qq):
-    """From BernI to FlavioI basis for $\Delta F=2$ operators.
+    r"""From BernI to FlavioI basis for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'uc'"""
     qqf = qq[::-1]  # flavio uses "bs" instead of "sb" etc.
     if qq in ['sb', 'db', 'ds', 'cu']:
@@ -126,11 +126,11 @@ def _BernI_to_Flavio_I(C, qq):
             'CSLR_' + 2*qqf: C["4" + 2*qq]
             }
     else:
-        raise ValueError("not in Flavio_I: ".format(qq))
+        raise ValueError(f"not in Flavio_I: ")
 
 
 def _FlavioI_to_Bern_I(C, qq):
-    """From FlavioI to BernI basis for $\Delta F=2$ operators.
+    r"""From FlavioI to BernI basis for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'uc'"""
     qqb = qq[::-1]  # flavio uses "bs" instead of "sb" etc.
     if qq in ['bs', 'bd', 'sd', 'uc']:
@@ -145,11 +145,11 @@ def _FlavioI_to_Bern_I(C, qq):
             '3p' + 2*qqb: -8 * C["CTRR_" + 2*qq],
             }
     else:
-        raise ValueError("not in Bern_I: ".format(qq))
+        raise ValueError(f"not in Bern_I: ")
 
 
 def _BernI_to_FormFlavor_I(C, qq):
-    """From BernI to FormFlavorI basis for $\Delta F=2$ operators.
+    r"""From BernI to FormFlavorI basis for $\Delta F=2$ operators.
     `qq` should be 'sb', 'db', 'ds' or 'uc'"""
     qqf = qq[::-1] # FormFlavour uses "bs" instead of "sb" etc.
     if qq in ['sb', 'db', 'ds']:
@@ -175,7 +175,7 @@ def _BernI_to_FormFlavor_I(C, qq):
             'CSLR_' + 2*qq: C["4" + 2*qq].conjugate()
             }
     else:
-        raise ValueError("{} not in FormFlavor_I".format(qq))
+        raise ValueError(f"{qq} not in FormFlavor_I")
 
 
 ## Class II ##
@@ -437,7 +437,7 @@ def _Fierz_to_JMS_III_IV_V(Fqqqq, qqqq):
         'S8uuRR_' + f4 + f1 + f2 + f3: -16 * F['F' + qqqq + '9p'].conjugate()
         }
         return symmetrize_JMS_dict(d)
-    raise ValueError("Case not implemented: {}".format(qqqq))
+    raise ValueError(f"Case not implemented: {qqqq}")
 
 def _JMS_to_Fierz_III_IV_V(C, qqqq):
     """From JMS to 4-quark Fierz basis for Classes III, IV and V.
@@ -621,7 +621,7 @@ def _JMS_to_Fierz_III_IV_V(C, qqqq):
                                     C["S8uuRR"][f4, f1, f2, f3].conj() / 16 / Nc
                                     }
     else:
-        raise ValueError("Case not implemented: {}".format(qqqq))
+        raise ValueError(f"Case not implemented: {qqqq}")
 
 
 def _Fierz_to_Bern_III_IV_V(Fqqqq, qqqq):
@@ -736,7 +736,7 @@ def _Fierz_to_Bern_III_IV_V(Fqqqq, qqqq):
         '10p'+qqqq : Fqqqq['F' + qqqq + '6p'] / 24
                      - Fqqqq['F' + qqqq + '8p'] / 24
                     }
-    raise ValueError("Case not implemented: {}".format(qqqq))
+    raise ValueError(f"Case not implemented: {qqqq}")
 
 def _Bern_to_Fierz_III_IV_V(C, qqqq):
     """From Bern to 4-quark Fierz basis for Classes III, IV and V.
@@ -794,7 +794,7 @@ def _Bern_to_Fierz_III_IV_V(C, qqqq):
                 'F' + qqqq + '9': (8 * C['10' + qqqq]) / 3 + C['7' + qqqq] - C['8' + qqqq] / 6 - 16 * C['9' + qqqq],
                 'F' + qqqq + '9p': (8 * C['10p' + qqqq]) / 3 + C['7p' + qqqq] - C['8p' + qqqq] / 6 - 16 * C['9p' + qqqq],
                 }
-    raise ValueError("Case not implemented: {}".format(qqqq))
+    raise ValueError(f"Case not implemented: {qqqq}")
 
 def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
     """
@@ -869,7 +869,7 @@ def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
                              - Fqqqq['F' + qqqq + '8p'] / 24
         }
         return {k: v * pf_ckm for k, v in d.items()}
-    raise ValueError("Case not implemented: {}".format(qqqq))
+    raise ValueError(f"Case not implemented: {qqqq}")
 
 def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
     p = parameters
@@ -923,7 +923,7 @@ def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
             'CTLLt_' + qqqq_fl: pf * Fqqqq['F' + qqqq + '10p'],
         }
     else:
-        raise ValueError("Sector not implemented: {}".format(qqqq))
+        raise ValueError(f"Sector not implemented: {qqqq}")
 
 
 def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
@@ -978,7 +978,7 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
             'F' + qqqq + '10p': pf * Cqqqq['CTLLt_' + qqqq_fl],
         }
     else:
-        raise ValueError("Sector not implemented: {}".format(qqqq))
+        raise ValueError(f"Sector not implemented: {qqqq}")
 
 
 def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
@@ -1462,18 +1462,18 @@ def Fierz_to_JMS_chrom(C, qq):
     if qq[0] in dflav:
         s = dflav[qq[0]] + 1
         b = dflav[qq[1]] + 1
-        return {'dgamma_{}{}'.format(s, b): C['F7gamma' + qq],
-                'dG_{}{}'.format(s, b): C['F8g' + qq],
-                'dgamma_{}{}'.format(b, s): C['F7pgamma' + qq].conjugate(),
-                'dG_{}{}'.format(b, s): C['F8pg' + qq].conjugate(),
+        return {f'dgamma_{s}{b}': C['F7gamma' + qq],
+                f'dG_{s}{b}': C['F8g' + qq],
+                f'dgamma_{b}{s}': C['F7pgamma' + qq].conjugate(),
+                f'dG_{b}{s}': C['F8pg' + qq].conjugate(),
                 }
     else:
         u = uflav[qq[0]] + 1
         c = uflav[qq[1]] + 1
-        return {'ugamma_{}{}'.format(u, c): C['F7gamma' + qq],
-                'uG_{}{}'.format(u, c): C['F8g' + qq],
-                'ugamma_{}{}'.format(c, u): C['F7pgamma' + qq].conjugate(),
-                'uG_{}{}'.format(c, u): C['F8pg' + qq].conjugate(),
+        return {f'ugamma_{u}{c}': C['F7gamma' + qq],
+                f'uG_{u}{c}': C['F8g' + qq],
+                f'ugamma_{c}{u}': C['F7pgamma' + qq].conjugate(),
+                f'uG_{c}{u}': C['F8pg' + qq].conjugate(),
                 }
 
 
@@ -1487,7 +1487,7 @@ def Fierz_to_Bern_chrom(C, dd, parameters):
     elif dd == 'ds':
         mq = parameters['m_s']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
+        KeyError(f"Not sure what to do with quark mass for flavour {dd}")
     return {
         '7gamma' + dd : gs**2 / e / mq * C['F7gamma' + dd ],
         '8g' + dd : gs / mq * C['F8g' + dd ],
@@ -1506,7 +1506,7 @@ def Bern_to_Fierz_chrom(C, dd, parameters):
     elif dd == 'ds':
         mq = parameters['m_s']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(dd))
+        KeyError(f"Not sure what to do with quark mass for flavour {dd}")
     return {
         'F7gamma' + dd : C['7gamma' + dd] / (gs**2 / e / mq),
         'F8g' + dd : C['8g' + dd] / (gs / mq),
@@ -1529,7 +1529,7 @@ def Fierz_to_Flavio_chrom(C, qq, parameters):
     elif qq == 'uc':
         xi = V[1, 2].conj() * V[0, 2]
     else:
-        raise ValueError("Unexpected flavours: {}".format(qq))
+        raise ValueError(f"Unexpected flavours: {qq}")
     qqfl = qq[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
@@ -1540,7 +1540,7 @@ def Fierz_to_Flavio_chrom(C, qq, parameters):
     elif qq == 'uc':
         mq = parameters['m_c']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(qq))
+        KeyError(f"Not sure what to do with quark mass for flavour {qq}")
     dic = {
         "C7_" + qqfl : (16 * pi**2) / e / mq * C['F7gamma' + qq],
         "C8_" + qqfl : (16 * pi**2) / gs / mq * C['F8g' + qq],
@@ -1565,7 +1565,7 @@ def Flavio_to_Fierz_chrom(C, qq, parameters):
     elif qq == 'uc':
         xi = V[1, 2].conj() * V[0, 2]
     else:
-        raise ValueError("Unexpected flavours: {}".format(qq))
+        raise ValueError(f"Unexpected flavours: {qq}")
     qqfl = qq[::-1]
     e = sqrt(4 * pi * parameters['alpha_e'])
     gs = sqrt(4 * pi * parameters['alpha_s'])
@@ -1576,7 +1576,7 @@ def Flavio_to_Fierz_chrom(C, qq, parameters):
     elif qq == 'uc':
         mq = parameters['m_c']
     else:
-        KeyError("Not sure what to do with quark mass for flavour {}".format(qq))
+        KeyError(f"Not sure what to do with quark mass for flavour {qq}")
     dic = {
         'F7gamma' + qq: C["C7_" + qqfl] / ((16 * pi**2) / e / mq),
         'F8g' + qq: C["C8_" + qqfl] / ((16 * pi**2) / gs / mq),
@@ -2242,7 +2242,7 @@ def FlavorKit_to_JMS(C, scale, parameters=None, sectors=None):
                 m = p['m_tau']
             C_out['egamma_' + ind] = 1/2 * e * m * v
         else:
-            raise ValueError("Unexpected key: {}".format(k))
+            raise ValueError(f"Unexpected key: {k}")
     return C_out
 
 

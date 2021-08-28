@@ -32,7 +32,7 @@ class TestWarsawMass(unittest.TestCase):
             for k, v in wc_Warsaw_random.dict.items():
                 if k.split('_')[0] not in ['uphi', 'uG', 'uW', 'uB', 'llphiphi']:
                     self.assertEqual(wcW.dict[k], v,
-                                     msg="Not equal for {}".format(k))
+                                     msg=f"Not equal for {k}")
             for i in range(3):
                 for j in range(3):
                     if i > j:
@@ -50,7 +50,7 @@ class TestWarsawUp(unittest.TestCase):
             wc_roundtrip = wcW.translate('Warsaw')
             for k, v in wcWdown.dict.items():
                 self.assertAlmostEqual(v, wc_roundtrip.dict[k], places=12,
-                                       msg="Failed for {}".format(k))
+                                       msg=f"Failed for {k}")
 
 
 class TestIO(unittest.TestCase):
@@ -61,4 +61,4 @@ class TestIO(unittest.TestCase):
         C_wcxf = wilson.util.smeftutil.arrays2wcxf(C_arr)
         for k, v in wc.dict.items():
             self.assertEqual(v, C_wcxf[k],
-                             msg="Failed for {}".format(k))
+                             msg=f"Failed for {k}")

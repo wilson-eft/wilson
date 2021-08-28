@@ -35,5 +35,5 @@ class TestHiggs(unittest.TestCase):
             wc_roundtrip = wc_translated.translate("Warsaw up")
             for k, v in wc.dict.items():
                 self.assertAlmostEqual(
-                    v, wc_roundtrip.dict[k], places=20, msg="Failed for {}".format(k)
+                    v, wc_roundtrip.dict[k], places=20, msg=f"Failed for {k}"
                 )

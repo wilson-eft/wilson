@@ -83,7 +83,7 @@ def _testtex(s, delete=True):
     logf = os.path.join(tmpd, 'textest.log')
     res['log'] = ''
     try:
-        with open(logf, 'r') as f:
+        with open(logf) as f:
             logl = f.readlines()
     except FileNotFoundError:
         pass
@@ -117,7 +117,7 @@ class NamedInstanceMetaclass(type):
     def __delitem__(cls, item):
         return cls.del_instance(item)
 
-class NamedInstanceClass(object, metaclass=NamedInstanceMetaclass):
+class NamedInstanceClass(metaclass=NamedInstanceMetaclass):
     """Base class for classes that have named instances that can be accessed
     by their name.
 
@@ -155,7 +155,7 @@ class NamedInstanceClass(object, metaclass=NamedInstanceMetaclass):
         cls.instances = OrderedDict()
 
 
-class WCxf(object):
+class WCxf:
     """Base class for WCxf files (not meant to be used directly)."""
 
     @classmethod
@@ -190,7 +190,7 @@ class WCxf(object):
                              default_flow_style=default_flow_style,
                             **kwargs)
         else:
-            raise ValueError("Format {} unknown: use 'json' or 'yaml'.".format(fmt))
+            raise ValueError(f"Format {fmt} unknown: use 'json' or 'yaml'.")
 
 class EFT(WCxf, NamedInstanceClass):
     """Class representing EFT files."""
@@ -227,7 +227,7 @@ class Basis(WCxf, NamedInstanceClass):
                 self.sectors = Basis[self.eft, self.parent].sectors.copy()
                 self.sectors.update(sectors)
             except (AttributeError, KeyError):
-                raise ValueError("Parent basis {} not found".format(self.parent))
+                raise ValueError(f"Parent basis {self.parent} not found")
         else:
             self.sectors = sectors
         self._all_wcs = None
@@ -254,10 +254,10 @@ class Basis(WCxf, NamedInstanceClass):
         try:
             eft_instance = EFT[self.eft]
         except (AttributeError, KeyError):
-            raise ValueError("EFT {} not defined".format(self.eft))
+            raise ValueError(f"EFT {self.eft} not defined")
         unknown_sectors = set(self.sectors.keys()) - set(eft_instance.sectors.keys())
         if unknown_sectors:
-            raise ValueError("Unknown sectors: {}".format(unknown_sectors))
+            raise ValueError(f"Unknown sectors: {unknown_sectors}")
         all_keys = [k for s in self.sectors.values() for k, v in s.items()]
         if len(all_keys) != len(set(all_keys)):  # we have duplicate keys!
             cnt = Counter(all_keys)
@@ -278,10 +278,10 @@ class Basis(WCxf, NamedInstanceClass):
                              + "{}".format(res['log']))
 
     def __repr__(self):
-        return "wcxf.Basis('{}', '{}', {{...}})".format(self.eft, self.basis)
+        return f"wcxf.Basis('{self.eft}', '{self.basis}', {{...}})"
 
     def _repr_markdown_(self):
-        md = "# Basis `{}` (EFT `{}`)\n\n".format(self.basis, self.eft)
+        md = f"# Basis `{self.basis}` (EFT `{self.eft}`)\n\n"
         if hasattr(self, 'metadata') and 'description' in self.metadata:
             md += self.metadata['description'] + "\n\n"
         return md
@@ -295,7 +295,7 @@ class Basis(WCxf, NamedInstanceClass):
                r"\left( C_i \, O_i + C^*_i \, O^\dagger_i\right).$$")
         md += "\n\n"
         for s, wcs in self.sectors.items():
-            md += "### `{}`\n\n".format(s)
+            md += f"### `{s}`\n\n"
             if wcs:
                 md += "| WC name | Operator | Type |\n"
                 # NB: this is meant for pandoc; it computes column widths
@@ -370,11 +370,11 @@ class WC(WCxf):
         try:
             eft_instance = EFT[self.eft]
         except (AttributeError, KeyError):
-            raise ValueError("EFT {} not defined".format(self.eft))
+            raise ValueError(f"EFT {self.eft} not defined")
         try:
             basis_instance = Basis[self.eft, self.basis]
         except (AttributeError, KeyError):
-            raise ValueError("Basis {} not defined for EFT {}".format(self.basis, self.eft))
+            raise ValueError(f"Basis {self.basis} not defined for EFT {self.eft}")
         unknown_keys = set(self.values.keys()) - set(basis_instance.all_wcs)
         assert unknown_keys == set(), \
             "Wilson coefficients do not exist in this basis: " + str(unknown_keys)
@@ -409,9 +409,9 @@ class WC(WCxf):
 
     def _repr_markdown_(self):
         md = "## WCxf Wilson coefficients\n\n"
-        md += "**EFT:** `{}`\n\n".format(self.eft)
-        md += "**Basis:** `{}`\n\n".format(self.basis)
-        md += "**Scale:** {} GeV\n\n".format(self.scale)
+        md += f"**EFT:** `{self.eft}`\n\n"
+        md += f"**Basis:** `{self.basis}`\n\n"
+        md += f"**Scale:** {self.scale} GeV\n\n"
         md += "### Values\n\n"
         md += "| WC name | Value |\n"
         # NB: this is meant for pandoc; it computes column widths
@@ -419,7 +419,7 @@ class WC(WCxf):
         # fractions of line width (default: 72)
         md += "|" + 20 * "-" + "|" + 52 * "-" + "|\n"
         for name, v in self.dict.items():
-            md += "| `{}` | {} |\n".format(name, v)
+            md += f"| `{name}` | {v} |\n"
         return md
 
     def _repr_html_(self):
@@ -461,7 +461,7 @@ class WC(WCxf):
         try:
             translator = Translator[self.eft, self.basis, to_basis]
         except (KeyError, AttributeError):
-            raise ValueError("No translator from basis {} to {} found.".format(self.basis, to_basis))
+            raise ValueError(f"No translator from basis {self.basis} to {to_basis} found.")
         return translator.translate(self, parameters=parameters, sectors=sectors)
 
     def match(self, to_eft, to_basis, parameters=None):
@@ -472,7 +472,7 @@ class WC(WCxf):
         try:
             matcher = Matcher[self.eft, self.basis, to_eft, to_basis]
         except (KeyError, AttributeError):
-            raise ValueError("No matcher from EFT {} in basis {} to EFT {} in basis {} found.".format(self.eft, self.basis, to_eft, to_basis))
+            raise ValueError(f"No matcher from EFT {self.eft} in basis {self.basis} to EFT {to_eft} in basis {to_basis} found.")
         return matcher.match(self, parameters=parameters)
 
 

@@ -11,7 +11,7 @@ from wilson.util import smeftutil
 from wilson import wcxf
 
 
-class SMEFT(object):
+class SMEFT:
     """Class representing a parameter point in the Standard Model Effective
     Field Theory and allowing the evolution of the Wilson Coefficients.
 
@@ -173,7 +173,7 @@ class SMEFT(object):
         elif accuracy == 'leadinglog':
             C_out = self._rgevolve_leadinglog(scale_sm)
         else:
-            raise ValueError("'{}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').".format(accuracy))
+            raise ValueError(f"'{accuracy}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').")
         return smpar.smpar(C_out)
 
     def _get_sm_scale_in(self, scale_sm=91.1876):
@@ -210,7 +210,7 @@ class SMEFT(object):
         elif accuracy == 'leadinglog':
             C_out = self._rgevolve_leadinglog(scale)
         else:
-            raise ValueError("'{}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').".format(accuracy))
+            raise ValueError(f"'{accuracy}' is not a valid value of 'accuracy' (must be either 'integrate' or 'leadinglog').")
         return self._to_wcxf(C_out, scale)
 
     def run_continuous(self, scale):

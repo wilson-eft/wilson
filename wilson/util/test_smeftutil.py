@@ -19,7 +19,7 @@ class TestSymm(unittest.TestCase):
         # check no parameter or WC was forgotten in the C_symm_keys lists
         self.assertEqual(
           set(smeftutil.C_keys),
-          set([c for cs in smeftutil.C_symm_keys.values() for c in cs])
+          {c for cs in smeftutil.C_symm_keys.values() for c in cs}
         )
 
     def test_symmetrize_symmetric(self):
@@ -77,12 +77,12 @@ class TestSymm(unittest.TestCase):
         C = smeftutil.wcxf2arrays_symmetrized(wc.dict)
         d = smeftutil.arrays2wcxf_nonred(C)
         for k, v in wc.dict.items():
-            self.assertAlmostEqual(v, d[k], msg="Failed for {}".format(k))
+            self.assertAlmostEqual(v, d[k], msg=f"Failed for {k}")
 
     def test_wcxf2array_incomplete(self):
         wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'G': 1e-10})
         C = smeftutil.wcxf2arrays_symmetrized(wc.dict)
         d = smeftutil.arrays2wcxf_nonred(C)
         for k, v in d.items():
-            self.assertEqual(v, wc[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, wc[k], msg=f"Failed for {k}")
             self.assertIsInstance(v, Number)

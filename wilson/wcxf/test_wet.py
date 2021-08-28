@@ -41,7 +41,7 @@ class TestWET(unittest.TestCase):
             L = sum([1 if isreal(k) else 2 for k in all_wc if s in k])
             try:
                 self.assertEqual(L, n,
-                             msg="Failed for {}".format(s))
+                             msg=f"Failed for {s}")
             except Exception as exc:
                 print(exc)
         # compare individual counts to tables 11-17 in arXiv:1709.04486

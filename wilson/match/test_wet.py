@@ -27,7 +27,7 @@ class TestWETflavio(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-4', 'flavio'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
     def test_wet4_wet3(self):
         from_wc = get_random_wc('WET-4', 'flavio')
@@ -37,7 +37,7 @@ class TestWETflavio(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-3', 'flavio'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
 
 class TestWETBern(unittest.TestCase):
@@ -49,7 +49,7 @@ class TestWETBern(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-4', 'Bern'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
     def test_wet4_wet3(self):
         from_wc = get_random_wc('WET-4', 'Bern')
@@ -59,7 +59,7 @@ class TestWETBern(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-3', 'Bern'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
 
 class TestWETJMS(unittest.TestCase):
@@ -71,7 +71,7 @@ class TestWETJMS(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-4', 'JMS'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
     def test_wet4_wet3(self):
         from_wc = get_random_wc('WET-4', 'JMS')
@@ -81,7 +81,7 @@ class TestWETJMS(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-3', 'JMS'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")
 
     def test_wet3_wet2(self):
         from_wc = get_random_wc('WET-3', 'JMS')
@@ -91,4 +91,4 @@ class TestWETJMS(unittest.TestCase):
         fkeys_all = set(wcxf.Basis['WET-2', 'JMS'].all_wcs)
         self.assertSetEqual(fkeys_all - fkeys, set(), msg="Missing coefficients")
         for k, v in to_wc.dict.items():
-            self.assertEqual(v, from_wc.dict[k], msg="Failed for {}".format(k))
+            self.assertEqual(v, from_wc.dict[k], msg=f"Failed for {k}")

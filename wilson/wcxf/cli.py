@@ -137,7 +137,7 @@ def eos():
     elif args.output == sys.stdout and args.eoshome is not None:
         output_dir = os.path.join(args.eoshome, 'parameters')
         if not os.path.isdir(output_dir):
-            logging.error("Output directory {} does not exist".format(output_dir))
+            logging.error(f"Output directory {output_dir} does not exist")
             return 1
         f = open(os.path.join(output_dir, 'wcxf.yaml'), 'w')
     else:
