@@ -1,0 +1,20 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-case-conflict
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: check-shebang-scripts-are-executable
+    -   id: check-executables-have-shebangs
+-   repo: https://github.com/codespell-project/codespell
+    rev: 'v2.1.0'
+    hooks:
+    -   id: codespell
+        args: ["-I", "codespell.txt"]
+
+ci:
+    autoupdate_schedule: monthly

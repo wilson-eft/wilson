@@ -17,7 +17,7 @@ from wilson.util import smeftutil, wetutil
 Nc = 3
 
 def _match_all_array(C, p):
-    
+
     # AUXILIARY FUNCTIONS
 
     # Eq. (6.4)
@@ -206,4 +206,3 @@ def match_all_array(C_SMEFT, p):
     match_C = _match_all_array(C_SMEFT, p)
     match_C0 = _match_all_array(C_SMEFT_0, p)
     return {k: match_C[k] - match_C0[k] for k in match_C}
-

@@ -44,7 +44,7 @@ def _match_all_array(_C, p):
 
     # MATCHING CONDITIONS
     c = {}
-        
+
     c['dgamma'] = (-(vT*(-2*mW*C["dB"] + g1bar*vT*C["dW"]))/(2.*sqrt(2)*mZ))
     c['dG'] = ((vT*C["dG"])/sqrt(2))
     c['egamma'] = (-(vT*(-2*mW*C["eB"] + g1bar*vT*C["eW"]))/(2.*sqrt(2)*mZ))

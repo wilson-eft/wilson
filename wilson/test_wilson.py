@@ -102,9 +102,9 @@ class TestWilson(unittest.TestCase):
     def test_run_smeft(self):
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
         wc = w.match_run(160, 'SMEFT', 'Warsaw up')
-        wc.validate()        
+        wc.validate()
 
- 
+
     def test__translate_warsaw_to_warsawup(self):
         w_in = wilson.Wilson({'qd1_1211': 1e-6}, 1e3, 'SMEFT', 'Warsaw')
         wc_out = w_in.match_run(1e3, 'SMEFT', 'Warsaw up')

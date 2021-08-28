@@ -3,30 +3,30 @@ eft: WET
 basis: JMS
 scale: 4.8
 values:
-#   Class-I 
-    VddLL_2323: 
+#   Class-I
+    VddLL_2323:
          Re:  1.0
          Im:  1.0
-    VddLL_1313: 
+    VddLL_1313:
          Re:  1.0
          Im:  1.0
-    VddLL_1212: 
+    VddLL_1212:
          Re:  1.0
          Im:  1.0
 #   Class-II
-    VnueduLL_2211: 
+    VnueduLL_2211:
          Re:  1.0
          Im:  1.0
-    VnueduLL_2221: 
+    VnueduLL_2221:
          Re:  1.0
          Im:  1.0
-    VnueduLL_2231: 
+    VnueduLL_2231:
          Re:  1.0
          Im:  1.0
-    VnueduLL_2212: 
+    VnueduLL_2212:
          Re:  1.0
          Im:  1.0
-    VnueduLL_2222: 
+    VnueduLL_2222:
          Re:  1.0
          Im:  1.0
     VnueduLL_2232:
@@ -34,36 +34,36 @@ values:
          Im:  1.0
 #   Class-III
 #   sbuc
-    V1udLL_1223: 
+    V1udLL_1223:
          Re:  1.0
          Im:  1.0
 #   sbcu
-    V1udLL_1232: 
+    V1udLL_1232:
          Re:  1.0
          Im:  1.0
 #   dbuc
-    V1udLL_1213: 
+    V1udLL_1213:
          Re:  1.0
          Im:  1.0
 #   dbcu
-    V1udLL_1231: 
+    V1udLL_1231:
          Re:  1.0
          Im:  1.0
 #   dsuc
-    V1udLL_1212: 
+    V1udLL_1212:
          Re:  1.0
          Im:  1.0
 #   dscu
-    V1udLL_1221: 
+    V1udLL_1221:
          Re:  1.0
          Im:  1.0
 #   Class-IV
-#   dbds    
-    VddLL_1213: 
+#   dbds
+    VddLL_1213:
          Re:  1.0
          Im:  1.0
 #   dbsb                ** to be fixed later *
-#    VddLL_3132: 
+#    VddLL_3132:
 #         Re:  1.0
 #         Im:  1.0
 #   sbsd
@@ -73,16 +73,16 @@ values:
 # Class-V(Semileptonic)
 #   sbmumu
     VedLL_2223:
-         Re: 1.0 
-         Im: 1.0 
+         Re: 1.0
+         Im: 1.0
 #   dbmumu
     VedLL_2213:
-         Re: 1.0 
-         Im: 1.0 
+         Re: 1.0
+         Im: 1.0
 #   sdmumu
     VedLL_2212:
-         Re: 1.0 
-         Im: 1.0 
+         Re: 1.0
+         Im: 1.0
 # Class-V(four quark)
 #   ddsb
     VddLL_1123:
@@ -103,4 +103,3 @@ values:
     dG_23:
          Re: 1.0
          Im: 1.0
-
