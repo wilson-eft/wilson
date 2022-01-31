@@ -4,7 +4,7 @@
 from wilson import wcxf
 import numpy as np
 import ckmutil
-from wilson.util.smeftutil import _d_4, _d_6, _d_7
+from wilson.util.common import _d_4, _d_6, _d_7
 
 
 # names of Wilson coefficients with the same fermionic symmetry properties
