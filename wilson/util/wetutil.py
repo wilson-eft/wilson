@@ -33,7 +33,7 @@ C_symm_keys[5] = ["VnueLL", "VnuuLL", "VnudLL", "VeuLL", "VedLL", "V1udLL",
 # 6 4F two identical ffbar currents + Fierz symmetry
 C_symm_keys[6] = ['VeeLL', 'VeeRR', 'VnunuLL']
 # 4F antisymmetric in first 2 indices
-C_symm_keys[9] = ['SuudLR', 'SuudRL', 'SdduRL']
+C_symm_keys[71] = ['SuudLR', 'SuudRL', 'SdduRL']
 
 
 # symmetrize JMS basis
@@ -100,7 +100,7 @@ def JMS_to_array(C, sectors=None):
             Ca[k] = _symm_current(Ca[k])
         if k in C_symm_keys[4]:
             Ca[k] = _symm_herm(_symm_current(Ca[k]))
-        if k in C_symm_keys[9]:
+        if k in C_symm_keys[71]:
             Ca[k] = _antisymm_12(Ca[k])
     return Ca
 
@@ -139,7 +139,7 @@ def symmetrize_JMS_dict(C):
                     indnew = ''.join([k, l, i, j])
                     newname = '_'.join([name, indnew])
                     Cs[newname] = v
-        elif name in C_symm_keys[9]:
+        elif name in C_symm_keys[71]:
             i, j, k, l = ind
             indnew = ''.join([j, i, k, l])
             Cs['_'.join([name, indnew])] = -v
@@ -227,7 +227,7 @@ for k in C_symm_keys[4] + C_symm_keys[41]:
     _scale_dict[k] = _d_4
 for k in C_symm_keys[6]:
     _scale_dict[k] = _d_6
-for k in C_symm_keys[9]:
+for k in C_symm_keys[71]:
     # while _d_7 contains the symmetry factors for the case of coefficients
     # *symmetric* under the 1st 2 indices, they are actually the same as for
     # the case where they are *antisymmetric*

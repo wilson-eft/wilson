@@ -122,7 +122,7 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
                 a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
                 npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
-            if k in C_symm_keys[9]:
+            if k in C_symm_keys[71]:
                 a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
                 npt.assert_array_almost_equal(C[k], a, err_msg=f"Failed for {k}",
                                               decimal=20)
@@ -150,7 +150,7 @@ class TestMatchingSymmetryFactors(unittest.TestCase):
                 a = np.einsum('ilkj', C[k]) # C_ijkl = C_ilkj
                 npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
-            if k in C_symm_keys[9]:
+            if k in C_symm_keys[71]:
                 a = -np.einsum('jikl', C[k]) # C_ijkl = -C_jikl
                 npt.assert_array_almost_equal(np.array(C[k], complex), np.array(a, complex), err_msg=f"Failed for {k}",
                                               decimal=20)
