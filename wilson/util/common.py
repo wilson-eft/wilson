@@ -1,4 +1,80 @@
 import numpy as np
+from collections import OrderedDict
+from functools import reduce
+import operator
+
+
+
+
+def C_array2dict(C, C_keys, C_keys_shape):
+    """Convert a 1D array containing C values to a dictionary."""
+    d = OrderedDict()
+    i=0
+    for k in C_keys:
+        s = C_keys_shape[k]
+        if s == 1:
+            j = i+1
+            d[k] = C[i]
+        else:
+            j = i \
+      + reduce(operator.mul, s, 1)
+            d[k] = C[i:j].reshape(s)
+        i = j
+    return d
+
+
+def C_dict2array(C, C_keys):
+    """Convert an OrderedDict containing C values to a 1D array."""
+    return np.hstack([np.asarray(C[k]).ravel() for k in C_keys])
+
+
+def arrays2wcxf(C):
+    """Convert a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values. This is needed for the output in WCxf format."""
+    d = {}
+    for k, v in C.items():
+        if np.shape(v) == () or np.shape(v) == (1,):
+            d[k] = v
+        else:
+            ind = np.indices(v.shape).reshape(v.ndim, v.size).T
+            for i in ind:
+                name = k + '_' + ''.join([str(int(j) + 1) for j in i])
+                d[name] = v[tuple(i)]
+    return d
+
+
+def wcxf2arrays(d, C_keys_shape):
+    """Convert a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values to a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values. This is needed for the parsing
+    of input in WCxf format."""
+    C = {}
+    for k, v in d.items():
+        name = k.split('_')[0]
+        s = C_keys_shape[name]
+        if s == 1:
+            C[k] = v
+        else:
+            ind = k.split('_')[-1]
+            if name not in C:
+                C[name] = np.zeros(s, dtype=complex)
+            C[name][tuple([int(i) - 1 for i in ind])] = v
+    return C
+
+
+def add_missing(C, WC_keys, C_keys_shape):
+    """Add arrays with zeros for missing Wilson coefficient keys"""
+    C_out = C.copy()
+    for k in (set(WC_keys) - set(C.keys())):
+        s = C_keys_shape[k]
+        if s == 1:
+            C_out[k] = 0
+        else:
+            C_out[k] = np.zeros(C_keys_shape[k])
+    return C_out
 
 
 def symmetrize_2(b):
@@ -538,6 +614,14 @@ def symmetrize_9(b):
     return a
 
 
+def unscale_dict(C, C_symm_keys, scale_dict):
+    """Undo the scaling applied in `scale_dict`."""
+    C_out = {k: scale_dict[k] * v for k, v in C.items()}
+    for k in C_symm_keys[8]:
+        C_out[k] = unscale_8(C_out[k])
+    return C_out
+
+
 def symmetrize(C, C_symm_keys):
     """Symmetrize the Wilson coefficient arrays.
 
@@ -617,3 +701,35 @@ def symmetrize_nonred(C, C_symm_keys):
         elif i in C_symm_keys[9]:
             C_symm[i] = symmetrize_9(C[i])
     return C_symm
+
+
+def wcxf2arrays_symmetrized(d, WC_keys, C_keys_shape, C_symm_keys):
+    """Convert a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values to a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values.
+
+
+    In contrast to `wcxf2arrays`, here the numpy arrays fulfill the same
+    symmetry relations as the operators (i.e. they contain redundant entries)
+    and they do not contain undefined indices.
+
+    Zero arrays are added for missing coefficients."""
+    C = wcxf2arrays(d, C_keys_shape)
+    C = symmetrize_nonred(C, C_symm_keys)
+    C = add_missing(C, WC_keys, C_keys_shape)
+    return C
+
+
+def arrays2wcxf_nonred(C, C_symm_keys, scale_dict):
+    """Convert a dictionary with Wilson coefficient names as keys and
+    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
+    name followed by underscore and numeric indices as keys and numbers as
+    values.
+
+    In contrast to `arrays2wcxf`, here the Wilson coefficient arrays are assumed
+    to fulfill the same symmetry relations as the operators, i.e. contain
+    redundant entries, while the WCxf output refers to the non-redundant basis."""
+    C_out = unscale_dict(C, C_symm_keys, scale_dict)
+    d = arrays2wcxf(C_out)
+    return d
