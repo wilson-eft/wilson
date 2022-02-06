@@ -2,12 +2,9 @@
 """
 
 import numpy as np
-from collections import OrderedDict
-from functools import reduce, partial
-import operator
-from wilson.util.common import _d_4, _d_6, _d_7, unscale_8
-from wilson.util.common import symmetrize_nonred as symmetrize_nonred_common
-from wilson.util.common import symmetrize as symmetrize_common
+from functools import partial
+from wilson.util.common import _d_4, _d_6, _d_7, arrays2wcxf
+from wilson.util import common
 
 
 # names of SM parameters
@@ -28,8 +25,8 @@ WC_keys_4f = ["ll", "qq1", "qq3", "lq1", "lq3", "ee", "uu", "dd", "eu", "ed",
               "qque", "qqql", "duue"]
 
 
-C_keys = SM_keys + WC_keys_0f + WC_keys_2f + WC_keys_4f
 WC_keys = WC_keys_0f + WC_keys_2f + WC_keys_4f
+C_keys = SM_keys + WC_keys
 
 C_keys_shape = {
    'g': 1,
@@ -131,58 +128,56 @@ C_symm_keys[8] = ["qqql",]
 C_symm_keys[9] = ["llphiphi"]
 
 
-symmetrize_nonred = partial(symmetrize_nonred_common, C_symm_keys=C_symm_keys)
-symmetrize = partial(symmetrize_common, C_symm_keys=C_symm_keys)
 
 
-def arrays2wcxf(C):
-    """Convert a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values. This is needed for the output in WCxf format."""
-    d = {}
-    for k, v in C.items():
-        if np.shape(v) == () or np.shape(v) == (1,):
-            d[k] = v
-        else:
-            ind = np.indices(v.shape).reshape(v.ndim, v.size).T
-            for i in ind:
-                name = k + '_' + ''.join([str(int(j) + 1) for j in i])
-                d[name] = v[tuple(i)]
-    return d
 
 
-def wcxf2arrays(d):
-    """Convert a dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values to a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values. This is needed for the parsing
-    of input in WCxf format."""
-    C = {}
-    for k, v in d.items():
-        name = k.split('_')[0]
-        s = C_keys_shape[name]
-        if s == 1:
-            C[k] = v
-        else:
-            ind = k.split('_')[-1]
-            if name not in C:
-                C[name] = np.zeros(s, dtype=complex)
-            C[name][tuple([int(i) - 1 for i in ind])] = v
-    return C
+C_array2dict = partial(
+    common.C_array2dict,
+    C_keys=C_keys, C_keys_shape=C_keys_shape,
+)
 
+C_dict2array = partial(
+    common.C_dict2array,
+    C_keys=C_keys,
+)
 
-def add_missing(C):
-    """Add arrays with zeros for missing Wilson coefficient keys"""
-    C_out = C.copy()
-    for k in (set(WC_keys) - set(C.keys())):
-        s = C_keys_shape[k]
-        if s == 1:
-            C_out[k] = 0
-        else:
-            C_out[k] = np.zeros(C_keys_shape[k])
-    return C_out
+_scale_dict = C_array2dict(np.ones(9999))
+for k in C_symm_keys[4]:
+    _scale_dict[k] = _d_4
+for k in C_symm_keys[6]:
+    _scale_dict[k] = _d_6
+for k in C_symm_keys[7]:
+    _scale_dict[k] = _d_7
 
+wcxf2arrays = partial(
+    common.wcxf2arrays,
+    C_keys_shape=C_keys_shape,
+)
+symmetrize_nonred = partial(
+    common.symmetrize_nonred,
+    C_symm_keys=C_symm_keys,
+)
+symmetrize = partial(
+    common.symmetrize,
+    C_symm_keys=C_symm_keys,
+)
+unscale_dict = partial(
+    common.unscale_dict,
+    C_symm_keys=C_symm_keys, scale_dict=_scale_dict,
+)
+add_missing = partial(
+    common.add_missing,
+    WC_keys=WC_keys, C_keys_shape=C_keys_shape,
+)
+wcxf2arrays_symmetrized = partial(
+    common.wcxf2arrays_symmetrized,
+    WC_keys=WC_keys, C_keys_shape=C_keys_shape, C_symm_keys=C_symm_keys,
+)
+arrays2wcxf_nonred = partial(
+    common.arrays2wcxf_nonred,
+    C_symm_keys=C_symm_keys, scale_dict=_scale_dict,
+)
 
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):
     """Gauge-invariant $U(3)^5$ flavor rotation of all Wilson coefficients."""
@@ -280,74 +275,3 @@ def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):
     if 'duue' in C_in:
         C['duue'] = np.einsum('jb,ld,ia,kc,ijkl->abcd', Uu, Ue, Ud, Uu, C_in['duue'])
     return C
-
-
-def C_array2dict(C):
-    """Convert a 1D array containing C values to a dictionary."""
-    d = OrderedDict()
-    i=0
-    for k in C_keys:
-        s = C_keys_shape[k]
-        if s == 1:
-            j = i+1
-            d[k] = C[i]
-        else:
-            j = i \
-      + reduce(operator.mul, s, 1)
-            d[k] = C[i:j].reshape(s)
-        i = j
-    return d
-
-
-def C_dict2array(C):
-    """Convert an OrderedDict containing C values to a 1D array."""
-    return np.hstack([np.asarray(C[k]).ravel() for k in C_keys])
-
-
-_scale_dict = C_array2dict(np.ones(9999))
-for k in C_symm_keys[4]:
-    _scale_dict[k] = _d_4
-for k in C_symm_keys[6]:
-    _scale_dict[k] = _d_6
-for k in C_symm_keys[7]:
-    _scale_dict[k] = _d_7
-
-
-def unscale_dict(C):
-    """Undo the scaling applied in `scale_dict`."""
-    C_out = {k: _scale_dict[k] * v for k, v in C.items()}
-    for k in C_symm_keys[8]:
-        C_out['qqql'] = unscale_8(C_out['qqql'])
-    return C_out
-
-
-def wcxf2arrays_symmetrized(d):
-    """Convert a dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values to a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values.
-
-
-    In contrast to `wcxf2arrays`, here the numpy arrays fulfill the same
-    symmetry relations as the operators (i.e. they contain redundant entries)
-    and they do not contain undefined indices.
-
-    Zero arrays are added for missing coefficients."""
-    C = wcxf2arrays(d)
-    C = symmetrize_nonred(C)
-    C = add_missing(C)
-    return C
-
-
-def arrays2wcxf_nonred(C):
-    """Convert a dictionary with Wilson coefficient names as keys and
-    numbers or numpy arrays as values to a dictionary with a Wilson coefficient
-    name followed by underscore and numeric indices as keys and numbers as
-    values.
-
-    In contrast to `arrays2wcxf`, here the Wilson coefficient arrays are assumed
-    to fulfill the same symmetry relations as the operators, i.e. contain
-    redundant entries, while the WCxf output refers to the non-redundant basis."""
-    C_out = unscale_dict(C)
-    d = arrays2wcxf(C_out)
-    return d
