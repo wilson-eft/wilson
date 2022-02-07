@@ -5,7 +5,7 @@ import json
 import yaml
 from math import sqrt
 import ckmutil
-from wilson.util import smeftutil, smeft_Warsaw
+from wilson.util import smeftutil, smeft_warsaw
 from . import dsixtools_definitions as definitions
 import wilson
 
@@ -124,7 +124,7 @@ def wc_lha2dict(lha):
             C[k] = dict(lha['BLOCK'][block]['values'])[i]
         except KeyError:
             C[k] = 0
-    for k in smeft_Warsaw.WC_keys_2f:
+    for k in smeft_warsaw.WC_keys_2f:
         try:
             C[k] = lha2matrix(lha['BLOCK']['WC' + k.upper()]['values'], (3,3)).real
         except KeyError:
@@ -133,7 +133,7 @@ def wc_lha2dict(lha):
             C[k] = C[k] + 1j*lha2matrix(lha['BLOCK']['IMWC' + k.upper()]['values'], (3,3))
         except KeyError:
             pass
-    for k in smeft_Warsaw.WC_keys_4f:
+    for k in smeft_warsaw.WC_keys_4f:
         try:
             C[k] = lha2matrix(lha['BLOCK']['WC' + k.upper()]['values'], (3,3,3,3))
         except KeyError:
@@ -153,7 +153,7 @@ def wc_dict2lha(wc, skip_redundant=True, skip_zero=True):
             d[block] = defaultdict(list)
         if wc[name] != 0:
             d[block]['values'].append([i, wc[name].real])
-    for name in smeft_Warsaw.WC_keys_2f:
+    for name in smeft_warsaw.WC_keys_2f:
         reblock = 'WC'+name.upper()
         imblock = 'IMWC'+name.upper()
         if reblock not in d:
@@ -171,7 +171,7 @@ def wc_dict2lha(wc, skip_redundant=True, skip_zero=True):
                     # omit Im parts that have to vanish by symmetry
                     if (i, j) not in definitions.vanishing_im_parts[name]:
                         d[imblock]['values'].append([i+1, j+1, float(wc[name][i, j].imag)])
-    for name in smeft_Warsaw.WC_keys_4f:
+    for name in smeft_warsaw.WC_keys_4f:
         reblock = 'WC'+name.upper()
         imblock = 'IMWC'+name.upper()
         if reblock not in d:
@@ -260,7 +260,7 @@ class SMEFTio:
             self.scale_high = wc.scale
         C = smeftutil.wcxf2arrays(wc.dict)
         keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(smeft_Warsaw.WC_keys_0f + smeft_Warsaw.WC_keys_2f + smeft_Warsaw.WC_keys_4f) - set(keys_dim5))
+        keys_dim6 = list(set(smeft_warsaw.WC_keys_0f + smeft_warsaw.WC_keys_2f + smeft_warsaw.WC_keys_4f) - set(keys_dim5))
         self.scale_in = wc.scale
         for k in keys_dim5:
             if k in C:
@@ -271,7 +271,7 @@ class SMEFTio:
         C = smeftutil.symmetrize(C)
         # fill in zeros for missing WCs
         for k, s in smeftutil.C_keys_shape.items():
-            if k not in C and k not in smeft_Warsaw.SM_keys:
+            if k not in C and k not in smeft_warsaw.SM_keys:
                 if s == 1:
                     C[k] = 0
                 else:
@@ -323,8 +323,8 @@ class SMEFTio:
         basis = wcxf.Basis['SMEFT', 'Warsaw']
         d = {k: v for k, v in d.items() if k in basis.all_wcs and v != 0}
         keys_dim5 = ['llphiphi']
-        keys_dim6 = list(set(smeft_Warsaw.WC_keys_0f + smeft_Warsaw.WC_keys_2f
-                             + smeft_Warsaw.WC_keys_4f) - set(keys_dim5))
+        keys_dim6 = list(set(smeft_warsaw.WC_keys_0f + smeft_warsaw.WC_keys_2f
+                             + smeft_warsaw.WC_keys_4f) - set(keys_dim5))
         for k in d:
             if k.split('_')[0] in keys_dim5:
                 d[k] = d[k] / self.scale_high
@@ -364,7 +364,7 @@ class SMEFTio:
         Unu, Mnu = ckmutil.diag.mtakfac(Mnup)
         UuL, UdL, UuR, UdR = ckmutil.phases.rephase_standard(UuL, UdL, UuR, UdR)
         Unu, UeL, UeR = ckmutil.phases.rephase_pmns_standard(Unu, UeL, UeR)
-        return smeft_Warsaw.flavor_rotation(C, Uq=UdL, Uu=UuR, Ud=UdR, Ul=UeL, Ue=UeR)
+        return smeft_warsaw.flavor_rotation(C, Uq=UdL, Uu=UuR, Ud=UdR, Ul=UeL, Ue=UeR)
 
 
 def wcxf2dsixtools(wc, stream=None):
