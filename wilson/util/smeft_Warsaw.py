@@ -2,9 +2,6 @@
 """
 
 import numpy as np
-from functools import partial
-from wilson.util.common import _d_4, _d_6, _d_7, arrays2wcxf
-from wilson.util import common
 
 
 # names of SM parameters
@@ -127,57 +124,6 @@ C_symm_keys[8] = ["qqql",]
 # 9 2F symmetric matrix
 C_symm_keys[9] = ["llphiphi"]
 
-
-
-
-
-
-C_array2dict = partial(
-    common.C_array2dict,
-    C_keys=C_keys, C_keys_shape=C_keys_shape,
-)
-
-C_dict2array = partial(
-    common.C_dict2array,
-    C_keys=C_keys,
-)
-
-_scale_dict = C_array2dict(np.ones(9999))
-for k in C_symm_keys[4]:
-    _scale_dict[k] = _d_4
-for k in C_symm_keys[6]:
-    _scale_dict[k] = _d_6
-for k in C_symm_keys[7]:
-    _scale_dict[k] = _d_7
-
-wcxf2arrays = partial(
-    common.wcxf2arrays,
-    C_keys_shape=C_keys_shape,
-)
-symmetrize_nonred = partial(
-    common.symmetrize_nonred,
-    C_symm_keys=C_symm_keys,
-)
-symmetrize = partial(
-    common.symmetrize,
-    C_symm_keys=C_symm_keys,
-)
-unscale_dict = partial(
-    common.unscale_dict,
-    C_symm_keys=C_symm_keys, scale_dict=_scale_dict,
-)
-add_missing = partial(
-    common.add_missing,
-    WC_keys=WC_keys, C_keys_shape=C_keys_shape,
-)
-wcxf2arrays_symmetrized = partial(
-    common.wcxf2arrays_symmetrized,
-    WC_keys=WC_keys, C_keys_shape=C_keys_shape, C_symm_keys=C_symm_keys,
-)
-arrays2wcxf_nonred = partial(
-    common.arrays2wcxf_nonred,
-    C_symm_keys=C_symm_keys, scale_dict=_scale_dict,
-)
 
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):
     """Gauge-invariant $U(3)^5$ flavor rotation of all Wilson coefficients."""

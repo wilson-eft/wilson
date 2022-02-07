@@ -3,7 +3,7 @@ import numpy as np
 import numpy.testing as npt
 from wilson.run.smeft import SMEFT, beta
 from wilson.test_wilson import get_random_wc
-from wilson.util.smeftutil import SM_keys
+from wilson.util import smeftutil, smeft_Warsaw
 from wilson import wcxf
 
 
@@ -24,9 +24,9 @@ class TestSMEFT(unittest.TestCase):
         wc_sm = wcxf.WC('SMEFT', 'Warsaw', 160, {})
         smeft_sm = SMEFT(wc_sm, get_smpar=False)
         C_in_sm = smeft_sm.C_in
-        C_in_sm_2 = beta.C_array2dict(np.zeros(9999))
+        C_in_sm_2 = smeftutil.C_array2dict(np.zeros(9999))
         for k, v in C_in_sm_2.items():
-            if k not in SM_keys:
+            if k not in smeft_Warsaw.SM_keys:
                 npt.assert_array_equal(v, C_in_sm[k],
                                        err_msg=f"Failed for {k}")
     #

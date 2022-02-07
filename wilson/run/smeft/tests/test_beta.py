@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from wilson.run.smeft import beta, rge, definitions
-from wilson.util import smeftutil
+from wilson.util import smeftutil, smeft_Warsaw
 import json
 import pkgutil
 import pylha
@@ -22,9 +22,9 @@ C["Gd"] = np.array(rpar[7]) + 1j*np.array(rpar[8])
 C["Ge"] = np.array(rpar[9]) + 1j*np.array(rpar[10])
 HIGHSCALE = 1000
 
-C0 = smeftutil.WC_keys_0f
-C2 = smeftutil.WC_keys_2f
-C4 = smeftutil.WC_keys_4f
+C0 = smeft_Warsaw.WC_keys_0f
+C2 = smeft_Warsaw.WC_keys_2f
+C4 = smeft_Warsaw.WC_keys_4f
 
 # construct numerical values of Cs
 for i, n in enumerate(C0):
@@ -38,12 +38,12 @@ class TestBeta(unittest.TestCase):
     def test_beta(self):
         """check that numerical output of Python code equals Mathematica code"""
         my_beta = beta.beta(C, HIGHSCALE)
-        self.assertEqual(list(my_beta.keys()), beta.C_keys)
-        for k in beta.C_keys:
+        self.assertEqual(list(my_beta.keys()), smeftutil.C_keys)
+        for k in smeftutil.C_keys:
             if isinstance(my_beta[k], float) or isinstance(my_beta[k], complex):
-                self.assertEqual(beta.C_keys_shape[k], 1)
+                self.assertEqual(smeftutil.C_keys_shape[k], 1)
             else:
-                self.assertEqual(my_beta[k].shape, beta.C_keys_shape[k], msg=k)
+                self.assertEqual(my_beta[k].shape, smeftutil.C_keys_shape[k], msg=k)
         for i, n in enumerate(C0):
             self.assertAlmostEqual(betas_re[0][i]/my_beta[n].real, 1, places=4)
         for i, n in enumerate(C2):
@@ -62,11 +62,11 @@ class TestBeta(unittest.TestCase):
         self.assertEqual(my_beta.shape, (n_op + 5 + 3*9,))
 
     def test_array2dict(self):
-        d1 = beta.C_array2dict(beta.beta_array(C,  HIGHSCALE))
+        d1 = smeftutil.C_array2dict(beta.beta_array(C,  HIGHSCALE))
         d2 = beta.beta(C, HIGHSCALE)
         for k in d1:
             npt.assert_array_equal(d1[k], d2[k])
-        d3 = beta.C_array2dict(beta.C_dict2array(C))
+        d3 = smeftutil.C_array2dict(smeftutil.C_dict2array(C))
         for k in d3:
             npt.assert_array_equal(d3[k], C[k])
 
@@ -87,7 +87,7 @@ class TestBeta(unittest.TestCase):
         beta_np = beta.beta(C,  HIGHSCALE)
         beta_sm = beta.beta(C,  HIGHSCALE, newphys=False)
         for k in smeftutil.C_keys:
-            if k in smeftutil.SM_keys:
+            if k in smeft_Warsaw.SM_keys:
                 npt.assert_array_equal(beta_np[k], beta_sm[k])
             else:
                 self.assertEqual(np.asarray(beta_np[k]).shape, np.asarray(beta_sm[k]).shape)

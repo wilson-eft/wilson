@@ -2,7 +2,7 @@ from wilson import wcxf
 from wilson.parameters import p as default_parameters
 import ckmutil.ckm
 import ckmutil.diag
-from wilson.util import smeftutil
+from wilson.util import smeftutil, smeft_Warsaw
 import numpy as np
 from collections import OrderedDict
 
@@ -79,7 +79,7 @@ def warsaw_to_warsaw_up(C, parameters=None, sectors=None):
     Uu = Ud = Ul = Ue = np.eye(3)
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     Uq = V.conj().T
-    C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
+    C_out = smeft_Warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
     warsawup = wcxf.Basis['SMEFT', 'Warsaw up']
     allkeys = set(warsawup.all_wcs)  # to speed up lookup
@@ -102,7 +102,7 @@ def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
     Uu = Ud = Ul = Ue = np.eye(3)
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
     Uq = V
-    C_out = smeftutil.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
+    C_out = smeft_Warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
     warsaw = wcxf.Basis['SMEFT', 'Warsaw']
     all_wcs = set(warsaw.all_wcs)  # to speed up lookup
