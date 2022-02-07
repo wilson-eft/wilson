@@ -6,7 +6,7 @@ import wilson
 from wilson.run.smeft.smpar import p
 import ckmutil
 from math import pi, log
-from wilson.util.wetutil import C_symm_keys
+from wilson.util.wet_jms import C_symm_keys
 import wilson.match.smeft_loop
 import wilson.match.smeft_tree
 

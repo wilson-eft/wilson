@@ -8,7 +8,7 @@ from math import sqrt, pi
 from wilson import wcxf
 import wilson
 from wilson.run.smeft.smpar import p as default_parameters
-from wilson.util import smeftutil, wetutil
+from wilson.util import smeftutil, wet_jms
 from wilson.match import smeft_tree, smeft_loop
 
 
@@ -34,7 +34,7 @@ def match_all(d_SMEFT, scale, parameters=None):
     else:
         C_WET = C_WET_tree
     C_WET = wilson.translate.wet.rotate_down(C_WET, p)
-    C_WET = wetutil.unscale_dict_wet(C_WET)
+    C_WET = wet_jms.unscale_dict_wet(C_WET)
     d_WET = wilson.util.smeftutil.arrays2wcxf(C_WET)
     basis = wcxf.Basis['WET', 'JMS']
     keys = set(d_WET.keys()) & set(basis.all_wcs)

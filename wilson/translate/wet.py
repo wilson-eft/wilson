@@ -2,7 +2,7 @@ from math import pi, sqrt
 import numpy as np
 from wilson.parameters import p as default_parameters
 from wilson.util.qcd import alpha_s, m_b, m_s, m_c
-from wilson.util.wetutil import rotate_down, symmetrize_JMS_dict, JMS_to_array
+from wilson.util.wet_jms import rotate_down, symmetrize_JMS_dict, JMS_to_array
 import ckmutil.ckm, ckmutil.diag
 from wilson import wcxf
 import pkgutil
