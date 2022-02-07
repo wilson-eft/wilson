@@ -4,7 +4,7 @@
 from wilson import wcxf
 import numpy as np
 import ckmutil
-from wilson.util.common import _d_4, _d_6, _d_7
+from wilson.util import smeftutil
 
 
 # names of Wilson coefficients with the same fermionic symmetry properties
@@ -224,14 +224,14 @@ for k in C_symm_keys[1]:
 for k in C_symm_keys[3] + C_symm_keys[5]:
     _scale_dict[k] = np.ones((3, 3, 3, 3))
 for k in C_symm_keys[4] + C_symm_keys[41]:
-    _scale_dict[k] = _d_4
+    _scale_dict[k] = smeftutil._d_4
 for k in C_symm_keys[6]:
-    _scale_dict[k] = _d_6
+    _scale_dict[k] = smeftutil._d_6
 for k in C_symm_keys[71]:
     # while _d_7 contains the symmetry factors for the case of coefficients
     # *symmetric* under the 1st 2 indices, they are actually the same as for
     # the case where they are *antisymmetric*
-    _scale_dict[k] = _d_7
+    _scale_dict[k] = smeftutil._d_7
 
 
 def scale_dict_wet(C):

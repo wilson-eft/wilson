@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from wilson.run.smeft import beta
-from wilson.util import smeftutil, common
+from wilson.util import smeftutil, smeft_Warsaw
+from wilson.util.common import EFTutil
 from wilson.run.smeft.tests import test_beta
 from wilson.test_wilson import get_random_wc
 from wilson import wcxf
@@ -10,7 +11,7 @@ from numbers import Number
 
 C = test_beta.C.copy()
 for i in C:
-    if i in smeftutil.WC_keys_2f + smeftutil.WC_keys_4f:
+    if i in smeft_Warsaw.WC_keys_2f + smeft_Warsaw.WC_keys_4f:
         # make Wilson coefficients involving fermions complex!
         C[i] = C[i] + 1j*C[i]
 
@@ -24,15 +25,15 @@ class TestSymm(unittest.TestCase):
 
     def test_symmetrize_symmetric(self):
         a = np.array([[1, 2, 3], [2, 4, 5], [3, 5, 6]])
-        npt.assert_array_equal(common.symmetrize_2(a), a)
+        npt.assert_array_equal(EFTutil.symmetrize_2(a), a)
         b = np.array([[1, 2, 3], [0, 4, 5], [0, 0, 6]])
-        npt.assert_array_equal(common.symmetrize_2(b), a)
+        npt.assert_array_equal(EFTutil.symmetrize_2(b), a)
 
     def test_symmetrize_hermitian(self):
         a = np.array([[1, 2j, 3j], [-2j, 4, 5j], [-3j, -5j, 6]])
-        npt.assert_array_equal(common.symmetrize_2(a), a)
+        npt.assert_array_equal(EFTutil.symmetrize_2(a), a)
         b = np.array([[1, 2j, 3j], [0, 4, 5j], [0, 0, 6]])
-        npt.assert_array_equal(common.symmetrize_2(b), a)
+        npt.assert_array_equal(EFTutil.symmetrize_2(b), a)
 
     def test_symmetrize_C(self):
         C_symm = smeftutil.symmetrize(C)
