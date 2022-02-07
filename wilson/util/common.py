@@ -32,11 +32,11 @@ class EFTutil:
                         # class 7: symmetric under interachange of first two indices
                         d_7[i, j, k, l] = len({(i, j, k, l), (j, i, k, l)})
         scale_dict = self.C_array2dict(np.ones(9999))
-        for k in self.C_symm_keys.get(4, ()):
+        for k in self.C_symm_keys.get(4, []) + self.C_symm_keys.get(41, []):
             scale_dict[k] = d_4
         for k in self.C_symm_keys.get(6, ()):
             scale_dict[k] = d_6
-        for k in self.C_symm_keys.get(7, ()):
+        for k in self.C_symm_keys.get(7, []) + self.C_symm_keys.get(71, []):
             scale_dict[k] = d_7
         return scale_dict, d_4, d_6, d_7
 
@@ -698,6 +698,9 @@ class EFTutil:
             elif i in self.C_symm_keys.get(4, ()):
                 C_symm[i] = self.symmetrize_4(C[i])
                 C_symm[i] = C_symm[i] / self._d_4
+            elif i in self.C_symm_keys.get(41, ()):
+                C_symm[i] = self.symmetrize_41(C[i])
+                C_symm[i] = C_symm[i] / self._d_4
             elif i in self.C_symm_keys.get(5, ()):
                 C_symm[i] = self.symmetrize_5(C[i])
             elif i in self.C_symm_keys.get(6, ()):
@@ -705,6 +708,9 @@ class EFTutil:
                 C_symm[i] = C_symm[i] / self._d_6
             elif i in self.C_symm_keys.get(7, ()):
                 C_symm[i] = self.symmetrize_7(C[i])
+                C_symm[i] = C_symm[i] / self._d_7
+            elif i in self.C_symm_keys.get(71, ()):
+                C_symm[i] = self.symmetrize_71(C[i])
                 C_symm[i] = C_symm[i] / self._d_7
             elif i in self.C_symm_keys.get(8, ()):
                 C_symm[i] = self.scale_8(C[i])
