@@ -10,15 +10,15 @@ class EFTutil:
     """Utility class useful for the manipulation of EFT Wilson coefficients.
     """
     _symmetry_class_defintions = {
-        #The keys are sorted n-tuples of 2-tuples in which the first entry is
-        #a string specifying the indices of a Wilson coefficient in the non-
-        #redundant two-flavour basis and the second entry is True (False) if the
-        #Wilson coefficient is real (complex). The values are integer ids
-        #denoting the symmetry class.
-        (): 0, #0F scalar object
+        # The keys are sorted n-tuples of 2-tuples in which the first entry is
+        # a string specifying the indices of a Wilson coefficient in the non-
+        # redundant two-flavour basis and the second entry is True (False) if
+        # the Wilson coefficient is real (complex). The values are integer ids
+        # denoting the symmetry class.
+        (): 0, # 0F scalar object
         (
             ('11', False), ('12', False), ('21', False), ('22', False),
-        ): 1, #2F general 3x3 matrix
+        ): 1, # 2F general matrix
         (
             ('11', True), ('12', False), ('22', True),
         ): 2, # 2F Hermitian matrix
@@ -42,13 +42,13 @@ class EFTutil:
         (
             ('1111', True), ('1112', False), ('1122', True), ('1212', False),
             ('1222', False), ('2222', True),
-        ): 6, # 4F two identical ffbar currents
+        ): 6, # 4F two identical ffbar currents - special case Cee
         (
             ('1111', False), ('1112', False), ('1121', False), ('1122', False),
             ('1211', False), ('1212', False), ('1221', False), ('1222', False),
             ('2111', False), ('2112', False), ('2121', False), ('2122', False),
             ('2211', False), ('2212', False), ('2221', False), ('2222', False),
-        ): 3, # 4F general 3x3x3x3 object
+        ): 3, # 4F general four-index object
         (
             ('1111', False), ('1112', False), ('1121', False), ('1122', False),
             ('1211', False), ('1212', False), ('1221', False), ('1222', False),
