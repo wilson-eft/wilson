@@ -1,5 +1,6 @@
 import numpy as np
 from collections import OrderedDict
+from itertools import chain
 from functools import reduce
 import operator
 from wilson import wcxf
@@ -8,11 +9,66 @@ from wilson import wcxf
 class EFTutil:
     """Utility class useful for the manipulation of EFT Wilson coefficients.
     """
+    _symmetry_class_defintions = {
+        #The keys are sorted n-tuples of 2-tuples in which the first entry is
+        #a string specifying the indices of a Wilson coefficient in the non-
+        #redundant two-flavour basis and the second entry is True (False) if the
+        #Wilson coefficient is real (complex). The values are integer ids
+        #denoting the symmetry class.
+        (): 0, #0F scalar object
+        (
+            ('11', False), ('12', False), ('21', False), ('22', False),
+        ): 1, #2F general 3x3 matrix
+        (
+            ('11', True), ('12', False), ('22', True),
+        ): 2, # 2F Hermitian matrix
+        (
+            ('11', False), ('12', False), ('22', False),
+        ): 9, # 2F symmetric matrix
+        (
+            ('1111', True), ('1112', False), ('1122', True), ('1212', False),
+            ('1221', True), ('1222', False), ('2222', True),
+        ): 4, # 4F two identical ffbar currents, hermitian
+        (
+            ('1111', False), ('1112', False), ('1121', False), ('1122', False),
+            ('1212', False), ('1221', False), ('1222', False), ('2121', False),
+            ('2122', False), ('2222', False),
+        ): 41, # 4F two identical ffbar currents, non-hermitian
+        (
+            ('1111', True), ('1112', False), ('1122', True), ('1211', False),
+            ('1212', False), ('1221', False), ('1222', False), ('2211', True),
+            ('2212', False), ('2222', True),
+        ): 5, # 4F two independent ffbar currents
+        (
+            ('1111', True), ('1112', False), ('1122', True), ('1212', False),
+            ('1222', False), ('2222', True),
+        ): 6, # 4F two identical ffbar currents
+        (
+            ('1111', False), ('1112', False), ('1121', False), ('1122', False),
+            ('1211', False), ('1212', False), ('1221', False), ('1222', False),
+            ('2111', False), ('2112', False), ('2121', False), ('2122', False),
+            ('2211', False), ('2212', False), ('2221', False), ('2222', False),
+        ): 3, # 4F general 3x3x3x3 object
+        (
+            ('1111', False), ('1112', False), ('1121', False), ('1122', False),
+            ('1211', False), ('1212', False), ('1221', False), ('1222', False),
+            ('2211', False), ('2212', False), ('2221', False), ('2222', False),
+        ): 7, # 4F symmetric in first two indices
+        (
+            ('1211', False), ('1212', False), ('1221', False), ('1222', False),
+        ): 71, # 4F antisymmetric in first two indices
+        (
+            ('1111', False), ('1112', False), ('1121', False), ('1122', False),
+            ('1211', False), ('1212', False), ('1221', False), ('1222', False),
+            ('2121', False), ('2122', False), ('2221', False), ('2222', False),
+        ): 8, # 4F Baryon-number-violating - special case Cqqql
+    }
 
-    def __init__(self, eft, basis, dim4_keys_shape, C_symm_keys):
+    def __init__(self, eft, basis, dim4_keys_shape, dim4_symm_keys):
         self._eft = eft
         self._basis = basis
         self._dim4_keys_shape = dim4_keys_shape
+        self._dim4_symm_keys = dim4_symm_keys
         keys_and_shapes = self._get_keys_and_shapes()
         self.WC_keys_0f = keys_and_shapes['WC_keys_0f']
         self.WC_keys_2f = keys_and_shapes['WC_keys_2f']
@@ -21,7 +77,7 @@ class EFTutil:
         self.C_keys_shape = keys_and_shapes['C_keys_shape']
         self.C_keys = keys_and_shapes['C_keys']
         self.dim4_keys = keys_and_shapes['dim4_keys']
-        self.C_symm_keys = C_symm_keys
+        self.C_symm_keys = self._get_symm_keys()
         self._scale_dict, self._d_4, self._d_6, self._d_7 = self._get_scale_dict()
 
     def _get_keys_and_shapes(self):
@@ -60,6 +116,31 @@ class EFTutil:
             'C_keys': C_keys,
             'C_keys_shape': C_keys_shape,
         }
+
+    def _get_symm_keys(self):
+        sectors = wcxf.Basis[self._eft, self._basis].sectors
+        all_wcs = wcxf.Basis[self._eft, self._basis].all_wcs
+        C_keys_complex = dict(chain.from_iterable(
+            ((k2,v2.get('real', False)) for k2,v2 in v1.items())
+            for k1,v1 in sectors.items()
+        ))
+        index_complex_dict = {k:[] for k in self.WC_keys}
+        for v in all_wcs:
+            v_split = v.split('_')
+            if len(v_split) == 2 and '3' not in v_split[1]:
+                index_complex_dict[v_split[0]].append(
+                    (v_split[1], C_keys_complex[v])
+                )
+        C_symm_keys = {}
+        for k,v in index_complex_dict.items():
+            key = self._symmetry_class_defintions[tuple(sorted(set(v)))]
+            if key in C_symm_keys:
+                C_symm_keys[key].append(k)
+            else:
+                C_symm_keys[key] = [k]
+        for k,v in self._dim4_symm_keys.items():
+            C_symm_keys[k] += v
+        return C_symm_keys
 
     def _get_scale_dict(self):
         # computing the scale vector required for symmetrize_nonred
