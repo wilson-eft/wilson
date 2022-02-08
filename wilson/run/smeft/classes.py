@@ -7,7 +7,7 @@ from math import sqrt
 import numpy as np
 import ckmutil.phases, ckmutil.diag
 import wilson
-from wilson.util import smeftutil, smeft_warsaw
+from wilson.util import smeftutil
 from wilson import wcxf
 
 
@@ -65,7 +65,7 @@ class SMEFT:
         C = wilson.util.smeftutil.wcxf2arrays_symmetrized(wc.dict)
         # fill in zeros for missing WCs
         for k, s in smeftutil.C_keys_shape.items():
-            if k not in C and k not in smeft_warsaw.SM_keys:
+            if k not in C and k not in smeftutil.dim4_keys:
                 if s == 1:
                     C[k] = 0
                 else:
@@ -150,7 +150,7 @@ class SMEFT:
         C_in_sm = smeftutil.C_array2dict(np.zeros(9999))
         # set the SM parameters to the values obtained from smpar.smeftpar
         C_SM = smpar.smeftpar(scale_sm, C_out, basis='Warsaw')
-        SM_keys = set(smeft_warsaw.SM_keys)  # to speed up lookup
+        SM_keys = set(smeftutil.dim4_keys)  # to speed up lookup
         C_SM = {k: v for k, v in C_SM.items() if k in SM_keys}
         # set the Wilson coefficients at the EW scale to C_out
         C_in_sm.update(C_out)
