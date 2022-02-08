@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from wilson.run.smeft import beta
-from wilson.util import smeftutil, smeft_warsaw
+from wilson.util import smeftutil
 from wilson.util.common import EFTutil
 from wilson.run.smeft.tests import test_beta
 from wilson.test_wilson import get_random_wc
@@ -11,7 +11,7 @@ from numbers import Number
 
 C = test_beta.C.copy()
 for i in C:
-    if i in smeft_warsaw.WC_keys_2f + smeft_warsaw.WC_keys_4f:
+    if i in smeftutil.WC_keys_2f + smeftutil.WC_keys_4f:
         # make Wilson coefficients involving fermions complex!
         C[i] = C[i] + 1j*C[i]
 

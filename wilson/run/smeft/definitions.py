@@ -1,7 +1,7 @@
 """Definitions of auxiliary objects and operator properties."""
 
 import numpy as np
-from wilson.util import smeft_warsaw
+from wilson.util import smeftutil
 
 
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue, sm_parameters=True):
@@ -16,7 +16,7 @@ def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue, sm_parameters=True):
         C['Gu'] = Uq.conj().T @ C_in['Gu'] @ Uu
         C['Gd'] = Uq.conj().T @ C_in['Gd'] @ Ud
     # nothing to do for purely bosonic operators
-    for k in smeft_warsaw.WC_keys_0f:
+    for k in smeftutil.WC_keys_0f:
         C[k] = C_in[k]
     # see 1704.03888 table 4 (but staying SU(2) invariant here)
     # LR

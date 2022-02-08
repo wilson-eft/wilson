@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 from wilson.run.smeft import beta, rge, definitions
-from wilson.util import smeftutil, smeft_warsaw
+from wilson.util import smeftutil
 import json
 import pkgutil
 import pylha
@@ -22,9 +22,9 @@ C["Gd"] = np.array(rpar[7]) + 1j*np.array(rpar[8])
 C["Ge"] = np.array(rpar[9]) + 1j*np.array(rpar[10])
 HIGHSCALE = 1000
 
-C0 = smeft_warsaw.WC_keys_0f
-C2 = smeft_warsaw.WC_keys_2f
-C4 = smeft_warsaw.WC_keys_4f
+C0 = smeftutil.WC_keys_0f
+C2 = smeftutil.WC_keys_2f
+C4 = smeftutil.WC_keys_4f
 
 # construct numerical values of Cs
 for i, n in enumerate(C0):
@@ -87,7 +87,7 @@ class TestBeta(unittest.TestCase):
         beta_np = beta.beta(C,  HIGHSCALE)
         beta_sm = beta.beta(C,  HIGHSCALE, newphys=False)
         for k in smeftutil.C_keys:
-            if k in smeft_warsaw.SM_keys:
+            if k in smeftutil.dim4_keys:
                 npt.assert_array_equal(beta_np[k], beta_sm[k])
             else:
                 self.assertEqual(np.asarray(beta_np[k]).shape, np.asarray(beta_sm[k]).shape)

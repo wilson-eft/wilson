@@ -2,18 +2,64 @@ import numpy as np
 from collections import OrderedDict
 from functools import reduce
 import operator
+from wilson import wcxf
 
 
 class EFTutil:
     """Utility class useful for the manipulation of EFT Wilson coefficients.
     """
 
-    def __init__(self, WC_keys, C_keys, C_keys_shape, C_symm_keys):
-        self.WC_keys = WC_keys
-        self.C_keys = C_keys
-        self.C_keys_shape = C_keys_shape
+    def __init__(self, eft, basis, dim4_keys_shape, C_symm_keys):
+        self._eft = eft
+        self._basis = basis
+        self._dim4_keys_shape = dim4_keys_shape
+        keys_and_shapes = self._get_keys_and_shapes()
+        self.WC_keys_0f = keys_and_shapes['WC_keys_0f']
+        self.WC_keys_2f = keys_and_shapes['WC_keys_2f']
+        self.WC_keys_4f = keys_and_shapes['WC_keys_4f']
+        self.WC_keys = keys_and_shapes['WC_keys']
+        self.C_keys_shape = keys_and_shapes['C_keys_shape']
+        self.C_keys = keys_and_shapes['C_keys']
+        self.dim4_keys = keys_and_shapes['dim4_keys']
         self.C_symm_keys = C_symm_keys
         self._scale_dict, self._d_4, self._d_6, self._d_7 = self._get_scale_dict()
+
+    def _get_keys_and_shapes(self):
+        all_wcs = wcxf.Basis[self._eft, self._basis].all_wcs
+        WC_keys_0f = list(dict.fromkeys(v for v in all_wcs if '_' not in v))
+        WC_keys_2f = list(dict.fromkeys(
+            v.split("_")[0] for v in all_wcs
+            if '_' in v and len(v.split("_")[1]) == 2
+        ))
+        WC_keys_4f = list(dict.fromkeys(
+            v.split("_")[0] for v in all_wcs
+            if '_' in v and len(v.split("_")[1]) == 4
+        ))
+        WC_keys = WC_keys_0f + WC_keys_2f + WC_keys_4f
+        index_dict = {k:[] for k in WC_keys}
+        for v in all_wcs:
+            v_split = v.split('_')
+            if len(v_split) == 2:
+                index_dict[v_split[0]].append(v_split[1])
+        WC_keys_shape = {
+            k: tuple(np.max(
+                [[int(i) for i in index_list] for index_list in v],
+                axis=0
+            )) if v else 1
+            for k,v in index_dict.items()
+        }
+        dim4_keys_shape = self._dim4_keys_shape
+        C_keys_shape = {**dim4_keys_shape, **WC_keys_shape}
+        C_keys = list(C_keys_shape.keys())
+        return {
+            'WC_keys_0f': WC_keys_0f,
+            'WC_keys_2f': WC_keys_2f,
+            'WC_keys_4f': WC_keys_4f,
+            'WC_keys': WC_keys,
+            'dim4_keys': list(dim4_keys_shape.keys()),
+            'C_keys': C_keys,
+            'C_keys_shape': C_keys_shape,
+        }
 
     def _get_scale_dict(self):
         # computing the scale vector required for symmetrize_nonred
