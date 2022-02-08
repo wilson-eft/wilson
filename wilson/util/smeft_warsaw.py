@@ -16,35 +16,10 @@ dim4_keys_shape = {
    'Gd': (3, 3),
    'Ge': (3, 3),
 }
-
-
-# names of Wilson coefficients with the same fermionic symmetry properties
-C_symm_keys = {}
-# 0 0F scalar object
-C_symm_keys[0] = ['G', 'Gtilde', 'W', 'Wtilde', 'phi', 'phiBox', 'phiD', 'phiG',
-                  'phiB', 'phiW', 'phiWB', 'phiGtilde', 'phiBtilde',
-                  'phiWtilde', 'phiWtildeB'] + ['g', 'gp', 'gs', 'Lambda', 'm2']
-# 1 2F general 3x3 matrix
-C_symm_keys[1] = ["uphi", "dphi", "ephi", "eW", "eB", "uG", "uW", "uB", "dG",
-                  "dW", "dB", "phiud"] + ['Gu', 'Gd', 'Ge']
-# 2 2F Hermitian matrix
-C_symm_keys[2] = ["phil1", "phil3", "phie", "phiq1", "phiq3", "phiu", "phid",]
-# 3 4F general 3x3x3x3 object
-C_symm_keys[3] = ["ledq", "quqd1", "quqd8", "lequ1", "lequ3", "duql", "duue"]
-# 4 4F two identical ffbar currents
-# hermitian currents
-C_symm_keys[4] = ["ll", "qq1", "qq3", "uu", "dd",]
-# 5 4F two independent ffbar currents
-C_symm_keys[5] = ["lq1", "lq3", "eu", "ed", "ud1", "ud8", "le", "lu", "ld",
-                  "qe", "qu1", "qd1", "qu8", "qd8",]
-# 6 4F two identical ffbar currents - special case Cee
-C_symm_keys[6] = ["ee",]
-# 7 4F Baryon-number-violating - special case Cqque
-C_symm_keys[7] = ["qque",]
-# 8 4F Baryon-number-violating - special case Cqqql
-C_symm_keys[8] = ["qqql",]
-# 9 2F symmetric matrix
-C_symm_keys[9] = ["llphiphi"]
+dim4_symm_keys = {
+    0: ['g', 'gp', 'gs', 'Lambda', 'm2'],
+    1: ['Gu', 'Gd', 'Ge'],
+}
 
 
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):

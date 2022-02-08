@@ -7,5 +7,5 @@ smeftutil = _EFTutil(
     'SMEFT',
     'Warsaw',
     smeft_warsaw.dim4_keys_shape,
-    smeft_warsaw.C_symm_keys,
+    smeft_warsaw.dim4_symm_keys,
 )
