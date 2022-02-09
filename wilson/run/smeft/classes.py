@@ -9,10 +9,25 @@ import ckmutil.phases, ckmutil.diag
 import wilson
 from wilson.util import smeftutil
 from wilson import wcxf
+from . import rgeleft
+from wilson.util import leftutil 
 
 
-class SMEFT:
-    """Class representing a parameter point in the Standard Model Effective
+class EFT:
+   """Class representing a parameter point in the Effective
+   Field Theory and allowing the evolution of the Wilson Coefficients.
+
+   Methods:
+   - __init__: Initialize, given a wcxf.WC instance
+   """
+   def __init__(self, wc):
+       """Initialize the EFT instance.
+       Parameters:  'wc' : Wilson coefficients as `wcxf.WC` instance.
+       """
+       self.wc=wc
+
+class LEFT(EFT):
+    """Class representing a parameter point in the Low Energy Effective
     Field Theory and allowing the evolution of the Wilson Coefficients.
 
     Methods:
@@ -22,15 +37,66 @@ class SMEFT:
     """
 
     def __init__(self, wc, get_smpar=True):
-        """Initialize the SMEFT instance.
+       super().__init__(wc)
+       self.eft= wc.eft
+       self.wc = wc
+       self.scale_in = wc.scale
+       self.C_in = None
 
-        Parameters:
+       C = wilson.util.leftutil.wcxf2arrays_symmetrized(wc.dict)
 
-        - `wc`: the Wilson coefficients as `wcxf.WC` instance.
+       for k, s in leftutil.C_keys_shape.items():
+           if k not in C and k not in leftutil.SM_keys:
+               if s == 1:
+                   C[k] = 0
+               else:
+                   C[k] = np.zeros(s)
+       if self.C_in is None:
+           self.C_in = C
+       else:
+           self.C_in.update(C)
+    def _leftevolve_leadinglog(self, scale_out):
+        """Compute the leading logarithmic approximation to the solution
+        of the LEFT RGEs from the initial scale to `scale_out`.
+        Returns a dictionary with parameters and Wilson coefficients.
         """
-        self.wc = wc
-        self.scale_in = None
-        self.C_in = None
+        return rgeleft.left_evolve_leadinglog(C_in=self.C_in,
+                            scale_in=self.scale_in,
+                            scale_out=scale_out)
+
+    def _to_wcxf(self, C_out, scale_out):
+        """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
+        """
+        C = C_out
+        d = wilson.util.leftutil.arrays2wcxf(C)
+        d = wcxf.WC.dict2values(d)
+        wc = wcxf.WC('WET', 'JMS', scale_out, d)
+        return wc
+
+    def run(self, scale):
+        """Return the Wilson coefficients  (as wcxf.WC instance) evolved to the
+        scale `scale`.
+        Parameters:
+        - `scale`: scale in GeV
+        """
+        C_out = self._leftevolve_leadinglog(scale)
+        return self._to_wcxf(C_out, scale)
+
+
+class SMEFT(EFT):
+    """Class representing a parameter point in the Standard Model Effective
+    Field Theory and allowing the evolution of the Wilson Coefficients.
+
+    Methods:
+
+    - __init__: Initialize, given a wcxf.WC instance
+    - run: solve the RGE and return a wcxf.WC instance
+    """
+    def __init__(self, wc, get_smpar=True):
+        super().__init__(wc)
+        self.scale_in=None
+        self.C_in= None
+
         if wc is not None:
             self._set_initial_wcxf(wc, get_smpar=get_smpar)
 
