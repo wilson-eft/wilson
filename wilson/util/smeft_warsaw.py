@@ -5,23 +5,6 @@ import numpy as np
 import wilson
 
 
-# names and shape of SM parameters
-dim4_keys_shape = {
-   'g': 1,
-   'gp': 1,
-   'gs': 1,
-   'Lambda': 1,
-   'm2': 1,
-   'Gu': (3, 3),
-   'Gd': (3, 3),
-   'Ge': (3, 3),
-}
-dim4_symm_keys = {
-    0: ['g', 'gp', 'gs', 'Lambda', 'm2'],
-    1: ['Gu', 'Gd', 'Ge'],
-}
-
-
 def flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue):
     """Gauge-invariant $U(3)^5$ flavor rotation of all Wilson coefficients."""
     C = {}
