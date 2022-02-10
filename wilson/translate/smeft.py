@@ -81,9 +81,7 @@ def warsaw_to_warsaw_up(C, parameters=None, sectors=None):
     Uq = V.conj().T
     C_out = smeft_warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
-    warsawup = wcxf.Basis['SMEFT', 'Warsaw up']
-    allkeys = set(warsawup.all_wcs)  # to speed up lookup
-    return {k: v for k, v in C_out.items() if k in allkeys}
+    return C_out
 
 
 def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
@@ -104,6 +102,4 @@ def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
     Uq = V
     C_out = smeft_warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
-    warsaw = wcxf.Basis['SMEFT', 'Warsaw']
-    all_wcs = set(warsaw.all_wcs)  # to speed up lookup
-    return {k: v for k, v in C_out.items() if k in all_wcs}
+    return C_out

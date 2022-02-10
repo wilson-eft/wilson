@@ -69,6 +69,7 @@ class EFTutil:
     def __init__(self, eft, basis, dim4_keys_shape, dim4_symm_keys, n_gen=3):
         self.eft = eft
         self.basis = basis
+        self.all_wcs = wcxf.Basis[eft, basis].all_wcs
         self._dim4_keys_shape = dim4_keys_shape
         self._dim4_symm_keys = dim4_symm_keys
         self.n_gen = n_gen
@@ -92,25 +93,26 @@ class EFTutil:
         ) = self._get_scale_dict()
 
     def _get_keys_and_shapes(self):
-        all_wcs = wcxf.Basis[self.eft, self.basis].all_wcs
-        WC_keys_0f = list(dict.fromkeys(v for v in all_wcs if "_" not in v))
+        WC_keys_0f = list(
+            dict.fromkeys(v for v in self.all_wcs if "_" not in v)
+        )
         WC_keys_2f = list(
             dict.fromkeys(
                 v.split("_")[0]
-                for v in all_wcs
+                for v in self.all_wcs
                 if "_" in v and len(v.split("_")[1]) == 2
             )
         )
         WC_keys_4f = list(
             dict.fromkeys(
                 v.split("_")[0]
-                for v in all_wcs
+                for v in self.all_wcs
                 if "_" in v and len(v.split("_")[1]) == 4
             )
         )
         WC_keys = WC_keys_0f + WC_keys_2f + WC_keys_4f
         index_dict = {k: [] for k in WC_keys}
-        for v in all_wcs:
+        for v in self.all_wcs:
             v_split = v.split("_")
             if len(v_split) == 2:
                 index_dict[v_split[0]].append(v_split[1])
@@ -145,18 +147,17 @@ class EFTutil:
 
     def _get_symm_keys(self):
         sectors = wcxf.Basis[self.eft, self.basis].sectors
-        all_wcs = wcxf.Basis[self.eft, self.basis].all_wcs
         C_keys_complex = dict(
             chain.from_iterable(
                 ((k2, v2.get("real", False)) for k2, v2 in v1.items())
-                for k1, v1 in sectors.items()
+                for v1 in sectors.values()
             )
         )
         index_complex_dict = {
             k: []
-            for k in {v.split("_")[0] if "_" in v else v for v in all_wcs}
+            for k in {v.split("_")[0] if "_" in v else v for v in self.all_wcs}
         }
-        for v in all_wcs:
+        for v in self.all_wcs:
             v_split = v.split("_")
             if len(v_split) == 2 and "3" not in v_split[1]:
                 index_complex_dict[v_split[0]].append(
@@ -994,5 +995,10 @@ class EFTutil:
         to fulfill the same symmetry relations as the operators, i.e. contain
         redundant entries, while the WCxf output refers to the non-redundant basis."""
         C = self.unscale_dict(C)
-        d = self.arrays2wcxf(C)
+        all_wcs_set = set(self.all_wcs)  # to speed up lookup
+        d = {
+            k: v
+            for k, v in self.arrays2wcxf(C).items()
+            if k in all_wcs_set and v != 0
+        }
         return d

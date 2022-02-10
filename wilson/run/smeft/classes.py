@@ -85,9 +85,6 @@ class SMEFT:
         lepton mass matrices are diagonal."""
         C = self._rotate_defaultbasis(C_out)
         d = wilson.util.smeftutil.arrays2wcxf_nonred(C)
-        basis = wcxf.Basis['SMEFT', 'Warsaw']
-        all_wcs = set(basis.all_wcs)  # to speed up lookup
-        d = {k: v for k, v in d.items() if k in all_wcs and v != 0}
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('SMEFT', 'Warsaw', scale_out, d)
         return wc
