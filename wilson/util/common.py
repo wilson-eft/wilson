@@ -1,7 +1,8 @@
 import numpy as np
 from collections import OrderedDict
 from itertools import chain
-from functools import reduce
+import numbers
+from functools import reduce, partial
 import operator
 from wilson import wcxf
 
@@ -64,11 +65,13 @@ class EFTutil:
         ): 8, # 4F Baryon-number-violating - special case Cqqql
     }
 
-    def __init__(self, eft, basis, dim4_keys_shape, dim4_symm_keys):
+    def __init__(self, eft, basis, dim4_keys_shape, dim4_symm_keys, n_gen = 3):
         self._eft = eft
         self._basis = basis
         self._dim4_keys_shape = dim4_keys_shape
         self._dim4_symm_keys = dim4_symm_keys
+        self._n_gen = n_gen
+        self.C_symm_keys = self._get_symm_keys()
         keys_and_shapes = self._get_keys_and_shapes()
         self.WC_keys_0f = keys_and_shapes['WC_keys_0f']
         self.WC_keys_2f = keys_and_shapes['WC_keys_2f']
@@ -77,7 +80,10 @@ class EFTutil:
         self.C_keys_shape = keys_and_shapes['C_keys_shape']
         self.C_keys = keys_and_shapes['C_keys']
         self.dim4_keys = keys_and_shapes['dim4_keys']
-        self.C_symm_keys = self._get_symm_keys()
+        self._needs_padding = n_gen != min([
+            min(v) for v in self.C_keys_shape.values()
+            if not isinstance(v, numbers.Number)
+        ])
         self._scale_dict, self._d_4, self._d_6, self._d_7 = self._get_scale_dict()
 
     def _get_keys_and_shapes(self):
@@ -104,6 +110,13 @@ class EFTutil:
             )) if v else 1
             for k,v in index_dict.items()
         }
+        WC_keys_shape = { # symmetry class 71 needs a special treatment
+            k:
+            tuple([v[1]] + list(v[1:]))
+            if k in self.C_symm_keys.get(71,())
+            else v
+            for k,v in WC_keys_shape.items()
+        }
         dim4_keys_shape = self._dim4_keys_shape
         C_keys_shape = {**dim4_keys_shape, **WC_keys_shape}
         C_keys = list(C_keys_shape.keys())
@@ -124,7 +137,9 @@ class EFTutil:
             ((k2,v2.get('real', False)) for k2,v2 in v1.items())
             for k1,v1 in sectors.items()
         ))
-        index_complex_dict = {k:[] for k in self.WC_keys}
+        index_complex_dict = {
+            k:[] for k in {v.split("_")[0] if "_" in v else v for v in all_wcs}
+        }
         for v in all_wcs:
             v_split = v.split('_')
             if len(v_split) == 2 and '3' not in v_split[1]:
@@ -145,20 +160,21 @@ class EFTutil:
     def _get_scale_dict(self):
         # computing the scale vector required for symmetrize_nonred
         # initialize with factor 1
-        d_4 = np.zeros((3,3,3,3))
-        d_6 = np.zeros((3,3,3,3))
-        d_7 = np.zeros((3,3,3,3))
-        for i in range(3):
-            for j in range(3):
-                for k in range(3):
-                    for l in range(3):
+        n_gen = self._n_gen
+        d_4 = np.zeros((n_gen,n_gen,n_gen,n_gen))
+        d_6 = np.zeros((n_gen,n_gen,n_gen,n_gen))
+        d_7 = np.zeros((n_gen,n_gen,n_gen,n_gen))
+        for i in range(n_gen):
+            for j in range(n_gen):
+                for k in range(n_gen):
+                    for l in range(n_gen):
                         # class 4: symmetric under interachange of currents
                         d_4[i, j, k, l] = len({(i, j, k, l), (k, l, i, j)})
                         # class 6: symmetric under interachange of currents + Fierz
                         d_6[i, j, k, l] = len({(i, j, k, l), (k, l, i, j), (k, j, i, l), (i, l, k, j)})
                         # class 7: symmetric under interachange of first two indices
                         d_7[i, j, k, l] = len({(i, j, k, l), (j, i, k, l)})
-        scale_dict = self.C_array2dict(np.ones(9999))
+        scale_dict = self.pad_C(self.C_array2dict(np.ones(9999)), fill_value=1)
         for k in self.C_symm_keys.get(4, []) + self.C_symm_keys.get(41, []):
             scale_dict[k] = d_4
         for k in self.C_symm_keys.get(6, ()):
@@ -166,6 +182,41 @@ class EFTutil:
         for k in self.C_symm_keys.get(7, []) + self.C_symm_keys.get(71, []):
             scale_dict[k] = d_7
         return scale_dict, d_4, d_6, d_7
+
+    def pad_C(self, C, fill_value=0):
+        if not self._needs_padding:
+            return C
+        new_arr = (
+            np.zeros if fill_value == 0
+            else np.ones if fill_value == 1
+            else partial(np.full, fill_value=fill_value)
+        )
+        n_gen = self._n_gen
+        C_out = {}
+        for k,v in C.items():
+            if isinstance(v, numbers.Number) or min(v.shape) == n_gen:
+                C_out[k] = v
+            elif len(v.shape) == 4:
+                C_out[k] = new_arr((n_gen,n_gen,n_gen,n_gen), dtype=v.dtype)
+                C_out[k][:v.shape[0],:v.shape[1],:v.shape[2],:v.shape[3]] = v
+            elif len(v.shape) == 2:
+                C_out[k] = new_arr((n_gen,n_gen), dtype=v.dtype)
+                C_out[k][:v.shape[0],:v.shape[1]] = v
+        return C_out
+
+    def unpad_C(self, C):
+        if not self._needs_padding:
+            return C
+        C_out = {}
+        for k,v in C.items():
+            shape = self.C_keys_shape[k]
+            if isinstance(v, numbers.Number) or v.shape == shape:
+                C_out[k] = v
+            elif len(v.shape) == 4:
+                C_out[k] = v[:shape[0],:shape[1],:shape[2],:shape[3]]
+            elif len(v.shape) == 2:
+                C_out[k] = v[:shape[0],:shape[1]]
+        return C_out
 
     def C_array2dict(self, C):
         """Convert a 1D array containing C values to a dictionary."""
@@ -177,8 +228,7 @@ class EFTutil:
                 j = i+1
                 d[k] = C[i]
             else:
-                j = i \
-          + reduce(operator.mul, s, 1)
+                j = i + reduce(operator.mul, s, 1)
                 d[k] = C[i:j].reshape(s)
             i = j
         return d
@@ -231,7 +281,7 @@ class EFTutil:
             if s == 1:
                 C_out[k] = 0
             else:
-                C_out[k] = np.zeros(self.C_keys_shape[k])
+                C_out[k] = np.zeros(s)
         return C_out
 
     @staticmethod
@@ -773,10 +823,12 @@ class EFTutil:
 
     def unscale_dict(self, C):
         """Undo the scaling applied in `scale_dict`."""
-        C_out = {k: self._scale_dict[k] * v for k, v in C.items()}
+        C = self.pad_C(C)
+        C = {k: self._scale_dict[k] * v for k, v in C.items()}
         for k in self.C_symm_keys.get(8,()):
-            C_out[k] = self.unscale_8(C_out[k])
-        return C_out
+            C[k] = self.unscale_8(C[k])
+        C = self.unpad_C(C)
+        return C
 
     def symmetrize(self, C):
         """Symmetrize the Wilson coefficient arrays.
@@ -786,6 +838,7 @@ class EFTutil:
         (like in WCxf) to a basis where the Wilson coefficients are symmetrized
         like the operators. See `symmetrize_nonred` for this case."""
         C_symm = {}
+        C = self.pad_C(C)
         for i, v in C.items():
             if i in self.C_symm_keys.get(0, ()):
                 C_symm[i] = v.real
@@ -795,16 +848,21 @@ class EFTutil:
                 C_symm[i] = self.symmetrize_2(C[i])
             elif i in self.C_symm_keys.get(4, ()):
                 C_symm[i] = self.symmetrize_4(C[i])
+            elif i in self.C_symm_keys.get(41, ()):
+                C_symm[i] = self.symmetrize_41(C[i])
             elif i in self.C_symm_keys.get(5, ()):
                 C_symm[i] = self.symmetrize_5(C[i])
             elif i in self.C_symm_keys.get(6, ()):
                 C_symm[i] = self.symmetrize_6(C[i])
             elif i in self.C_symm_keys.get(7, ()):
                 C_symm[i] = self.symmetrize_7(C[i])
+            elif i in self.C_symm_keys.get(71, ()):
+                C_symm[i] = self.symmetrize_71(C[i])
             elif i in self.C_symm_keys.get(8, ()):
                 C_symm[i] = self.symmetrize_8(C[i])
             elif i in self.C_symm_keys.get(9, ()):
                 C_symm[i] = self.symmetrize_9(C[i])
+        C_symm = self.unpad_C(C_symm)
         return C_symm
 
     def symmetrize_nonred(self, C):
@@ -815,6 +873,7 @@ class EFTutil:
         (like in WCxf) to a basis where the Wilson coefficients are symmetrized
         like the operators."""
         C_symm = {}
+        C = self.pad_C(C)
         for i, v in C.items():
             if i in self.C_symm_keys.get(0, ()):
                 C_symm[i] = v.real
@@ -844,6 +903,7 @@ class EFTutil:
                 C_symm[i] = self.symmetrize_8(C_symm[i])
             elif i in self.C_symm_keys.get(9, ()):
                 C_symm[i] = self.symmetrize_9(C[i])
+        C_symm = self.unpad_C(C_symm)
         return C_symm
 
     def wcxf2arrays_symmetrized(self, d):
@@ -872,6 +932,6 @@ class EFTutil:
         In contrast to `arrays2wcxf`, here the Wilson coefficient arrays are assumed
         to fulfill the same symmetry relations as the operators, i.e. contain
         redundant entries, while the WCxf output refers to the non-redundant basis."""
-        C_out = self.unscale_dict(C)
-        d = self.arrays2wcxf(C_out)
+        C = self.unscale_dict(C)
+        d = self.arrays2wcxf(C)
         return d
