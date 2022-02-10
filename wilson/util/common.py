@@ -1,5 +1,4 @@
 import numpy as np
-from collections import OrderedDict
 from itertools import chain
 import numbers
 from functools import reduce, partial
@@ -66,11 +65,11 @@ class EFTutil:
     }
 
     def __init__(self, eft, basis, dim4_keys_shape, dim4_symm_keys, n_gen = 3):
-        self._eft = eft
-        self._basis = basis
+        self.eft = eft
+        self.basis = basis
         self._dim4_keys_shape = dim4_keys_shape
         self._dim4_symm_keys = dim4_symm_keys
-        self._n_gen = n_gen
+        self.n_gen = n_gen
         self.C_symm_keys = self._get_symm_keys()
         keys_and_shapes = self._get_keys_and_shapes()
         self.WC_keys_0f = keys_and_shapes['WC_keys_0f']
@@ -82,12 +81,12 @@ class EFTutil:
         self.dim4_keys = keys_and_shapes['dim4_keys']
         self._needs_padding = n_gen != min([
             min(v) for v in self.C_keys_shape.values()
-            if not isinstance(v, numbers.Number)
+            if v != 1
         ])
         self._scale_dict, self._d_4, self._d_6, self._d_7 = self._get_scale_dict()
 
     def _get_keys_and_shapes(self):
-        all_wcs = wcxf.Basis[self._eft, self._basis].all_wcs
+        all_wcs = wcxf.Basis[self.eft, self.basis].all_wcs
         WC_keys_0f = list(dict.fromkeys(v for v in all_wcs if '_' not in v))
         WC_keys_2f = list(dict.fromkeys(
             v.split("_")[0] for v in all_wcs
@@ -131,8 +130,8 @@ class EFTutil:
         }
 
     def _get_symm_keys(self):
-        sectors = wcxf.Basis[self._eft, self._basis].sectors
-        all_wcs = wcxf.Basis[self._eft, self._basis].all_wcs
+        sectors = wcxf.Basis[self.eft, self.basis].sectors
+        all_wcs = wcxf.Basis[self.eft, self.basis].all_wcs
         C_keys_complex = dict(chain.from_iterable(
             ((k2,v2.get('real', False)) for k2,v2 in v1.items())
             for k1,v1 in sectors.items()
@@ -160,7 +159,7 @@ class EFTutil:
     def _get_scale_dict(self):
         # computing the scale vector required for symmetrize_nonred
         # initialize with factor 1
-        n_gen = self._n_gen
+        n_gen = self.n_gen
         d_4 = np.zeros((n_gen,n_gen,n_gen,n_gen))
         d_6 = np.zeros((n_gen,n_gen,n_gen,n_gen))
         d_7 = np.zeros((n_gen,n_gen,n_gen,n_gen))
@@ -191,7 +190,7 @@ class EFTutil:
             else np.ones if fill_value == 1
             else partial(np.full, fill_value=fill_value)
         )
-        n_gen = self._n_gen
+        n_gen = self.n_gen
         C_out = {}
         for k,v in C.items():
             if isinstance(v, numbers.Number) or min(v.shape) == n_gen:
@@ -220,7 +219,7 @@ class EFTutil:
 
     def C_array2dict(self, C):
         """Convert a 1D array containing C values to a dictionary."""
-        d = OrderedDict()
+        d = {}
         i=0
         for k in self.C_keys:
             s = self.C_keys_shape[k]
@@ -234,7 +233,7 @@ class EFTutil:
         return d
 
     def C_dict2array(self, C):
-        """Convert an OrderedDict containing C values to a 1D array."""
+        """Convert a dict containing C values to a 1D array."""
         return np.hstack([np.asarray(C[k]).ravel() for k in self.C_keys])
 
     @staticmethod
