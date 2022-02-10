@@ -1,8 +1,8 @@
 """Utility modules for wilson."""
 
-from wilson.util.common import EFTutil as _EFTutil
+from wilson.util.common import EFTutil as EFTutil
 
-smeftutil = _EFTutil(
+smeftutil = EFTutil(
     'SMEFT',
     'Warsaw',
     dim4_keys_shape = {
@@ -20,7 +20,7 @@ smeftutil = _EFTutil(
         1: ['Gu', 'Gd', 'Ge'],
     },
 )
-wetutil = _EFTutil(
+wetutil = EFTutil(
     'WET',
     'JMS',
     dim4_keys_shape = {
