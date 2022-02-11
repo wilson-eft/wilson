@@ -49,9 +49,9 @@ def beta(C):
 
     Beta["gs"] =  -  b0g*g**3  -  4*g**2*(my_einsum("rs,sr",C["uG"],C["Mu"])  +  my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  -  4*g**2*(my_einsum("rs,sr",C["dG"],C["Md"])  +  my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  4*g*(my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["uG"].conj(),C["Mu"].conj().T,C["uG"].conj())  +  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dG"].conj(),C["Md"].conj().T,C["dG"].conj()))
 
-    Beta["thetaQCD"] =   ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["uG"],C["Mu"])  -  1j*my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  +  ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["dG"],C["Md"])  -  1j*my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  ((32*pi**2)/(g**2))*2j*(  -  my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("ts,sr,rp,pt",C["Mu"].conj(),C["uG"].conj(),C["Mu"].conj(),C["uG"].conj())  -  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("ts,sr,rp,pt",C["Md"].conj(),C["dG"].conj(),C["Md"].conj(),C["dG"].conj()))
+    #Beta["thetaQCD"] =   ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["uG"],C["Mu"])  -  1j*my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  +  ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["dG"],C["Md"])  -  1j*my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  ((32*pi**2)/(g**2))*2j*(  -  my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("ts,sr,rp,pt",C["Mu"].conj(),C["uG"].conj(),C["Mu"].conj(),C["uG"].conj())  -  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("ts,sr,rp,pt",C["Md"].conj(),C["dG"].conj(),C["Md"].conj(),C["dG"].conj()))
 
-    Beta["thetaQED"] =   ((128*pi**2*qe)/(e))*(1j*my_einsum("rs,sr",C["egamma"],C["Me"])  -  1j*my_einsum("rs,rs",C["Me"].conj().T,C["egamma"].conj()))  +  ((128*Nc*pi**2*qu)/(e))*(1j*my_einsum("rs,sr",C["ugamma"],C["Mu"])  -  1j*my_einsum("rs,rs",C["Mu"].conj().T,C["ugamma"].conj()))  +  ((128*Nc*pi**2*qd)/(e))*(1j*my_einsum("rs,sr",C["dgamma"],C["Md"])  -  1j*my_einsum("rs,rs",C["Md"].conj().T,C["dgamma"].conj()))  +  ((32*pi**2)/(e**2))*4j*(2*my_einsum("ts,sr,rp,pt",C["Mnu"].conj().T,C["nugamma"],C["Mnu"].conj().T,C["nugamma"])  -  2*my_einsum("pr,sr,st,pt",C["Mnu"],C["nugamma"].conj(),C["Mnu"],C["nugamma"].conj())  -  my_einsum("ts,sr,rp,pt",C["Me"],C["egamma"],C["Me"],C["egamma"])  +  my_einsum("pr,sr,st,pt",C["Me"].conj().T,C["egamma"].conj(),C["Me"].conj().T,C["egamma"].conj())  -  Nc*my_einsum("ts,sr,rp,pt",C["Mu"],C["ugamma"],C["Mu"],C["ugamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["ugamma"].conj(),C["Mu"].conj().T,C["ugamma"].conj())  -  Nc*my_einsum("ts,sr,rp,pt",C["Md"],C["dgamma"],C["Md"],C["dgamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dgamma"].conj(),C["Md"].conj().T,C["dgamma"].conj()))
+    #Beta["thetaQED"] =   ((128*pi**2*qe)/(e))*(1j*my_einsum("rs,sr",C["egamma"],C["Me"])  -  1j*my_einsum("rs,rs",C["Me"].conj().T,C["egamma"].conj()))  +  ((128*Nc*pi**2*qu)/(e))*(1j*my_einsum("rs,sr",C["ugamma"],C["Mu"])  -  1j*my_einsum("rs,rs",C["Mu"].conj().T,C["ugamma"].conj()))  +  ((128*Nc*pi**2*qd)/(e))*(1j*my_einsum("rs,sr",C["dgamma"],C["Md"])  -  1j*my_einsum("rs,rs",C["Md"].conj().T,C["dgamma"].conj()))  +  ((32*pi**2)/(e**2))*4j*(2*my_einsum("ts,sr,rp,pt",C["Mnu"].conj().T,C["nugamma"],C["Mnu"].conj().T,C["nugamma"])  -  2*my_einsum("pr,sr,st,pt",C["Mnu"],C["nugamma"].conj(),C["Mnu"],C["nugamma"].conj())  -  my_einsum("ts,sr,rp,pt",C["Me"],C["egamma"],C["Me"],C["egamma"])  +  my_einsum("pr,sr,st,pt",C["Me"].conj().T,C["egamma"].conj(),C["Me"].conj().T,C["egamma"].conj())  -  Nc*my_einsum("ts,sr,rp,pt",C["Mu"],C["ugamma"],C["Mu"],C["ugamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["ugamma"].conj(),C["Mu"].conj().T,C["ugamma"].conj())  -  Nc*my_einsum("ts,sr,rp,pt",C["Md"],C["dgamma"],C["Md"],C["dgamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dgamma"].conj(),C["Md"].conj().T,C["dgamma"].conj()))
 
     # Dimension 5: Dipole Operators
 
@@ -197,37 +197,37 @@ def beta(C):
 
     # \psi^4: \Delta L=4\boldmath $\psi^4: \Delta L=4$
 
-    Beta["SnunuLL"] =   0
+    #Beta["SnunuLL"] =   0
 
     # \psi^4: \Delta L=2\boldmath $\psi^4: \Delta L=2$
 
-    Beta["SnueLL"] =  -  6*e**2*qe**2*my_einsum("prst",C["SnueLL"])
+    #Beta["SnueLL"] =  -  6*e**2*qe**2*my_einsum("prst",C["SnueLL"])
 
-    Beta["TnueLL"] =   2*e**2*qe**2*my_einsum("prst",C["TnueLL"])
+    #Beta["TnueLL"] =   2*e**2*qe**2*my_einsum("prst",C["TnueLL"])
 
-    Beta["SnueLR"] =  -  6*e**2*qe**2*my_einsum("prst",C["SnueLR"])
+    #Beta["SnueLR"] =  -  6*e**2*qe**2*my_einsum("prst",C["SnueLR"])
 
-    Beta["SnuuLL"] =  -  6*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["SnuuLL"])
+    #Beta["SnuuLL"] =  -  6*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["SnuuLL"])
 
-    Beta["TnuuLL"] =   2*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["TnuuLL"])
+    #Beta["TnuuLL"] =   2*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["TnuuLL"])
 
-    Beta["SnuuLR"] =  -  6*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["SnuuLR"])
+    #Beta["SnuuLR"] =  -  6*(e**2*qu**2  +  g**2*CF)*my_einsum("prst",C["SnuuLR"])
 
-    Beta["SnudLL"] =  -  6*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["SnudLL"])
+    #Beta["SnudLL"] =  -  6*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["SnudLL"])
 
-    Beta["TnudLL"] =   2*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["TnudLL"])
+    #Beta["TnudLL"] =   2*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["TnudLL"])
 
-    Beta["SnudLR"] =  -  6*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["SnudLR"])
+    #Beta["SnudLR"] =  -  6*(e**2*qd**2  +  g**2*CF)*my_einsum("prst",C["SnudLR"])
 
-    Beta["SnueduLL"] =  -  6*(e**2*qu*qd  +  g**2*CF)*my_einsum("prst",C["SnueduLL"])  +  24*e**2*(qu**2  -  qd**2)*my_einsum("prst",C["TnueduLL"])
+    #Beta["SnueduLL"] =  -  6*(e**2*qu*qd  +  g**2*CF)*my_einsum("prst",C["SnueduLL"])  +  24*e**2*(qu**2  -  qd**2)*my_einsum("prst",C["TnueduLL"])
 
-    Beta["TnueduLL"] =   (2*e**2*(qu**2  +  qu*qe  -  2*qe**2)  +  2*g**2*CF)*my_einsum("prst",C["TnueduLL"])  +  ((1)/(2))*e**2*(qu**2  -  qd**2)*my_einsum("prst",C["SnueduLL"])
+    #Beta["TnueduLL"] =   (2*e**2*(qu**2  +  qu*qe  -  2*qe**2)  +  2*g**2*CF)*my_einsum("prst",C["TnueduLL"])  +  ((1)/(2))*e**2*(qu**2  -  qd**2)*my_einsum("prst",C["SnueduLL"])
 
-    Beta["SnueduLR"] =  -  6*(e**2*qu*qd  +  g**2*CF)*my_einsum("prst",C["SnueduLR"])
+    #Beta["SnueduLR"] =  -  6*(e**2*qu*qd  +  g**2*CF)*my_einsum("prst",C["SnueduLR"])
 
-    Beta["VnueduRL"] =  -  6*e**2*qe*qd*my_einsum("prst",C["VnueduRL"])
+    #Beta["VnueduRL"] =  -  6*e**2*qe*qd*my_einsum("prst",C["VnueduRL"])
 
-    Beta["VnueduRR"] =   6*e**2*qe*qu*my_einsum("prst",C["VnueduRR"])
+    #Beta["VnueduRR"] =   6*e**2*qe*qu*my_einsum("prst",C["VnueduRR"])
 
     # \psi^4: \Delta B=\Delta L=1\boldmath $\psi^4: \Delta B=\Delta L=1$
 
@@ -251,18 +251,18 @@ def beta(C):
 
     # \psi^4: \Delta B =  -  \Delta L=1\boldmath $\psi^4: \Delta B =  -  \Delta L=1$
 
-    Beta["SdddLL"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddLL"])
+    #Beta["SdddLL"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddLL"])
 
-    Beta["SuddLR"] =   (  -  4*g**2  +  6*e**2*qu*qd)*my_einsum("prst",C["SuddLR"])
+    #Beta["SuddLR"] =   (  -  4*g**2  +  6*e**2*qu*qd)*my_einsum("prst",C["SuddLR"])
 
-    Beta["SdduLR"] =   (  -  4*g**2  +  6*e**2*qd**2)*my_einsum("prst",C["SdduLR"])
+    #Beta["SdduLR"] =   (  -  4*g**2  +  6*e**2*qd**2)*my_einsum("prst",C["SdduLR"])
 
-    Beta["SdddLR"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddLR"])
+    #Beta["SdddLR"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddLR"])
 
-    Beta["SdddRL"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddRL"])
+    #Beta["SdddRL"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddRL"])
 
-    Beta["SuddRR"] =   (  -  4*g**2  +  e**2*(6*qu*qd  -  2*(qu  -  qd)*qd))*my_einsum("prst",C["SuddRR"])  +  4*e**2*(qu  -  qd)*qd*my_einsum("ptsr",C["SuddRR"])
+    #Beta["SuddRR"] =   (  -  4*g**2  +  e**2*(6*qu*qd  -  2*(qu  -  qd)*qd))*my_einsum("prst",C["SuddRR"])  +  4*e**2*(qu  -  qd)*qd*my_einsum("ptsr",C["SuddRR"])
 
-    Beta["SdddRR"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddRR"])
+    #Beta["SdddRR"] =   (  -  4*g**2  +  6*e**2*(qd**2  -  qe*qd))*my_einsum("prst",C["SdddRR"])
 
     return Beta
