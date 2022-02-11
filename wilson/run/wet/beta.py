@@ -1,3 +1,4 @@
+import numpy as np
 from numpy import pi
 from wilson.run.smeft.beta import my_einsum
 
@@ -13,17 +14,33 @@ Cd = (Nc**2-4)/Nc
 qu = 2/3
 qd = -1/3
 qe = -1
+
 nu = 2
 nd = 3
 ne = 3
+
 b0g = (11*Nc - 2*(nd + nu))/3.
 b0e = (-4*(Nc*nd*qd**2 + ne*qe**2 + Nc*nu*qu**2))/3.
 
 
-def beta(C):
+def beta(C, n_gen=3):
     e = C["e"]
     g = C["gs"]
 
+    # set undefined Wilson coefficients to zero
+    zeros_4F = np.zeros((n_gen,n_gen,n_gen,n_gen))
+    zeros_2F = np.zeros((n_gen,n_gen))
+    C['SnunuLL'] = zeros_4F
+    C['SnueLL'] = zeros_4F
+    C['SnueLR'] = zeros_4F
+    C['SnuuLL'] = zeros_4F
+    C['SnuuLR'] = zeros_4F
+    C['SnudLL'] = zeros_4F
+    C['SnudLR'] = zeros_4F
+    C['nugamma'] = zeros_2F
+
+    # define Kronecker delta
+    C['delta'] = np.eye(n_gen)
 
     # Eq. (3.41)
     zetae = (8/3)*(2*my_einsum("wv,wv",C["nugamma"],C["nugamma"].conj())+my_einsum("wv,wv",C["egamma"],C["egamma"].conj())+Nc*my_einsum("wv,wv",C["ugamma"],C["ugamma"].conj())+Nc*my_einsum("wv,wv",C["dgamma"],C["dgamma"].conj()))
