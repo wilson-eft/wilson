@@ -1,6 +1,5 @@
 from numpy import pi
 from wilson.run.smeft.beta import my_einsum
-from collections import OrderedDict
 
 
 Nc = 3
@@ -11,8 +10,8 @@ C1 = (Nc**2-1)/(4*Nc**2)
 Cd = (Nc**2-4)/Nc
 
 
-qu = 0.6666666666666666
-qd = -0.3333333333333333
+qu = 2/3
+qd = -1/3
 qe = -1
 nu = 2
 nd = 3
@@ -21,7 +20,7 @@ b0g = (11*Nc - 2*(nd + nu))/3.
 b0e = (-4*(Nc*nd*qd**2 + ne*qe**2 + Nc*nu*qu**2))/3.
 
 
-def betaLEFT(C):
+def beta(C):
     e = C["e"]
     g = C["gs"]
 
@@ -31,7 +30,7 @@ def betaLEFT(C):
     zetag = (4/3)*(my_einsum("wv,wv",C["uG"],C["uG"].conj())+my_einsum("wv,wv",C["dG"],C["dG"].conj()))
 
 
-    Beta = OrderedDict()
+    Beta = {}
 
 
     # Dimension 3: Masses
@@ -48,7 +47,7 @@ def betaLEFT(C):
 
     Beta["e"] =  -  b0e*e**3  -  8*e**2*qe*(my_einsum("rs,sr",C["egamma"],C["Me"])  +  my_einsum("rs,rs",C["Me"].conj().T,C["egamma"].conj()))  -  8*e**2*Nc*qu*(my_einsum("rs,sr",C["ugamma"],C["Mu"])  +  my_einsum("rs,rs",C["Mu"].conj().T,C["ugamma"].conj()))  -  8*e**2*Nc*qd*(my_einsum("rs,sr",C["dgamma"],C["Md"])  +  my_einsum("rs,rs",C["Md"].conj().T,C["dgamma"].conj()))  +  8*e*(2*my_einsum("ts,sr,rp,pt",C["Mnu"].conj().T,C["nugamma"],C["Mnu"].conj().T,C["nugamma"])  +  2*my_einsum("pr,sr,st,pt",C["Mnu"],C["nugamma"].conj(),C["Mnu"],C["nugamma"].conj())  +  my_einsum("ts,sr,rp,pt",C["Me"],C["egamma"],C["Me"],C["egamma"])  +  my_einsum("pr,sr,st,pt",C["Me"].conj().T,C["egamma"].conj(),C["Me"].conj().T,C["egamma"].conj())  +  Nc*my_einsum("ts,sr,rp,pt",C["Mu"],C["ugamma"],C["Mu"],C["ugamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["ugamma"].conj(),C["Mu"].conj().T,C["ugamma"].conj())  +  Nc*my_einsum("ts,sr,rp,pt",C["Md"],C["dgamma"],C["Md"],C["dgamma"])  +  Nc*my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dgamma"].conj(),C["Md"].conj().T,C["dgamma"].conj()))
 
-    Beta["g"] =  -  b0g*g**3  -  4*g**2*(my_einsum("rs,sr",C["uG"],C["Mu"])  +  my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  -  4*g**2*(my_einsum("rs,sr",C["dG"],C["Md"])  +  my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  4*g*(my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["uG"].conj(),C["Mu"].conj().T,C["uG"].conj())  +  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dG"].conj(),C["Md"].conj().T,C["dG"].conj()))
+    Beta["gs"] =  -  b0g*g**3  -  4*g**2*(my_einsum("rs,sr",C["uG"],C["Mu"])  +  my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  -  4*g**2*(my_einsum("rs,sr",C["dG"],C["Md"])  +  my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  4*g*(my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("pr,sr,st,pt",C["Mu"].conj().T,C["uG"].conj(),C["Mu"].conj().T,C["uG"].conj())  +  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("pr,sr,st,pt",C["Md"].conj().T,C["dG"].conj(),C["Md"].conj().T,C["dG"].conj()))
 
     Beta["thetaQCD"] =   ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["uG"],C["Mu"])  -  1j*my_einsum("rs,rs",C["Mu"].conj().T,C["uG"].conj()))  +  ((64*pi**2)/(g))*(1j*my_einsum("rs,sr",C["dG"],C["Md"])  -  1j*my_einsum("rs,rs",C["Md"].conj().T,C["dG"].conj()))  +  ((32*pi**2)/(g**2))*2j*(  -  my_einsum("ts,sr,rp,pt",C["Mu"],C["uG"],C["Mu"],C["uG"])  +  my_einsum("ts,sr,rp,pt",C["Mu"].conj(),C["uG"].conj(),C["Mu"].conj(),C["uG"].conj())  -  my_einsum("ts,sr,rp,pt",C["Md"],C["dG"],C["Md"],C["dG"])  +  my_einsum("ts,sr,rp,pt",C["Md"].conj(),C["dG"].conj(),C["Md"].conj(),C["dG"].conj()))
 
