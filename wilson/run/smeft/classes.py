@@ -15,7 +15,7 @@ from wilson.util import leftutil
 
 class EFT:
    """Class representing a parameter point in the Effective
-   Field Theory and allowing the evolution of the Wilson Coefficients.
+   Field Theory.
 
    Methods:
    - __init__: Initialize, given a wcxf.WC instance
