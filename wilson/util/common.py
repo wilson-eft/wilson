@@ -208,6 +208,10 @@ class EFTutil:
         return scale_dict, d_4, d_6, d_7
 
     def pad_C(self, C, fill_value=0):
+        """In a dictionary with Wilson coefficient names as keys and numbers or
+        numpy arrays as values, pad the arrays with `fill_value` (0 by default)
+        in such a way that the size of each array dimension will be given by
+        `self.n_gen`."""
         if not self._needs_padding:
             return C
         new_arr = (
@@ -233,6 +237,10 @@ class EFTutil:
         return C_out
 
     def unpad_C(self, C):
+        """In a dictionary with Wilson coefficient names as keys and numbers or
+        numpy arrays as values, remove the last entries in each array dimension
+        such that the resulting array will have the shape defined by the WCxf
+        basis definition."""
         if not self._needs_padding:
             return C
         C_out = {}
