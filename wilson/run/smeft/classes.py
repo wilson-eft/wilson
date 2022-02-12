@@ -1,5 +1,9 @@
-"""Defines the SMEFT class that provides the main API to smeft."""
+"""Defines the EFT class that provides the main API to smeft and wet."""
 
+from numpy import pi, sqrt
+import numpy as np
+from wilson.util import qcd
+from wilson.parameters import p as default_parameters
 from . import rge
 from . import definitions
 from . import smpar
@@ -10,7 +14,7 @@ import wilson
 from wilson.util import smeftutil
 from wilson import wcxf
 from . import rgeleft
-from wilson.util import leftutil 
+from wilson.util import wetutil 
 
 
 class EFT:
@@ -36,25 +40,36 @@ class LEFT(EFT):
     - run: solve the RGE and return a wcxf.WC instance
     """
 
-    def __init__(self, wc, get_smpar=True):
+    def __init__(self, wc, dim4_left=True):
        super().__init__(wc)
        self.eft= wc.eft
        self.wc = wc
        self.scale_in = wc.scale
        self.C_in = None
 
-       C = wilson.util.leftutil.wcxf2arrays_symmetrized(wc.dict)
+       if self.eft == 'WET':
+            self.f = 5
+       elif self.eft == 'WET-4':
+            self.f = 4
+       elif self.eft == 'WET-3':
+            self.f = 3
 
-       for k, s in leftutil.C_keys_shape.items():
-           if k not in C and k not in leftutil.SM_keys:
+       C = wilson.util.wetutil.wcxf2arrays_symmetrized(wc.dict)
+       for k, s in wetutil.C_keys_shape.items():
+           if k not in C and k not in wetutil.dim4_keys:
                if s == 1:
                    C[k] = 0
                else:
                    C[k] = np.zeros(s)
+
        if self.C_in is None:
            self.C_in = C
        else:
            self.C_in.update(C)
+
+       if dim4_left:
+            self.C_in.update(self._get_sm_left(self.scale_in, self.f))
+
     def _leftevolve_leadinglog(self, scale_out):
         """Compute the leading logarithmic approximation to the solution
         of the LEFT RGEs from the initial scale to `scale_out`.
@@ -64,11 +79,38 @@ class LEFT(EFT):
                             scale_in=self.scale_in,
                             scale_out=scale_out)
 
+    def _get_sm_left(self, scale, f, loop=3):
+
+        C_in_SM={}
+        parameters= default_parameters.copy()
+
+        m_d = qcd.m_s(parameters['m_d'], scale, self.f, parameters['alpha_s'], loop=loop)
+        m_s = qcd.m_s(parameters['m_s'], scale, self.f, parameters['alpha_s'], loop=loop)
+        m_b = qcd.m_b(parameters['m_b'], scale, self.f, parameters['alpha_s'], loop=loop)
+
+        m_u = qcd.m_s(parameters['m_u'], scale, self.f, parameters['alpha_s'], loop=loop)
+        m_c = qcd.m_c(parameters['m_c'], scale, self.f, parameters['alpha_s'], loop=loop)
+       
+        # running ignored for alpha_e and lepton mass
+        m_e   = parameters['m_e']
+        m_mu  = parameters['m_mu']
+        m_tau = parameters['m_tau']
+
+        C_in_SM['gs'] = sqrt(4*pi*qcd.alpha_s(scale, self.f, parameters['alpha_s'], loop=loop))
+        C_in_SM['e'] = sqrt(4*pi*parameters['alpha_e'])
+
+        C_in_SM['Me'] = np.array([[m_e,0,0],[0,m_mu,0],[0,0,m_tau]])
+        C_in_SM['Md'] = np.array([[m_d,0,0],[0,m_s,0],[0,0,m_b]])
+        C_in_SM['Mu'] = np.array([[m_u,0],[0,m_c]])  
+
+        C_in_SM['Mnu'] = np.array([[0,0,0],[0,0,0],[0,0,0]])  # update
+        return C_in_SM
+
     def _to_wcxf(self, C_out, scale_out):
         """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
         """
         C = C_out
-        d = wilson.util.leftutil.arrays2wcxf(C)
+        d = wilson.util.wetutil.arrays2wcxf(C)
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('WET', 'JMS', scale_out, d)
         return wc
