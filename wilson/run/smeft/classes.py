@@ -69,7 +69,9 @@ class LEFT(EFT):
 
        if dim4_left:
             self.C_in.update(self._get_sm_left(self.scale_in, self.f))
-
+    
+       self.C_in = wilson.util.wetutil.pad_C(self.C_in)
+ 
     def _leftevolve_leadinglog(self, scale_out):
         """Compute the leading logarithmic approximation to the solution
         of the LEFT RGEs from the initial scale to `scale_out`.
@@ -103,14 +105,18 @@ class LEFT(EFT):
         C_in_SM['Md'] = np.array([[m_d,0,0],[0,m_s,0],[0,0,m_b]])
         C_in_SM['Mu'] = np.array([[m_u,0],[0,m_c]])  
 
-        C_in_SM['Mnu'] = np.array([[0,0,0],[0,0,0],[0,0,0]])  # update
+        C_in_SM['Mnu'] = np.array([[0,0,0],[0,0,0],[0,0,0]])  # update?
         return C_in_SM
 
     def _to_wcxf(self, C_out, scale_out):
         """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
         """
+#        C = wetutil.unpad_C(C_out)
         C = C_out
-        d = wilson.util.wetutil.arrays2wcxf(C)
+        d = wilson.util.wetutil.arrays2wcxf(C) 
+        basis = wcxf.Basis['WET', 'JMS']
+        left_wcs = set(basis.all_wcs)
+        d = {k: v for k, v in d.items() if k in left_wcs and v != 0}
         d = wcxf.WC.dict2values(d)
         wc = wcxf.WC('WET', 'JMS', scale_out, d)
         return wc
