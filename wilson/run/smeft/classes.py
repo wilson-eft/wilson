@@ -48,13 +48,19 @@ class LEFT(EFT):
        self.C_in = None
 
        if self.eft == 'WET':
-            self.f = 5
+            self.Nu=2
+            self.Nd=3
        elif self.eft == 'WET-4':
-            self.f = 4
+            self.Nu=2
+            self.Nd=2
        elif self.eft == 'WET-3':
-            self.f = 3
+            self.Nu=1
+            self.Nd=2
+
+       f = self.Nu+ self.Nd
 
        C = wilson.util.wetutil.wcxf2arrays_symmetrized(wc.dict)
+
        for k, s in wetutil.C_keys_shape.items():
            if k not in C and k not in wetutil.dim4_keys:
                if s == 1:
@@ -68,7 +74,7 @@ class LEFT(EFT):
            self.C_in.update(C)
 
        if dim4_left:
-            self.C_in.update(self._get_sm_left(self.scale_in, self.f))
+            self.C_in.update(self._get_sm_left(self.scale_in, f))
     
        self.C_in = wilson.util.wetutil.pad_C(self.C_in)
  
@@ -79,27 +85,27 @@ class LEFT(EFT):
         """
         return rgeleft.left_evolve_leadinglog(C_in=self.C_in,
                             scale_in=self.scale_in,
-                            scale_out=scale_out)
+                            scale_out=scale_out, Nu= self.Nu, Nd= self.Nd)
 
     def _get_sm_left(self, scale, f, loop=3):
 
         C_in_SM={}
         parameters= default_parameters.copy()
 
-        m_d = qcd.m_s(parameters['m_d'], scale, self.f, parameters['alpha_s'], loop=loop)
-        m_s = qcd.m_s(parameters['m_s'], scale, self.f, parameters['alpha_s'], loop=loop)
-        m_b = qcd.m_b(parameters['m_b'], scale, self.f, parameters['alpha_s'], loop=loop)
+        m_d = qcd.m_s(parameters['m_d'], scale, f, parameters['alpha_s'], loop=loop)
+        m_s = qcd.m_s(parameters['m_s'], scale, f, parameters['alpha_s'], loop=loop)
+        m_b = qcd.m_b(parameters['m_b'], scale, f, parameters['alpha_s'], loop=loop)
 
-        m_u = qcd.m_s(parameters['m_u'], scale, self.f, parameters['alpha_s'], loop=loop)
-        m_c = qcd.m_c(parameters['m_c'], scale, self.f, parameters['alpha_s'], loop=loop)
+        m_u = qcd.m_s(parameters['m_u'], scale, f, parameters['alpha_s'], loop=loop)
+        m_c = qcd.m_c(parameters['m_c'], scale, f, parameters['alpha_s'], loop=loop)
        
         # running ignored for alpha_e and lepton mass
         m_e   = parameters['m_e']
         m_mu  = parameters['m_mu']
         m_tau = parameters['m_tau']
 
-        C_in_SM['gs'] = sqrt(4*pi*qcd.alpha_s(scale, self.f, parameters['alpha_s'], loop=loop))
-        C_in_SM['e'] = sqrt(4*pi*parameters['alpha_e'])
+        C_in_SM['gs'] = sqrt(4*pi*qcd.alpha_s(scale, f, parameters['alpha_s'], loop=loop))
+        C_in_SM['e'] =  sqrt(4*pi*parameters['alpha_e'])
 
         C_in_SM['Me'] = np.array([[m_e,0,0],[0,m_mu,0],[0,0,m_tau]])
         C_in_SM['Md'] = np.array([[m_d,0,0],[0,m_s,0],[0,0,m_b]])
@@ -114,11 +120,11 @@ class LEFT(EFT):
 #        C = wetutil.unpad_C(C_out)
         C = C_out
         d = wilson.util.wetutil.arrays2wcxf(C) 
-        basis = wcxf.Basis['WET', 'JMS']
+        basis = wcxf.Basis[self.eft, 'JMS']
         left_wcs = set(basis.all_wcs)
         d = {k: v for k, v in d.items() if k in left_wcs and v != 0}
         d = wcxf.WC.dict2values(d)
-        wc = wcxf.WC('WET', 'JMS', scale_out, d)
+        wc = wcxf.WC(self.eft, 'JMS', scale_out, d)
         return wc
 
     def run(self, scale):
