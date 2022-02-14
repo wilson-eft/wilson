@@ -15,21 +15,19 @@ qu = 2/3
 qd = -1/3
 qe = -1
 
-nu = 2
-nd = 3
-ne = 3
+def beta(C, Nu=2, Nd=3):
 
-b0g = (11*Nc - 2*(nd + nu))/3.
-b0e = (-4*(Nc*nd*qd**2 + ne*qe**2 + Nc*nu*qu**2))/3.
+    Ne=3
+    b0g = (11*Nc - 2*(Nd + Nu))/3.
+    b0e = (-4*(Nc*Nd*qd**2 + Ne*qe**2 + Nc*Nu*qu**2))/3.
 
-
-def beta(C, n_gen=3):
     e = C["e"]
     g = C["gs"]
 
     # set undefined Wilson coefficients to zero
-    zeros_4F = np.zeros((n_gen,n_gen,n_gen,n_gen))
-    zeros_2F = np.zeros((n_gen,n_gen))
+   
+    zeros_4F = np.zeros((3,3,3,3))
+    zeros_2F = np.zeros((3,3))
     C['SnunuLL'] = zeros_4F
     C['SnueLL'] = zeros_4F
     C['SnueLR'] = zeros_4F
@@ -37,10 +35,10 @@ def beta(C, n_gen=3):
     C['SnuuLR'] = zeros_4F
     C['SnudLL'] = zeros_4F
     C['SnudLR'] = zeros_4F
-    C['nugamma'] = zeros_2F
+    C['nugamma'] = zeros_2F    
 
     # define Kronecker delta
-    C['delta'] = np.eye(n_gen)
+    C['delta'] = np.eye(3)
 
     # Eq. (3.41)
     zetae = (8/3)*(2*my_einsum("wv,wv",C["nugamma"],C["nugamma"].conj())+my_einsum("wv,wv",C["egamma"],C["egamma"].conj())+Nc*my_einsum("wv,wv",C["ugamma"],C["ugamma"].conj())+Nc*my_einsum("wv,wv",C["dgamma"],C["dgamma"].conj()))
