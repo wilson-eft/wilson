@@ -1,5 +1,9 @@
-"""Defines the SMEFT class that provides the main API to smeft."""
+"""Defines the EFT class that provides the main API to smeft and wet."""
 
+from numpy import pi, sqrt
+import numpy as np
+from wilson.util import qcd
+from wilson.parameters import p as default_parameters
 from . import rge
 from . import definitions
 from . import smpar
@@ -9,10 +13,25 @@ import ckmutil.phases, ckmutil.diag
 import wilson
 from wilson.util import smeftutil
 from wilson import wcxf
+from . import rgeleft
+from wilson.util import wetutil 
 
 
-class SMEFT:
-    """Class representing a parameter point in the Standard Model Effective
+class EFT:
+   """Class representing a parameter point in the Effective
+   Field Theory.
+
+   Methods:
+   - __init__: Initialize, given a wcxf.WC instance
+   """
+   def __init__(self, wc):
+       """Initialize the EFT instance.
+       Parameters:  'wc' : Wilson coefficients as `wcxf.WC` instance.
+       """
+       self.wc=wc
+
+class LEFT(EFT):
+    """Class representing a parameter point in the Low Energy Effective
     Field Theory and allowing the evolution of the Wilson Coefficients.
 
     Methods:
@@ -21,16 +40,117 @@ class SMEFT:
     - run: solve the RGE and return a wcxf.WC instance
     """
 
-    def __init__(self, wc, get_smpar=True):
-        """Initialize the SMEFT instance.
+    def __init__(self, wc, dim4_left=True):
+       super().__init__(wc)
+       self.eft= wc.eft
+       self.wc = wc
+       self.scale_in = wc.scale
+       self.C_in = None
 
-        Parameters:
+       if self.eft == 'WET':
+            self.Nu=2
+            self.Nd=3
+       elif self.eft == 'WET-4':
+            self.Nu=2
+            self.Nd=2
+       elif self.eft == 'WET-3':
+            self.Nu=1
+            self.Nd=2
 
-        - `wc`: the Wilson coefficients as `wcxf.WC` instance.
+       f = self.Nu+ self.Nd
+
+       C = wilson.util.wetutil.wcxf2arrays_symmetrized(wc.dict)
+
+       for k, s in wetutil.C_keys_shape.items():
+           if k not in C and k not in wetutil.dim4_keys:
+               if s == 1:
+                   C[k] = 0
+               else:
+                   C[k] = np.zeros(s)
+
+       if self.C_in is None:
+           self.C_in = C
+       else:
+           self.C_in.update(C)
+
+       if dim4_left:
+            self.C_in.update(self._get_sm_left(self.scale_in, f))
+    
+       self.C_in = wilson.util.wetutil.pad_C(self.C_in)
+ 
+    def _leftevolve_leadinglog(self, scale_out):
+        """Compute the leading logarithmic approximation to the solution
+        of the LEFT RGEs from the initial scale to `scale_out`.
+        Returns a dictionary with parameters and Wilson coefficients.
         """
-        self.wc = wc
-        self.scale_in = None
-        self.C_in = None
+        return rgeleft.left_evolve_leadinglog(C_in=self.C_in,
+                            scale_in=self.scale_in,
+                            scale_out=scale_out, Nu= self.Nu, Nd= self.Nd)
+
+    def _get_sm_left(self, scale, f, loop=3):
+
+        C_in_SM={}
+        parameters= default_parameters.copy()
+
+        m_d = qcd.m_s(parameters['m_d'], scale, f, parameters['alpha_s'], loop=loop)
+        m_s = qcd.m_s(parameters['m_s'], scale, f, parameters['alpha_s'], loop=loop)
+        m_b = qcd.m_b(parameters['m_b'], scale, f, parameters['alpha_s'], loop=loop)
+
+        m_u = qcd.m_s(parameters['m_u'], scale, f, parameters['alpha_s'], loop=loop)
+        m_c = qcd.m_c(parameters['m_c'], scale, f, parameters['alpha_s'], loop=loop)
+       
+        # running ignored for alpha_e and lepton mass
+        m_e   = parameters['m_e']
+        m_mu  = parameters['m_mu']
+        m_tau = parameters['m_tau']
+
+        C_in_SM['gs'] = sqrt(4*pi*qcd.alpha_s(scale, f, parameters['alpha_s'], loop=loop))
+        C_in_SM['e'] =  sqrt(4*pi*parameters['alpha_e'])
+
+        C_in_SM['Me'] = np.array([[m_e,0,0],[0,m_mu,0],[0,0,m_tau]])
+        C_in_SM['Md'] = np.array([[m_d,0,0],[0,m_s,0],[0,0,m_b]])
+        C_in_SM['Mu'] = np.array([[m_u,0],[0,m_c]])  
+
+        C_in_SM['Mnu'] = np.array([[0,0,0],[0,0,0],[0,0,0]])  # update?
+        return C_in_SM
+
+    def _to_wcxf(self, C_out, scale_out):
+        """Return the Wilson coefficients `C_out` as a wcxf.WC instance.
+        """
+#        C = wetutil.unpad_C(C_out)
+        C = C_out
+        d = wilson.util.wetutil.arrays2wcxf(C) 
+        basis = wcxf.Basis[self.eft, 'JMS']
+        left_wcs = set(basis.all_wcs)
+        d = {k: v for k, v in d.items() if k in left_wcs and v != 0}
+        d = wcxf.WC.dict2values(d)
+        wc = wcxf.WC(self.eft, 'JMS', scale_out, d)
+        return wc
+
+    def run(self, scale):
+        """Return the Wilson coefficients  (as wcxf.WC instance) evolved to the
+        scale `scale`.
+        Parameters:
+        - `scale`: scale in GeV
+        """
+        C_out = self._leftevolve_leadinglog(scale)
+        return self._to_wcxf(C_out, scale)
+
+
+class SMEFT(EFT):
+    """Class representing a parameter point in the Standard Model Effective
+    Field Theory and allowing the evolution of the Wilson Coefficients.
+
+    Methods:
+
+    - __init__: Initialize, given a wcxf.WC instance
+    - run: solve the RGE and return a wcxf.WC instance
+    """
+    def __init__(self, wc, get_smpar=True):
+        super().__init__(wc)
+        self.scale_in=None
+        self.C_in= None
+
         if wc is not None:
             self._set_initial_wcxf(wc, get_smpar=get_smpar)
 

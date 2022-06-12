@@ -9,6 +9,7 @@ SMEFT and WET RGEs to be used for plotting.
 
 
 from wilson.run.smeft import SMEFT
+from wilson.run.smeft import LEFT
 from wilson.run.wet import WETrunner
 from wilson import parameters
 import numpy as np
@@ -90,12 +91,14 @@ class Wilson(ConfigurableClass):
                         'mb_matchingscale': 4.2,
                         'mc_matchingscale': 1.3,
                         'parameters': {},
+                        'wet_method': 'adms'
                         }
 
     # option schema:
     # Voluptuous schema defining allowed option values/types
     _option_schema = vol.Schema({
         'smeft_accuracy': vol.In(['integrate','leadinglog']),
+        'wet_method': vol.In(['betafunctions','adms']),
         'qed_order': vol.In([0,1]),
         'qcd_order': vol.In([0,1]),
         'smeft_matching_order':  vol.In([0,1]),
@@ -200,12 +203,14 @@ class Wilson(ConfigurableClass):
         scale_ew = self.get_option('smeft_matchingscale')
         mb = self.get_option('mb_matchingscale')
         mc = self.get_option('mc_matchingscale')
+        wet_method = self.get_option('wet_method')
         if self.wc.basis == basis and self.wc.eft == eft and scale == self.wc.scale:
             return self.wc  # nothing to do
         if self.wc.eft == eft and scale == self.wc.scale:
             wc_out = self.wc.translate(basis, sectors=translate_sectors, parameters=self.parameters)  # only translation necessary
             self._set_cache(sectors, scale, eft, basis, wc_out)
             return wc_out
+
         if self.wc.eft == 'SMEFT':
             smeft_accuracy = self.get_option('smeft_accuracy')
             if eft == 'SMEFT':
@@ -224,37 +229,73 @@ class Wilson(ConfigurableClass):
                         smeft = SMEFT(self.wc.translate('Warsaw', parameters=self.parameters))
                         wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS', parameters=self.matching_parameters)
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
-                wet = WETrunner(wc_ew, **self._wetrun_opt())
+                if wet_method  == 'adms':
+                    wet = WETrunner(wc_ew, **self._wetrun_opt())
+                elif wet_method  == 'betafunctions':
+                    left = LEFT(wc_ew)
+                     
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
-            wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors), **self._wetrun_opt())
+            if wet_method == 'adms':
+               wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors), **self._wetrun_opt())
+            elif wet_method == 'betafunctions':
+               left = LEFT(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors)) #look
         else:
             raise ValueError(f"Input EFT {self.wc.eft} unknown or not supported")
-        if eft == wet.eft:  # just run
-            wc_out = wet.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
-            self._set_cache(sectors, scale, eft, basis, wc_out)
-            return wc_out
-        elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
-            wet4 = WETrunner(wc_mb, **self._wetrun_opt())
-            wc_out = wet4.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
-            self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
-            return wc_out
-        elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
-            wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
-            wet3 = WETrunner(wc_mc, **self._wetrun_opt())
-            wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
-            return wc_out
-            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
-        elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
-            wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
-            wet4 = WETrunner(wc_mb, **self._wetrun_opt())
-            wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
-            wet3 = WETrunner(wc_mc, **self._wetrun_opt())
-            wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
-            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
-            return wc_out
-        else:
-            raise ValueError(f"Running from {wet.eft} to {eft} not implemented")
+
+        if wet_method == 'adms':  
+            if eft == wet.eft:  # just run
+                wc_out = wet.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                self._set_cache(sectors, scale, eft, basis, wc_out)
+                return wc_out
+            elif eft == 'WET-4' and wet.eft == 'WET':  # match at mb
+                wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
+                wet4 = WETrunner(wc_mb, **self._wetrun_opt())
+                wc_out = wet4.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                self._set_cache(sectors, scale, 'WET-4', basis, wc_out)
+                return wc_out
+            elif eft == 'WET-3' and wet.eft == 'WET-4':  # match at mc
+                wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
+                wet3 = WETrunner(wc_mc, **self._wetrun_opt())
+                wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                return wc_out
+                self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
+            elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
+                wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
+                wet4 = WETrunner(wc_mb, **self._wetrun_opt())
+                wc_mc = wet4.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
+                wet3 = WETrunner(wc_mc, **self._wetrun_opt())
+                wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
+                return wc_out
+            else:
+                raise ValueError(f"Running from {wet.eft} to {eft} not implemented")
+
+        elif wet_method == 'betafunctions':
+            if eft == left.eft:  # just run
+                wc_out = left.run(scale).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                return wc_out
+            elif eft == 'WET-4' and left.eft == 'WET':  # match at mb
+                wc_mb = left.run(mb).match('WET-4', 'JMS', parameters=self.matching_parameters)
+                wet4 =  LEFT(wc_mb) # Fix no. of flavours 
+                wc_out = wet4.run(scale).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                return wc_out
+            elif eft == 'WET-3' and left.eft == 'WET':  # match at mb and mc
+                wc_mb = left.run(mb).match('WET-4', 'JMS', parameters=self.matching_parameters)
+                wet4 = LEFT(wc_mb)
+                wc_mc = wet4.run(mc).match('WET-3', 'JMS', parameters=self.matching_parameters)
+                wet3 = LEFT(wc_mc)
+                wc_out = wet3.run(scale).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                return wc_out
+            elif eft == 'WET-3' and left.eft == 'WET-4':  # match at mc
+                wc_mc = left.run(mc).match('WET-3', 'JMS', parameters=self.matching_parameters)
+                wet3 = LEFT(wc_mc)
+                wc_out = wet3.run(scale).translate(basis, sectors=translate_sectors, parameters=self.parameters)
+                return wc_out
+            else:
+                raise ValueError(f"Running from {wet.eft} to {eft} not implemented")
+        else: 
+            raise ValueError(f"The key {wet_method} does not exist.")
+           
 
     def clear_cache(self):
         self._cache = {}
