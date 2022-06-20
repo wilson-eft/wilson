@@ -20,19 +20,6 @@ jobs:
                 submodules: true
                 path: _src/
 
-            - name: Verify release version matches source code version
-              if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/v')
-              shell: bash
-              run: |
-                pushd _src
-                export TAG_VERSION=${GITHUB_REF##refs/tags/v}
-                export SRC_VERSION=$(python3 -c "from wilson._version import __version__; print(__version__)")
-                if [[ ${TAG_VERSION} != ${SRC_VERSION} ]] ; then
-                  echo "tag/release version and source code version disagree, exiting"
-                  exit 1
-                fi
-                popd
-
             - name: Install dependencies
               shell: bash
               run: |
@@ -46,6 +33,19 @@ jobs:
                 pushd _src
                 python3 -m pip install .
                 python3 -m nose
+                popd
+
+            - name: Verify release version matches source code version
+              if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/v')
+              shell: bash
+              run: |
+                pushd _src
+                export TAG_VERSION=${GITHUB_REF##refs/tags/v}
+                export SRC_VERSION=$(python3 -c "from wilson._version import __version__; print(__version__)")
+                if [[ ${TAG_VERSION} != ${SRC_VERSION} ]] ; then
+                  echo "tag/release version and source code version disagree, exiting"
+                  exit 1
+                fi
                 popd
 
             - name: Build bdist
