@@ -15,7 +15,7 @@ def higgs_up_to_warsaw_up(C, scale, parameters, sectors=None):
 @wcxf.translator('SMEFT', 'Higgs-Warsaw up', 'Warsaw')
 def higgs_up_to_warsaw(C, scale, parameters, sectors=None):
     C = smeft_higgs.higgslike_to_warsaw_up(C, parameters, sectors)
-    return smeft.warsaw_up_to_warsaw(C, sectors)
+    return smeft.warsaw_up_to_warsaw(C, parameters, sectors)
 
 
 @wcxf.translator('SMEFT', 'Warsaw up', 'Higgs-Warsaw up')
@@ -24,23 +24,23 @@ def warsaw_up_to_higgs_up(C, scale, parameters, sectors=None):
 
 @wcxf.translator('SMEFT', 'Warsaw', 'Higgs-Warsaw up')
 def warsaw_up_to_higgs_up(C, scale, parameters, sectors=None):
-    C = smeft.warsaw_to_warsaw_up(C, sectors)
+    C = smeft.warsaw_to_warsaw_up(C, parameters, sectors)
     return smeft_higgs.warsaw_up_to_higgslike(C, parameters, sectors)
 
 
 @wcxf.translator('SMEFT', 'Warsaw', 'Warsaw mass')
 def warsaw_to_warsawmass(C, scale, parameters, sectors=None):
-    return smeft.warsaw_to_warsawmass(C, sectors)
+    return smeft.warsaw_to_warsawmass(C, parameters, sectors)
 
 
 @wcxf.translator('SMEFT', 'Warsaw', 'Warsaw up')
 def warsaw_to_warsaw_up(C, scale, parameters, sectors=None):
-    return smeft.warsaw_to_warsaw_up(C, sectors)
+    return smeft.warsaw_to_warsaw_up(C, parameters, sectors)
 
 
 @wcxf.translator('SMEFT', 'Warsaw up', 'Warsaw')
 def warsaw_up_to_warsaw(C, scale, parameters, sectors=None):
-    return smeft.warsaw_up_to_warsaw(C, sectors)
+    return smeft.warsaw_up_to_warsaw(C, parameters, sectors)
 
 
 @wcxf.translator('WET', 'flavio', 'JMS')
