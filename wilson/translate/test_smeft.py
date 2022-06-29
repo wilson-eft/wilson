@@ -40,6 +40,24 @@ class TestWarsawMass(unittest.TestCase):
                         # must vanish in the mass basis, i.e. be absent
                         self.assertTrue('llphiphi_{}{}'.format(i+1, j+1) not in wcW.dict)
 
+    def test_smeft_mass_sectors(self):
+        for wcW in [wc_Warsaw_random, wc_Warsaw_minimal1, wc_Warsaw_minimal2]:
+            wcW = wc_Warsaw_random.translate('Warsaw mass', sectors='dB=dL=0')
+            p = {'Vub': 3.6e-3}  # pass a parameter, but not all
+            wcW = wc_Warsaw_random.translate('Warsaw mass', p, sectors='dB=dL=0')
+            wcW.validate()
+            # almost all WCs should actually stay the same
+            for k, v in wc_Warsaw_random.dict.items():
+                if k.split('_')[0] not in ['uphi', 'uG', 'uW', 'uB', 'llphiphi']:
+                    self.assertEqual(wcW.dict[k], v,
+                                     msg=f"Not equal for {k}")
+            for i in range(3):
+                for j in range(3):
+                    if i > j:
+                        # the off-diagonal neutrino mass matrix elements
+                        # must vanish in the mass basis, i.e. be absent
+                        self.assertTrue('llphiphi_{}{}'.format(i+1, j+1) not in wcW.dict)
+
 
 class TestWarsawUp(unittest.TestCase):
     def test_warsaw_up(self):
@@ -48,6 +66,16 @@ class TestWarsawUp(unittest.TestCase):
             wcW.validate()
             # translate back and check that nothing changed
             wc_roundtrip = wcW.translate('Warsaw')
+            for k, v in wcWdown.dict.items():
+                self.assertAlmostEqual(v, wc_roundtrip.dict[k], places=12,
+                                       msg=f"Failed for {k}")
+
+    def test_warsaw_up_sectors(self):
+        for wcWdown in [wc_Warsaw_random, wc_Warsaw_minimal1, wc_Warsaw_minimal2]:
+            wcW = wcWdown.translate('Warsaw up', sectors='dB=dL=0')
+            wcW.validate()
+            # translate back and check that nothing changed
+            wc_roundtrip = wcW.translate('Warsaw', sectors='dB=dL=0')
             for k, v in wcWdown.dict.items():
                 self.assertAlmostEqual(v, wc_roundtrip.dict[k], places=12,
                                        msg=f"Failed for {k}")
