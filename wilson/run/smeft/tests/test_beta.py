@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import numpy.testing as npt
-from wilson.run.smeft import beta, rge, definitions
+from wilson.run.smeft import beta, rge
 from wilson.util import smeftutil
 import json
 import pkgutil
