@@ -93,7 +93,7 @@ def _JMS_to_EOS_I(C, qq, p):
     else:
         raise ValueError(f"not in EOS_I: ")
     ji = (ij[1], ij[0])
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     prefactor = sqrt(2) / p['GF'] / 4 / (V[2, ij[1]] * V[2, ij[0]].conj())**2
     d = {
         2 * qq + '::c1'   : prefactor * C[f"V{dd}LL"][ij + ij],
@@ -236,7 +236,7 @@ def _BernII_to_Flavio_II(C, udlnu, parameters):
         'CSL_'+ ind2 : C['5p' + ind],
         'CT_'+ ind2 : C['7p' + ind]
         }
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     prefactor = -sqrt(2) / p['GF'] / V[u, d] / 4
     return {k: prefactor * v for k, v in dic.items()}
 
@@ -261,7 +261,7 @@ def _FlavioII_to_BernII(C, udlnu, parameters):
         '5p' + ind: C['CSL_' + ind2],
         '7p' + ind: C['CT_' + ind2],
         }
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     prefactor = -sqrt(2) / p['GF'] / V[u, d] / 4
     return {k: v / prefactor for k, v in dic.items()}
 
@@ -284,7 +284,7 @@ def _BernII_to_EOS_II(C, udlnu, parameters):
         ind2 + '::cSL' : C['5p' + ind],
         ind2 + '::cT'  : C['7p' + ind]
         }
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     prefactor = -sqrt(2) / p['GF'] / V[u, d] / 4
     return {k: prefactor * v for k,v in dic.items()}
 
@@ -802,7 +802,7 @@ def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
     `qqqq` should be of the form 'sbcu', 'dbcu', etc.
     """
     pf = sqrt(2.0) / 4.0 / p['GF']
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     # generic case: dduu
     d1 = dflav[qqqq[0]]
     d2 = dflav[qqqq[1]]
@@ -873,7 +873,7 @@ def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
 
 def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if qqqq[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif qqqq[:2] == 'db':
@@ -928,7 +928,7 @@ def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
 
 def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if qqqq[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif qqqq[:2] == 'db':
@@ -983,7 +983,7 @@ def _Flavio_to_Fierz_V(Cqqqq, qqqq, parameters):
 
 def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Vtb = V[2,2]
     Vts = V[2,1]
     """From Fierz to the EOS basis for b -> s transitions.
@@ -1213,7 +1213,7 @@ def Fierz_to_Flavio_lep(C, ddll, parameters, norm_gf=True):
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if ddll[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif ddll[:2] == 'db':
@@ -1261,7 +1261,7 @@ def Fierz_to_Flavio_nunu(C, ddll, parameters, norm_gf=True):
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if ddll[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif ddll[:2] == 'db':
@@ -1294,7 +1294,7 @@ def Flavio_to_Fierz_lep(C, ddll, parameters, norm_gf=True):
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if ddll[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif ddll[:2] == 'db':
@@ -1344,7 +1344,7 @@ def Flavio_to_Fierz_nunu(C, ddll, parameters, norm_gf=True):
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if ddll[:2] == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif ddll[:2] == 'db':
@@ -1376,7 +1376,7 @@ def Fierz_to_EOS_lep(C, ddll, parameters):
     C should be the corresponding leptonic Fierz basis and
     `ddll` should be of the form 'sbl_enu_tau', 'dbl_munu_e' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Vtb = V[2,2]
     Vts = V[2,1]
     ind = ddll.replace('l_','').replace('nu_','')
@@ -1519,7 +1519,7 @@ def Fierz_to_Flavio_chrom(C, qq, parameters):
     """From Fierz to chromomagnetic Flavio basis for Class V.
     qq should be of the form 'sb', 'db' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if qq == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif qq == 'db':
@@ -1555,7 +1555,7 @@ def Flavio_to_Fierz_chrom(C, qq, parameters):
     """From Flavio to chromomagnetic Fierz basis for Class V.
     qq should be of the form 'sb', 'db' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     if qq == 'sb':
         xi = V[2, 2] * V[2, 1].conj()
     elif qq == 'db':
@@ -1591,7 +1591,7 @@ def Fierz_to_EOS_chrom(C, dd, parameters):
     """From Fierz to chromomagnetic EOS basis for Class V.
     dd should be of the form 'sb', 'ds' etc."""
     p = parameters
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Vtb = V[2,2]
     Vts = V[2,1]
     e = sqrt(4 * pi * parameters['alpha_e'])
@@ -1716,7 +1716,7 @@ def get_parameters(scale, f=5, input_parameters=None):
     # no running is performed for these parameters
     for k in ['m_W', 'm_Z', 'GF',
               'alpha_e',
-              'Vus', 'Vub', 'Vcb', 'delta',
+              'Vus', 'Vub', 'Vcb', 'gamma',
               'm_e', 'm_mu', 'm_tau', ]:
         parameters[k] = p[k]
     return parameters

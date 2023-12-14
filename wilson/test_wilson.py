@@ -108,7 +108,7 @@ class TestWilson(unittest.TestCase):
     def test__translate_warsaw_to_warsawup(self):
         w_in = wilson.Wilson({'qd1_1211': 1e-6}, 1e3, 'SMEFT', 'Warsaw')
         wc_out = w_in.match_run(1e3, 'SMEFT', 'Warsaw up')
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
         self.assertAlmostEqual(wc_out.dict['qd1_1111'], V[0, 1] * V[0, 0].conjugate() * 1e-6 + V[0, 0] * V[0, 1].conjugate() * 1e-6,places=11)
         self.assertAlmostEqual(wc_out.dict['qd1_1211'], V[0, 1] * V[1, 0].conjugate() * 1e-6 + V[0, 0] * V[1, 1].conjugate() * 1e-6,places=11)
         self.assertAlmostEqual(wc_out.dict['qd1_1311'], V[0, 1] * V[2, 0].conjugate() * 1e-6 + V[0, 0] * V[2, 1].conjugate() * 1e-6,places=11)
