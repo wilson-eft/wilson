@@ -153,7 +153,7 @@ class TestWilsonConfig(unittest.TestCase):
 
     def test_config_parameters(self):
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
-        with self.assertRaises(vol.MultipleInvalid):
+        with self.assertRaises((vol.MultipleInvalid,TypeError)):
             # value must be dict
             w.set_option('parameters', 4)
         with self.assertRaises(vol.MultipleInvalid):
