@@ -6,6 +6,7 @@ import pkgutil
 from wilson.parameters import p
 import ckmutil.ckm, ckmutil.diag
 import voluptuous as vol
+import warnings
 
 
 np.random.seed(235)
@@ -159,6 +160,12 @@ class TestWilsonConfig(unittest.TestCase):
         with self.assertRaises(vol.MultipleInvalid):
             # dict value must be number
             w.set_option('parameters', {'bla': 'blo'})
+        # test deprecation warning
+        with warnings.catch_warnings(record=True) as warns:
+            warnings.simplefilter("always")
+            w.set_option('parameters', {'delta': 1.})
+            self.assertEqual(len(warns), 1)
+            self.assertTrue(issubclass(warns[-1].category, DeprecationWarning))
         # int should be OK but corced to float
         w.set_option('parameters', {'bla': 1})
         self.assertTrue(type(w.get_option('parameters')['bla']), float)

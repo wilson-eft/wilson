@@ -15,6 +15,7 @@ import numpy as np
 from math import log, e
 from wilson import wcxf
 import voluptuous as vol
+import warnings
 
 class ConfigurableClass:
     """Class that provides the functionality to set and get configuration
@@ -58,8 +59,12 @@ class ConfigurableClass:
         ### of 'delta' to 'gamma' in the parameters dictionary           ###
         ####################################################################
         if key == 'parameters' and 'delta' in value:
+            warnings.warn("Using the parameter 'delta' is deprecated. "
+                          "Please use 'gamma' instead. Support for 'delta' "
+                          "will be removed in the future.", DeprecationWarning)
             value['gamma'] = value['delta']
-        #####################################################################
+            del value['delta']
+        ####################################################################
         self._options.update(self._option_schema({key: value}))
         self.clear_cache()
 
