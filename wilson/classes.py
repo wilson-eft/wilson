@@ -53,6 +53,13 @@ class ConfigurableClass:
 
         Instance method, affects only current instance.
         This will clear the cache."""
+        ####################################################################
+        ### temporary fix to keep backwards compatibility after renaming ###
+        ### of 'delta' to 'gamma' in the parameters dictionary           ###
+        ####################################################################
+        if key == 'parameters' and 'delta' in value:
+            value['gamma'] = value['delta']
+        #####################################################################
         self._options.update(self._option_schema({key: value}))
         self.clear_cache()
 
