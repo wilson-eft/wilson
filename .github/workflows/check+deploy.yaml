@@ -24,7 +24,7 @@ jobs:
               shell: bash
               run: |
                 pushd _src
-                python3 -m pip install --upgrade nose
+                python3 -m pip install --upgrade pytest
                 popd
 
             - name: Run checks
@@ -32,7 +32,7 @@ jobs:
               run: |
                 pushd _src
                 python3 -m pip install .
-                python3 -m nose
+                python3 -m pytest
                 popd
 
             - name: Verify release version matches source code version
