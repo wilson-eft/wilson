@@ -61,7 +61,7 @@ class ConfigurableClass:
         if key == 'parameters' and 'delta' in value:
             warnings.warn("Using the parameter 'delta' is deprecated. "
                           "Please use 'gamma' instead. Support for 'delta' "
-                          "will be removed in the future.", DeprecationWarning)
+                          "will be removed in the future.", FutureWarning)
             value['gamma'] = value['delta']
             del value['delta']
         ####################################################################

@@ -165,7 +165,7 @@ class TestWilsonConfig(unittest.TestCase):
             warnings.simplefilter("always")
             w.set_option('parameters', {'delta': 1.})
             self.assertEqual(len(warns), 1)
-            self.assertTrue(issubclass(warns[-1].category, DeprecationWarning))
+            self.assertTrue(issubclass(warns[-1].category, FutureWarning))
         # int should be OK but corced to float
         w.set_option('parameters', {'bla': 1})
         self.assertTrue(type(w.get_option('parameters')['bla']), float)
