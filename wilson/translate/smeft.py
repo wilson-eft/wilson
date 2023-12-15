@@ -50,7 +50,7 @@ def warsaw_to_warsawmass(C, parameters=None, sectors=None):
     C_rotate_u = ['uphi', 'uG', 'uW', 'uB']
     for name in C_rotate_u:
         _array = smeft_toarray(name, C)
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
         UuL = V.conj().T
         _array = UuL.conj().T @ _array
         _dict = smeft_fromarray(name, _array)
@@ -77,7 +77,7 @@ def warsaw_to_warsaw_up(C, parameters=None, sectors=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     Uu = Ud = Ul = Ue = np.eye(3)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V.conj().T
     C_out = smeft_warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)
@@ -98,7 +98,7 @@ def warsaw_up_to_warsaw(C, parameters=None, sectors=None):
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
     Uu = Ud = Ul = Ue = np.eye(3)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Uq = V
     C_out = smeft_warsaw.flavor_rotation(C_in, Uq, Uu, Ud, Ul, Ue)
     C_out = smeftutil.arrays2wcxf_nonred(C_out)

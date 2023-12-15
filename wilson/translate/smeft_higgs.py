@@ -26,7 +26,7 @@ def higgslike_to_warsaw_up(C, parameters=None, sectors=None):
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Vdag = V.T.conjugate()
 
     W = H.copy()
@@ -210,7 +210,7 @@ def warsaw_up_to_higgslike(C, parameters=None, sectors=None):
     if parameters is not None:
         # if parameters are passed in, overwrite the default values
         p.update(parameters)
-    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
     Vdag = V.T.conjugate()
 
     # parameters

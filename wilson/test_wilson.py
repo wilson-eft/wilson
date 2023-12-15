@@ -6,6 +6,7 @@ import pkgutil
 from wilson.parameters import p
 import ckmutil.ckm, ckmutil.diag
 import voluptuous as vol
+import warnings
 
 
 np.random.seed(235)
@@ -108,7 +109,7 @@ class TestWilson(unittest.TestCase):
     def test__translate_warsaw_to_warsawup(self):
         w_in = wilson.Wilson({'qd1_1211': 1e-6}, 1e3, 'SMEFT', 'Warsaw')
         wc_out = w_in.match_run(1e3, 'SMEFT', 'Warsaw up')
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
         self.assertAlmostEqual(wc_out.dict['qd1_1111'], V[0, 1] * V[0, 0].conjugate() * 1e-6 + V[0, 0] * V[0, 1].conjugate() * 1e-6,places=11)
         self.assertAlmostEqual(wc_out.dict['qd1_1211'], V[0, 1] * V[1, 0].conjugate() * 1e-6 + V[0, 0] * V[1, 1].conjugate() * 1e-6,places=11)
         self.assertAlmostEqual(wc_out.dict['qd1_1311'], V[0, 1] * V[2, 0].conjugate() * 1e-6 + V[0, 0] * V[2, 1].conjugate() * 1e-6,places=11)
@@ -153,12 +154,23 @@ class TestWilsonConfig(unittest.TestCase):
 
     def test_config_parameters(self):
         w = wilson.Wilson({'qd1_1123': 1}, 1000, 'SMEFT', 'Warsaw')
-        with self.assertRaises(vol.MultipleInvalid):
+        with self.assertRaises((vol.MultipleInvalid,TypeError)):
             # value must be dict
             w.set_option('parameters', 4)
         with self.assertRaises(vol.MultipleInvalid):
             # dict value must be number
             w.set_option('parameters', {'bla': 'blo'})
+        # test deprecation warning
+        with warnings.catch_warnings(record=True) as warns:
+            warnings.simplefilter("always")
+            w.set_option('parameters', {'delta': 1.})
+            self.assertEqual(len(warns), 1)
+            self.assertTrue(issubclass(warns[-1].category, FutureWarning))
+        with warnings.catch_warnings(record=True) as warns:
+            warnings.simplefilter("always")
+            w.set_default_option('parameters', {'delta': 1.})
+            self.assertEqual(len(warns), 1)
+            self.assertTrue(issubclass(warns[-1].category, FutureWarning))
         # int should be OK but corced to float
         w.set_option('parameters', {'bla': 1})
         self.assertTrue(type(w.get_option('parameters')['bla']), float)
