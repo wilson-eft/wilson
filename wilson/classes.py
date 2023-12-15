@@ -47,6 +47,18 @@ class ConfigurableClass:
 
         Note that this does not affect existing instances or the instance
         called from."""
+        ####################################################################
+        ### temporary fix to keep backwards compatibility after renaming ###
+        ### of 'delta' to 'gamma' in the parameters dictionary           ###
+        ####################################################################
+        if key == 'parameters' and 'delta' in value:
+            warnings.warn("Using the parameter 'delta' is deprecated. "
+                          "Please use 'gamma' instead. Support for using "
+                          "'delta' will be removed in the future.",
+                          FutureWarning)
+            value['gamma'] = value['delta']
+            del value['delta']
+        ####################################################################
         cls._default_options.update(cls._option_schema({key: value}))
 
     def set_option(self, key, value):
@@ -60,8 +72,9 @@ class ConfigurableClass:
         ####################################################################
         if key == 'parameters' and 'delta' in value:
             warnings.warn("Using the parameter 'delta' is deprecated. "
-                          "Please use 'gamma' instead. Support for 'delta' "
-                          "will be removed in the future.", FutureWarning)
+                          "Please use 'gamma' instead. Support for using "
+                          "'delta' will be removed in the future.",
+                          FutureWarning)
             value['gamma'] = value['delta']
             del value['delta']
         ####################################################################
