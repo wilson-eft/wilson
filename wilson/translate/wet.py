@@ -871,6 +871,206 @@ def _Fierz_to_EOS_III(Fqqqq, qqqq, p):
         return {k: v * pf_ckm for k, v in d.items()}
     raise ValueError(f"Case not implemented: {qqqq}")
 
+def _JMS_to_Flavio_III(C, qqqq, parameters):
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if qqqq in ('sbcu', 'dbcu', 'sbuc', 'dbuc'):
+        d1 = dflav[qqqq[0]]
+        d2 = dflav[qqqq[1]] # Will always be b = 2
+        u1 = uflav[qqqq[2]]
+        u2 = uflav[qqqq[3]]
+        xi = V[u1, d2] * V[u2, d1].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(qqqq))
+    pf = -sqrt(2) / p['GF'] / xi / 4
+    qqqq_fl = qqqq[1:4] + qqqq[0] # Indices flipped for flavio (sbcu -> bcus, etc)
+    Nc = 3
+    if qqqq == 'sbcu':
+        indices_ud = (1,0,1,2)
+        indices_ud_conj = (0,1,2,1)
+        indices_uddu = (1,2,1,0)
+        indices_uddu_conj = (0,1,2,1)
+        indices_du = (1,2,1,0)
+    elif qqqq == 'dbcu':
+        indices_ud = (1,0,0,2)
+        indices_ud_conj = (0,1,2,0)
+        indices_uddu = (1,2,0,0)
+        indices_uddu_conj = (0,0,2,1)
+        indices_du = (0,2,1,0)
+    else:
+        raise ValueError(f"Sector not implemented: {qqqq}")
+    return {
+            f'CVLL_{qqqq_fl}': pf * ( C["V8udLL"][*indices_ud_conj].conj()/2 ),
+            f'CVLR_{qqqq_fl}': pf * ( C["V1udduLR"][*indices_uddu] - C["V8udduLR"][*indices_uddu]/(2*Nc) ),
+            f'CVRL_{qqqq_fl}': pf * ( C["V1udduLR"][*indices_uddu_conj].conj() - C["V8udduLR"][*indices_uddu_conj].conj()/(2*Nc) ),
+            f'CVRR_{qqqq_fl}': pf * ( C["V8udRR"][*indices_ud_conj].conj()/2 ),
+            f'CSLL_{qqqq_fl}': pf * ( C["S1udduRR"][*indices_uddu_conj].conj() - C["S8udduRR"][*indices_uddu_conj].conj()/(2*Nc) - C["S8udRR"][*indices_ud_conj].conj()/4 ),
+            f'CSLR_{qqqq_fl}': pf * ( -C["V8duLR"][*indices_du] ),
+            f'CSRL_{qqqq_fl}': pf * ( -C["V8udLR"][*indices_ud_conj].conj() ),
+            f'CSRR_{qqqq_fl}': pf * ( C["S1udduRR"][*indices_uddu] - C["S8udduRR"][*indices_uddu]/(2*Nc) - C["S8udRR"][*indices_ud]/4 ),
+            f'CTLL_{qqqq_fl}': pf * ( -C["S8udRR"][*indices_ud_conj].conj()/16 ),
+            f'CTRR_{qqqq_fl}': pf * ( -C["S8udRR"][*indices_ud]/16 ),
+            f'CVLLt_{qqqq_fl}': pf * ( C["V1udLL"][*indices_ud_conj].conj() - C["V8udLL"][*indices_ud_conj].conj()/(2*Nc) ),
+            f'CVLRt_{qqqq_fl}': pf * ( C["V8udduLR"][*indices_uddu]/2 ),
+            f'CVRLt_{qqqq_fl}': pf * ( C["V8udduLR"][*indices_uddu_conj].conj()/2 ),
+            f'CVRRt_{qqqq_fl}': pf * ( C["V1udRR"][*indices_ud_conj].conj() - C["V8udRR"][*indices_ud_conj].conj()/(2*Nc) ),
+            f'CSLLt_{qqqq_fl}': pf * ( -C["S1udRR"][*indices_ud_conj].conj()/2 + C["S8udduRR"][*indices_uddu_conj].conj()/2 + C["S8udRR"][*indices_ud_conj].conj()/(4*Nc) ),
+            f'CSLRt_{qqqq_fl}': pf * ( -2*C["V1duLR"][*indices_du] + C["V8duLR"][*indices_du]/Nc ),
+            f'CSRLt_{qqqq_fl}': pf * ( -2*C["V1udLR"][*indices_ud_conj].conj() + C["V8udLR"][*indices_ud_conj].conj()/Nc ),
+            f'CSRRt_{qqqq_fl}': pf * ( -C["S1udRR"][*indices_ud]/2 + C["S8udduRR"][*indices_uddu]/2 + C["S8udRR"][*indices_ud]/(4*Nc) ),
+            f'CTLLt_{qqqq_fl}': pf * ( -C["S1udRR"][*indices_ud_conj].conj()/8 + C["S8udRR"][*indices_ud_conj].conj()/(16*Nc) ),
+            f'CTRRt_{qqqq_fl}': pf * ( -C["S1udRR"][*indices_ud]/8 + C["S8udRR"][*indices_ud]/(16*Nc) ),
+    }
+
+def _Flavio_to_JMS_III(C, qqqq, parameters):
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if qqqq in ('sbcu', 'dbcu', 'sbuc', 'dbuc'):
+        d1 = dflav[qqqq[0]]
+        d2 = dflav[qqqq[1]] # Will always be b = 2
+        u1 = uflav[qqqq[2]]
+        u2 = uflav[qqqq[3]]
+        xi = V[u1, d2] * V[u2, d1].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(qqqq))
+    pf = -4 * p['GF'] * xi / sqrt(2)
+    Nc = 3
+    qqqq_fl = qqqq[1:4] + qqqq[0] # Indices flipped for flavio (sbcu -> bcus, etc)
+    if qqqq == 'sbcu':
+        indices_ud = "2123"
+        indices_ud_conj = "1232"
+        indices_uddu = "2321"
+        indices_uddu_conj = "1232"
+        indices_du = "2321"
+    elif qqqq == 'dbcu':
+        indices_ud = "2113"
+        indices_ud_conj = "1231"
+        indices_uddu = "2311"
+        indices_uddu_conj = "1132"
+        indices_du = "1321"
+    else:
+        raise ValueError(f"Sector not implemented: {qqqq}")
+    return {
+            f"V1udLL_{indices_ud_conj}": pf * ( C[f"CVLL_{qqqq_fl}"].conjugate()/Nc + C[f"CVLLt_{qqqq_fl}"].conjugate() ),
+            f"V8udLL_{indices_ud_conj}": pf * ( 2*C[f"CVLL_{qqqq_fl}"].conjugate() ),
+            f"V1udRR_{indices_ud_conj}": pf * ( C[f"CVRR_{qqqq_fl}"].conjugate()/Nc + C[f"CVRRt_{qqqq_fl}"].conjugate() ),
+            f"V8udRR_{indices_ud_conj}": pf * ( 2*C[f"CVRR_{qqqq_fl}"].conjugate() ),
+            f"V1udLR_{indices_ud_conj}": pf * ( -C[f"CSRL_{qqqq_fl}"].conjugate()/(2.*Nc) - C[f"CSRLt_{qqqq_fl}"].conjugate()/2. ),
+            f"V8udLR_{indices_ud_conj}": pf * ( -C[f"CSRL_{qqqq_fl}"].conjugate() ),
+            f"V1duLR_{indices_du}": pf * ( -C[f"CSLR_{qqqq_fl}"]/(2.*Nc) - C[f"CSLRt_{qqqq_fl}"]/2. ),
+            f"V8duLR_{indices_du}": pf * ( -C[f"CSLR_{qqqq_fl}"] ),
+            f"V1udduLR_{indices_uddu_conj}": pf * ( C[f"CVRL_{qqqq_fl}"].conjugate() + C[f"CVRLt_{qqqq_fl}"].conjugate()/Nc ),
+            f"V8udduLR_{indices_uddu_conj}": pf * ( 2*C[f"CVRLt_{qqqq_fl}"].conjugate() ),
+            f"V1udduLR_{indices_uddu}": pf * ( C[f"CVLR_{qqqq_fl}"] + C[f"CVLRt_{qqqq_fl}"]/Nc ),
+            f"V8udduLR_{indices_uddu}": pf * ( 2*C[f"CVLRt_{qqqq_fl}"] ),
+            f"S1udRR_{indices_ud_conj}": pf * ( (-8*C[f"CTLL_{qqqq_fl}"]).conjugate()/Nc - 8*C[f"CTLLt_{qqqq_fl}"].conjugate() ),
+            f"S8udRR_{indices_ud_conj}": pf * ( -16*C[f"CTLL_{qqqq_fl}"].conjugate() ),
+            f"S1udduRR_{indices_uddu_conj}": pf * ( C[f"CSLL_{qqqq_fl}"].conjugate() + C[f"CSLLt_{qqqq_fl}"].conjugate()/Nc - 4*C[f"CTLL_{qqqq_fl}"].conjugate() - (4*C[f"CTLLt_{qqqq_fl}"]).conjugate()/Nc ),
+            f"S8udduRR_{indices_uddu_conj}": pf * ( 2*C[f"CSLLt_{qqqq_fl}"].conjugate() - 8*C[f"CTLLt_{qqqq_fl}"].conjugate() ),
+            f"S1udRR_{indices_ud}": pf * ( (-8*C[f"CTRR_{qqqq_fl}"])/Nc - 8*C[f"CTRRt_{qqqq_fl}"] ),
+            f"S8udRR_{indices_ud}": pf * ( -16*C[f"CTRR_{qqqq_fl}"] ),
+            f"S1udduRR_{indices_uddu}": pf * ( C[f"CSRR_{qqqq_fl}"] + C[f"CSRRt_{qqqq_fl}"]/Nc - 4*C[f"CTRR_{qqqq_fl}"] - (4*C[f"CTRRt_{qqqq_fl}"])/Nc ),
+            f"S8udduRR_{indices_uddu}": pf * ( 2*C[f"CSRRt_{qqqq_fl}"] - 8*C[f"CTRRt_{qqqq_fl}"] ),
+        }
+
+def _Bern_to_Flavio_III(C, qqqq, parameters):
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if qqqq in ('sbcu', 'dbcu', 'sbuc', 'dbuc'):
+        d1 = dflav[qqqq[0]]
+        d2 = dflav[qqqq[1]] # Will always be b = 2
+        u1 = uflav[qqqq[2]]
+        u2 = uflav[qqqq[3]]
+        xi = V[u1, d2] * V[u2, d1].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(qqqq))
+    pf = -sqrt(2) / p['GF'] / xi / 4
+    qqqq_fl = qqqq[1:4] + qqqq[0] # Indices flipped for flavio (sbcu -> bcus, etc)
+    Nc = 3
+    CBern = [C[f"{i}{qqqq}"] if i <= 10 else C[f"{i-10}p{qqqq}"] for i in range(1,21)]
+    dic = {
+            f'CVLL_{qqqq_fl}': CBern[2-1]/2+8*CBern[4-1],
+            f'CVLR_{qqqq_fl}': -(CBern[16-1]/4)-4*CBern[20-1],
+            f'CVRL_{qqqq_fl}': -(CBern[6-1]/4)-4*CBern[10-1],
+            f'CVRR_{qqqq_fl}': CBern[12-1]/2+8*CBern[14-1],
+            f'CSLL_{qqqq_fl}': -(CBern[16-1]/4)-3*CBern[18-1]+32*CBern[20-1],
+            f'CSLR_{qqqq_fl}': -CBern[2-1]-4*CBern[4-1],
+            f'CSRL_{qqqq_fl}': -CBern[12-1]-4*CBern[14-1],
+            f'CSRR_{qqqq_fl}': -(CBern[6-1]/4)-3*CBern[8-1]+32*CBern[10-1],
+            f'CTLL_{qqqq_fl}': -(CBern[16-1]/16)+CBern[18-1]/4-8*CBern[20-1],
+            f'CTRR_{qqqq_fl}': -(CBern[6-1]/16)+CBern[8-1]/4-8*CBern[10-1],
+            f'CVLLt_{qqqq_fl}': -(CBern[2-1]/(2*Nc))-(8*CBern[4-1])/Nc+CBern[1-1]+16*CBern[3-1],
+            f'CVLRt_{qqqq_fl}': CBern[16-1]/(4*Nc)+(4*CBern[20-1])/Nc-CBern[15-1]/2-8*CBern[19-1],
+            f'CVRLt_{qqqq_fl}': CBern[6-1]/(4*Nc)+(4*CBern[10-1])/Nc-CBern[5-1]/2-8*CBern[9-1],
+            f'CVRRt_{qqqq_fl}': -(CBern[12-1]/(2*Nc))-(8*CBern[14-1])/Nc+CBern[11-1]+16*CBern[13-1],
+            f'CSLLt_{qqqq_fl}': CBern[16-1]/(4*Nc)+(3*CBern[18-1])/Nc-(32*CBern[20-1])/Nc-CBern[15-1]/2-6*CBern[17-1]+64*CBern[19-1],
+            f'CSLRt_{qqqq_fl}': CBern[2-1]/Nc+(4*CBern[4-1])/Nc-2*CBern[1-1]-8*CBern[3-1],
+            f'CSRLt_{qqqq_fl}': CBern[12-1]/Nc+(4*CBern[14-1])/Nc-2*CBern[11-1]-8*CBern[13-1],
+            f'CSRRt_{qqqq_fl}': CBern[6-1]/(4*Nc)+(3*CBern[8-1])/Nc-(32*CBern[10-1])/Nc-CBern[5-1]/2-6*CBern[7-1]+64*CBern[9-1],
+            f'CTLLt_{qqqq_fl}': CBern[16-1]/(16*Nc)-CBern[18-1]/(4*Nc)+(8*CBern[20-1])/Nc-CBern[15-1]/8+CBern[17-1]/2-16*CBern[19-1],
+            f'CTRRt_{qqqq_fl}': CBern[6-1]/(16*Nc)-CBern[8-1]/(4*Nc)+(8*CBern[10-1])/Nc-CBern[5-1]/8+CBern[7-1]/2-16*CBern[9-1],
+    }
+    return {k:v*pf for k,v in dic.items()}
+
+def _Flavio_to_Bern_III(C, qqqq, parameters):
+    ### Overall sign fixed, but messily
+    p = parameters
+    V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+    if qqqq in ('sbcu', 'dbcu', 'sbuc', 'dbuc'):
+        d1 = dflav[qqqq[0]]
+        d2 = dflav[qqqq[1]] # Will always be b = 2
+        u1 = uflav[qqqq[2]]
+        u2 = uflav[qqqq[3]]
+        xi = V[u1, d2] * V[u2, d1].conj()
+    else:
+        raise ValueError("Unexpected flavours: {}".format(qqqq))
+    pf = -4 * p['GF'] * xi / sqrt(2)
+    Nc = 3
+    qqqq_fl = qqqq[1:4] + qqqq[0] # Indices flipped for flavio (sbcu -> bcus, etc)
+    CVLL = C[f"CVLL_{qqqq_fl}"]
+    CVLR = C[f"CVLR_{qqqq_fl}"]
+    CVRL = C[f"CVRL_{qqqq_fl}"]
+    CVRR = C[f"CVRR_{qqqq_fl}"]
+    CSLL = C[f"CSLL_{qqqq_fl}"]
+    CSLR = C[f"CSLR_{qqqq_fl}"]
+    CSRL = C[f"CSRL_{qqqq_fl}"]
+    CSRR = C[f"CSRR_{qqqq_fl}"]
+    CTLL = C[f"CTLL_{qqqq_fl}"]
+    CTRR = C[f"CTRR_{qqqq_fl}"]
+    CVLLt = C[f"CVLLt_{qqqq_fl}"]
+    CVLRt = C[f"CVLRt_{qqqq_fl}"]
+    CVRLt = C[f"CVRLt_{qqqq_fl}"]
+    CVRRt = C[f"CVRRt_{qqqq_fl}"]
+    CSLLt = C[f"CSLLt_{qqqq_fl}"]
+    CSLRt = C[f"CSLRt_{qqqq_fl}"]
+    CSRLt = C[f"CSRLt_{qqqq_fl}"]
+    CSRRt = C[f"CSRRt_{qqqq_fl}"]
+    CTLLt = C[f"CTLLt_{qqqq_fl}"]
+    CTRRt = C[f"CTRRt_{qqqq_fl}"]
+    dic = {
+        f'1{qqqq}': -2*CSLR/(3*Nc)-2*CSLRt/3-CVLL/(3*Nc)-CVLLt/3,
+        f'2{qqqq}': -4*CSLR/3-2*CVLL/3,
+        f'3{qqqq}': CSLR/(24*Nc)+CSLRt/24+CVLL/(12*Nc)+CVLLt/12,
+        f'4{qqqq}': CSLR/12+CVLL/6,
+        f'5{qqqq}': CSRR/(6*Nc)+CSRRt/6+(2*CTRR)/Nc+2*CTRRt-8*CVRL/(3*Nc)-8*CVRLt/3,
+        f'6{qqqq}': CSRR/3+4*CTRR-16*CVRL/3,
+        f'7{qqqq}': -7*CSRR/(24*Nc)-7*CSRRt/24-3*CTRR/(2*Nc)-3*CTRRt/2+(2*CVRL)/(3*Nc)+(2*CVRLt)/3,
+        f'8{qqqq}': -7*CSRR/12-3*CTRR+(4*CVRL)/3,
+        f'9{qqqq}': -CSRR/(96*Nc)-CSRRt/96-CTRR/(8*Nc)-CTRRt/8+CVRL/(24*Nc)+CVRLt/24,
+        f'10{qqqq}': -CSRR/48-CTRR/4+CVRL/12,
+        f'1p{qqqq}': -2*CSRL/(3*Nc)-2*CSRLt/3-CVRR/(3*Nc)-CVRRt/3,
+        f'2p{qqqq}': -4*CSRL/3-2*CVRR/3,
+        f'3p{qqqq}': CSRL/(24*Nc)+CSRLt/24+CVRR/(12*Nc)+CVRRt/12,
+        f'4p{qqqq}': CSRL/12+CVRR/6,
+        f'5p{qqqq}': CSLL/(6*Nc)+CSLLt/6+(2*CTLL)/Nc+2*CTLLt-8*CVLR/(3*Nc)-8*CVLRt/3,
+        f'6p{qqqq}': CSLL/3+4*CTLL-16*CVLR/3,
+        f'7p{qqqq}': -7*CSLL/(24*Nc)-7*CSLLt/24-3*CTLL/(2*Nc)-3*CTLLt/2+(2*CVLR)/(3*Nc)+(2*CVLRt)/3,
+        f'8p{qqqq}': -7*CSLL/12-3*CTLL+(4*CVLR)/3,
+        f'9p{qqqq}': -CSLL/(96*Nc)-CSLLt/96-CTLL/(8*Nc)-CTLLt/8+CVLR/(24*Nc)+CVLRt/24,
+        f'10p{qqqq}': -CSLL/48-CTLL/4+CVLR/12,
+    }
+    return {k:v*pf for k,v in dic.items()}
+
 def _Fierz_to_Flavio_V(Fqqqq, qqqq, parameters):
     p = parameters
     V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
@@ -1784,6 +1984,11 @@ def JMS_to_flavio(Cflat, scale, parameters=None, sectors=None):
                                                   qq+'l_'+l+'nu_'+lp),
                                                   qq+'l_'+l+'nu_'+lp, p))
 
+    # Class III
+    for qqqq in ['sbcu', 'dbcu']: # 'sbuc', 'dbuc' not implemented yet
+        if sectors is None or qqqq in sectors:
+            d.update(_JMS_to_Flavio_III(C, qqqq, p))
+
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
@@ -1880,6 +2085,11 @@ def Bern_to_flavio(C_incomplete, scale, parameters=None, sectors=None):
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
                 d.update(_BernII_to_Flavio_II(C, qq+'l_'+l+'nu_'+lp, p))
 
+    # Class III
+    for qqqq in ['sbcu', 'dbcu']: # 'sbuc', 'dbuc' not implemented yet
+        if sectors is None or qqqq in sectors:
+            d.update(_Bern_to_Flavio_III(C, qqqq, p))
+
     # Class V semileptonic
     for l in lflav.keys():
         for lp in lflav.keys():
@@ -1942,6 +2152,11 @@ def flavio_to_Bern(C_incomplete, scale, parameters=None, sectors=None):
         for lp in lflav.keys():
             for qq in ['cb', 'ub', 'us', 'cs', 'cd', 'ud']:
                 d.update(_FlavioII_to_BernII(C, qq+'l_'+l+'nu_'+lp, p))
+
+    # Class III
+    for qqqq in ['sbcu', 'dbcu']: # 'sbuc', 'dbuc' not implemented yet
+        if sectors is None or qqqq in sectors:
+            d.update(_Flavio_to_Bern_III(C, qqqq, p))
 
     # Class V semileptonic
     for l in lflav.keys():
@@ -2143,6 +2358,11 @@ def flavio_to_JMS(C_incomplete, scale, parameters=None, sectors=None):
                     d.update(_Bern_to_JMS_II(_FlavioII_to_BernII(C,
                                              qq+'l_'+l+'nu_'+lp, p),
                                              qq+'l_'+l+'nu_'+lp))
+
+    # Class III
+    for qqqq in ['sbcu', 'dbcu']: # 'sbuc', 'dbuc' not implemented yet
+        if sectors is None or qqqq in sectors:
+            d.update(_Flavio_to_JMS_III(C, qqqq, p))
 
     # Class V semileptonic
     for l in lflav.keys():
