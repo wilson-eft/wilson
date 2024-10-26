@@ -1,21 +1,23 @@
 """Main classes used at the top level of the wilson package:
 
 `Wilson`: main interface to the wilson package, providing automatic running
-and matching in SMEFT and WET
+and matching in SMEFT, nuSMEFT and WET
 
 `RGsolution`: Class representing a continuous solution to the
 SMEFT and WET RGEs to be used for plotting.
 """
 
 
-from wilson.run.smeft import SMEFT
 from wilson.run.wet import WETrunner
 from wilson import parameters
 import numpy as np
 from math import log, e
 from wilson import wcxf
 import voluptuous as vol
-import warnings
+
+from wilson.run.smeft import EFTevolve
+from wilson.run.smeft import beta
+from wilson.run.smeft import beta_nusmeft
 
 class ConfigurableClass:
     """Class that provides the functionality to set and get configuration
@@ -47,18 +49,6 @@ class ConfigurableClass:
 
         Note that this does not affect existing instances or the instance
         called from."""
-        ####################################################################
-        ### temporary fix to keep backwards compatibility after renaming ###
-        ### of 'delta' to 'gamma' in the parameters dictionary           ###
-        ####################################################################
-        if key == 'parameters' and 'delta' in value:
-            warnings.warn("Using the parameter 'delta' is deprecated. "
-                          "Please use 'gamma' instead. Support for using "
-                          "'delta' will be removed in the future.",
-                          FutureWarning)
-            value['gamma'] = value['delta']
-            del value['delta']
-        ####################################################################
         cls._default_options.update(cls._option_schema({key: value}))
 
     def set_option(self, key, value):
@@ -66,18 +56,6 @@ class ConfigurableClass:
 
         Instance method, affects only current instance.
         This will clear the cache."""
-        ####################################################################
-        ### temporary fix to keep backwards compatibility after renaming ###
-        ### of 'delta' to 'gamma' in the parameters dictionary           ###
-        ####################################################################
-        if key == 'parameters' and 'delta' in value:
-            warnings.warn("Using the parameter 'delta' is deprecated. "
-                          "Please use 'gamma' instead. Support for using "
-                          "'delta' will be removed in the future.",
-                          FutureWarning)
-            value['gamma'] = value['delta']
-            del value['delta']
-        ####################################################################
         self._options.update(self._option_schema({key: value}))
         self.clear_cache()
 
@@ -115,6 +93,8 @@ class Wilson(ConfigurableClass):
                         'mb_matchingscale': 4.2,
                         'mc_matchingscale': 1.3,
                         'parameters': {},
+                        'yukawa_scale_in': {},
+                        'gauge_higgs_scale_in': {}
                         }
 
     # option schema:
@@ -128,7 +108,8 @@ class Wilson(ConfigurableClass):
         'mb_matchingscale': vol.Coerce(float),
         'mc_matchingscale': vol.Coerce(float),
         'parameters': vol.Schema({vol.Extra: vol.Coerce(float)}),
-    })
+        'yukawa_scale_in' : vol.Schema( { vol.In(['Gu', 'Gd', 'Ge', 'Gn']): vol.All(vol.All(vol.Length (min=3, max=3)), vol.Length(min=3, max=3)) } ),
+        'gauge_higgs_scale_in': vol.Schema({vol.In(['g', 'gp', 'gs', 'Lambda', 'm2']): vol.Coerce(float)})  })
 
     def __init__(self, wcdict, scale, eft, basis):
         """Initialize the `Wilson` class.
@@ -149,6 +130,12 @@ class Wilson(ConfigurableClass):
         self.wc.validate()
         self._cache = {}
 
+    def update_dim4_running(self):
+        par = {}
+        par.update(self.get_option('yukawa_scale_in'))
+        par.update(self.get_option('gauge_higgs_scale_in'))
+        return par
+    
     def __hash__(self):
         """Return a hash of the `Wilson` instance.
         The hash changes when Wilson coefficient values or options are modified.
@@ -234,22 +221,42 @@ class Wilson(ConfigurableClass):
         if self.wc.eft == 'SMEFT':
             smeft_accuracy = self.get_option('smeft_accuracy')
             if eft == 'SMEFT':
-                smeft = SMEFT(self.wc.translate('Warsaw', sectors=translate_sectors, parameters=self.parameters))
                 # if input and output EFT ist SMEFT, just run.
+#                smeft = SMEFT(self.wc.translate('Warsaw', sectors=translate_sectors, parameters=self.parameters))
+                smeft = EFTevolve(self.wc.translate('Warsaw', sectors=translate_sectors, parameters=self.parameters),beta.beta)
+                smeft.ext_par_scale_in(self.update_dim4_running())
                 wc_out = smeft.run(scale, accuracy=smeft_accuracy).translate(basis)
                 self._set_cache('all', scale, 'SMEFT', wc_out.basis, wc_out)
                 return wc_out
-            else:
+            elif eft in ['WET', 'WET-4', 'WET-3']:
                 # if SMEFT -> WET-x: match to WET at the EW scale
                 wc_ew = self._get_from_cache(sector='all', scale=scale_ew, eft='WET', basis='JMS')
                 if wc_ew is None:
                     if self.wc.scale == scale_ew:
                         wc_ew = self.wc.match('WET', 'JMS', parameters=self.matching_parameters)  # no need to run
                     else:
-                        smeft = SMEFT(self.wc.translate('Warsaw', parameters=self.parameters))
+#                        smeft = SMEFT(self.wc.translate('Warsaw', parameters=self.parameters))
+                        smeft = EFTevolve(self.wc.translate('Warsaw', parameters=self.parameters),beta.beta)
+                        smeft.ext_par_scale_in(self.update_dim4_running())
                         wc_ew = smeft.run(scale_ew, accuracy=smeft_accuracy).match('WET', 'JMS', parameters=self.matching_parameters)
                 self._set_cache('all', scale_ew, wc_ew.eft, wc_ew.basis, wc_ew)
                 wet = WETrunner(wc_ew, **self._wetrun_opt())
+
+            else:
+                raise ValueError(f"Output EFT {eft} unknown or not supported")           
+
+        elif self.wc.eft == 'nuSMEFT':
+            smeft_accuracy = self.get_option('smeft_accuracy')
+            if eft == 'nuSMEFT':
+                # if input and output EFT just nuSMEFT, just run.
+                nusmeft = EFTevolve(self.wc.translate('Warsaw', sectors=translate_sectors, parameters=self.parameters),beta_nusmeft.nubeta)
+                nusmeft.ext_par_scale_in(self.update_dim4_running())
+                wc_out = nusmeft.run(scale, accuracy=smeft_accuracy).translate(basis)
+                self._set_cache('all', scale, 'nuSMEFT', wc_out.basis, wc_out)
+                return wc_out
+            else:
+                raise ValueError(f"Output EFT {eft} unknown or not supported")
+
         elif self.wc.eft in ['WET', 'WET-4', 'WET-3']:
             wet = WETrunner(self.wc.translate('JMS', parameters=self.parameters, sectors=translate_sectors), **self._wetrun_opt())
         else:
@@ -268,8 +275,8 @@ class Wilson(ConfigurableClass):
             wc_mc = wet.run(mc, sectors=sectors).match('WET-3', 'JMS', parameters=self.matching_parameters)
             wet3 = WETrunner(wc_mc, **self._wetrun_opt())
             wc_out = wet3.run(scale, sectors=sectors).translate(basis, sectors=translate_sectors, parameters=self.parameters)
-            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
             return wc_out
+            self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
         elif eft == 'WET-3' and wet.eft == 'WET':  # match at mb and mc
             wc_mb = wet.run(mb, sectors=sectors).match('WET-4', 'JMS', parameters=self.matching_parameters)
             wet4 = WETrunner(wc_mb, **self._wetrun_opt())
@@ -279,7 +286,7 @@ class Wilson(ConfigurableClass):
             self._set_cache(sectors, scale, 'WET-3', basis, wc_out)
             return wc_out
         else:
-            raise ValueError(f"Running from {wet.eft} to {eft} not implemented")
+            raise ValueError(f"Output EFT {eft} unknown or not supported")
 
     def clear_cache(self):
         self._cache = {}
