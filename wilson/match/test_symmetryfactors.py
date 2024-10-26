@@ -10,6 +10,7 @@ from wilson.util.wet_jms import C_symm_keys
 import wilson.match.smeft_loop
 import wilson.match.smeft_tree
 
+from wilson.run.smeft import beta
 
 np.random.seed(39)
 
@@ -29,7 +30,7 @@ class TestMatch(unittest.TestCase):
         from_wc =  wcxf.WC(values = {'qq3_1122': 2e-6} ,
                     scale = 1e3 , eft = 'SMEFT' , basis = 'Warsaw up')
         to_wc = from_wc.match('WET', 'JMS')
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
         self.assertAlmostEqual(to_wc['V8udLL_1221']/V[0,0].conjugate()
         /V[1,1].conjugate(),8e-6)
 
@@ -38,7 +39,7 @@ class TestMatch(unittest.TestCase):
         from_wc =  wcxf.WC(values = {'qq3_1322': 3e-6} ,
                     scale = 1e3 , eft = 'SMEFT' , basis = 'Warsaw up')
         to_wc = from_wc.match('WET', 'JMS')
-        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["gamma"])
+        V = ckmutil.ckm.ckm_tree(p["Vus"], p["Vub"], p["Vcb"], p["delta"])
         self.assertAlmostEqual(to_wc['V8udLL_1223']/V[2,2].conjugate()
         /V[1,1].conjugate(),12e-6)
 
@@ -89,7 +90,8 @@ class TestRun(unittest.TestCase):
     def test_run_lq3_3333(self):
         w = wilson.Wilson({'lq3_2333': 1e-6}, 1000, 'SMEFT', 'Warsaw')
         # determine g at input scale
-        g = wilson.run.smeft.SMEFT(w.wc).C_in['g']
+#        g = wilson.run.smeft.SMEFT(w.wc).C_in['g']
+        g = wilson.run.smeft.EFTevolve(w.wc, beta.beta).C_in['g']
         # run down
         wc = w.match_run(100, 'SMEFT', 'Warsaw')
         # compare LL to expected value
