@@ -1,4 +1,4 @@
-#new beta file for nuSMEFT
+#beta functions for nuSMEFT
 
 from wilson.run.smeft.beta import *
 from wilson.util import nusmeftutil
