@@ -4,9 +4,6 @@ from wilson.run.smeft.beta import *
 from wilson.util import nusmeftutil
 import numpy as np
 
-#TODO
-#Refine beta functions before finalising for publication 
-#constants need to be copy-pasted from beta file, as they are not imported. Only functions are imported
 def nubeta(C, HIGHSCALE=1, newphys=True):
     
     HIGHSCALE=1
