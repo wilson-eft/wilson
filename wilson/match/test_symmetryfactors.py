@@ -10,6 +10,7 @@ from wilson.util.wet_jms import C_symm_keys
 import wilson.match.smeft_loop
 import wilson.match.smeft_tree
 
+from wilson.run.smeft import beta
 
 np.random.seed(39)
 
@@ -89,7 +90,8 @@ class TestRun(unittest.TestCase):
     def test_run_lq3_3333(self):
         w = wilson.Wilson({'lq3_2333': 1e-6}, 1000, 'SMEFT', 'Warsaw')
         # determine g at input scale
-        g = wilson.run.smeft.SMEFT(w.wc).C_in['g']
+#        g = wilson.run.smeft.SMEFT(w.wc).C_in['g']
+        g = wilson.run.smeft.EFTevolve(w.wc, beta.beta).C_in['g']
         # run down
         wc = w.match_run(100, 'SMEFT', 'Warsaw')
         # compare LL to expected value
