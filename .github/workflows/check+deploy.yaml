@@ -63,7 +63,7 @@ jobs:
                 python3 -m pip install dist/wilson-*.whl
 
             - name: Upload build as artifact
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v4
               with:
                 name: wilson-dist-${{ github.sha }}
                 path: dist
