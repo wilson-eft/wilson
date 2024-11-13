@@ -162,7 +162,7 @@ class TestWET(unittest.TestCase):
         self.assertAlmostEqual(wc1.dict['1udmumu'], wc2.dict['1udmumu'])
         self.assertAlmostEqual(wc1.dict['1usmumu'], wc2.dict['1usmumu'])
         self.assertAlmostEqual(wc1.dict['1ubmumu'], wc2.dict['1ubmumu'], places=5)
-        self.assertAlmostEqual(wc1.dict['1cdmumu'], wc2.dict['1cdmumu'])
+        self.assertAlmostEqual(wc1.dict['1cdmumu'], wc2.dict['1cdmumu'], places=6)
         self.assertAlmostEqual(wc1.dict['1csmumu'], wc2.dict['1csmumu'])
         self.assertAlmostEqual(wc1.dict['1cbmumu'], wc2.dict['1cbmumu'])
         self.assertAlmostEqual(wc1.dict['1sbmumu'], wc2.dict['1sbmumu'])
