@@ -35,7 +35,7 @@ setup(
         "pandas",
         "pylha>=0.2",
         "pyyaml",
-        "ckmutil>=0.3.2",
+        "ckmutil>=1.2.0",
         "rundec>=0.5",
         "voluptuous",
     ],
