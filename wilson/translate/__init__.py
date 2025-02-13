@@ -2,9 +2,31 @@
 `wcxf` Python package."""
 
 
-from . import smeft, smeft_higgs
+from . import smeft, smeft_higgs, smeft_smeftsim
 from . import wet
 from wilson import wcxf
+
+
+@wcxf.translator('SMEFT', 'Warsaw up', 'SMEFTsim_general')
+def warsaw_up_to_smeftsim_general(C, scale, parameters, sectors=None):
+    return smeft_smeftsim.warsaw_up_to_SMEFTsim_general(C=C, parameters=parameters, sectors=sectors)
+
+
+@wcxf.translator('SMEFT', 'SMEFTsim_general', 'Warsaw up')
+def smeftsim_general_to_warsaw_up(C, scale, parameters, sectors=None):
+    return smeft_smeftsim.SMEFTsim_general_to_warsaw_up(C=C, parameters=parameters, sectors=sectors)
+
+
+@wcxf.translator('SMEFT', 'Warsaw', 'SMEFTsim_general')
+def warsaw_to_smeftsim_general(C, scale, parameters, sectors=None):
+    C = smeft.warsaw_to_warsaw_up(C=C, parameters=parameters, sectors=sectors)
+    return smeft_smeftsim.warsaw_up_to_SMEFTsim_general(C=C, parameters=parameters, sectors=sectors)
+
+
+@wcxf.translator('SMEFT', 'SMEFTsim_general', 'Warsaw')
+def smeftsim_general_to_warsaw(C, scale, parameters, sectors=None):
+    C = smeft_smeftsim.SMEFTsim_general_to_warsaw_up(C=C, parameters=parameters, sectors=sectors)
+    return smeft.warsaw_up_to_warsaw(C=C, parameters=parameters, sectors=sectors)
 
 
 @wcxf.translator('SMEFT', 'Higgs-Warsaw up', 'Warsaw up')
