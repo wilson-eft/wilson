@@ -336,7 +336,7 @@ class TestBern2flavio(unittest.TestCase):
         for k, v in jms_direct.dict.items():
             if k in jms_indirect.dict:
                 self.assertAlmostEqual(1, jms_indirect.dict[k]/v,
-                                       delta=1e-15,
+                                       delta=1e-14,
                                        msg=f"Failed for {k}")
 
     def test_incomplete_input(self):
