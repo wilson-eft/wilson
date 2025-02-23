@@ -266,7 +266,7 @@ class Basis(WCxf, NamedInstanceClass):
                              " {}".format(dupes))
         # check for LaTeX errors
         # string with all tex values
-        alltex = '${}$'.format('$, $'.join([d.get('tex', '~')
+        alltex = '${}$'.format('$,\n$'.join([d.get('tex', '~')
                                             for c in self.sectors.values()
                                             for d in c.values()
                                             if d is not None]))
