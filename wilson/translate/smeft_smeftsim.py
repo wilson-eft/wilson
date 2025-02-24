@@ -13,9 +13,6 @@ name_mapping = {
     'cHD': 'cHDD',
     'cHWtilB': 'cHWBtil'
 }
-odd_number_of_fieldstrengths = {
-    'cG', 'cGt', 'cW', 'cWt', 'ceW', 'ceB', 'cuG', 'cuW', 'cuB', 'cdG', 'cdW', 'cdB'
-}
 
 warsaw_up = wcxf.Basis['SMEFT', 'Warsaw up']
 smeftsim_general = wcxf.Basis['SMEFT', 'SMEFTsim_general']
@@ -42,8 +39,6 @@ def warsaw_up_to_SMEFTsim_general(C, parameters=None, sectors=None):
     for wc_name_in in warsaw_up.sectors['dB=dL=0'].keys():
         wc_name_out = wc_name_warsaw_to_SMEFTsim(wc_name_in)
         fac = 1/multiplicities.get(wc_name_out, 1)
-        if wc_name_out[0][:3] in odd_number_of_fieldstrengths:
-            fac *= -1
         if warsaw_up.sectors['dB=dL=0'][wc_name_in].get('real'):
             if 'Re'.join(wc_name_out) in all_wcs_smeftsim_general:
                 wc_out['Re'.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
@@ -61,8 +56,6 @@ def SMEFTsim_general_to_warsaw_up(C, parameters=None, sectors=None):
     for wc_name_out in warsaw_up.sectors['dB=dL=0'].keys():
         wc_name_in = wc_name_warsaw_to_SMEFTsim(wc_name_out)
         fac = multiplicities.get(wc_name_in, 1)
-        if wc_name_in[0][:3] in odd_number_of_fieldstrengths:
-            fac *= -1
         if warsaw_up.sectors['dB=dL=0'][wc_name_out].get('real'):
             if 'Re'.join(wc_name_in) in all_wcs_smeftsim_general:
                 wc_out[wc_name_out] = C.get('Re'.join(wc_name_in), 0) / 1e6 * fac
