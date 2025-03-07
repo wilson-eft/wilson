@@ -64,6 +64,7 @@ jobs:
               run: |
                 pushd _src
                 python3 -m pip install --upgrade pip setuptools wheel build
+                python3 -m pip install .
                 popd
 
             - name: Verify release version matches source code version
