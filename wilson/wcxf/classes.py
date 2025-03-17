@@ -74,8 +74,7 @@ def _testtex(s, delete=True):
                             '-output-directory', tmpd, tmpf],
                            stdout=subprocess.DEVNULL)
     except FileNotFoundError:
-        logging.warn('latex executable not found. Cannot check tex code')
-        return {'success': True}
+        raise FileNotFoundError('latex executable not found. Cannot check tex code')
     if p.returncode == 0:
         res = {'success': True}
     else:
@@ -249,7 +248,7 @@ class Basis(WCxf, NamedInstanceClass):
             self._all_wcs = [wc for sector, wcs in self.sectors.items() for wc in wcs]
         return self._all_wcs
 
-    def validate(self):
+    def validate(self, skip_tex=False):
         """Validate the basis file."""
         try:
             eft_instance = EFT[self.eft]
@@ -266,16 +265,20 @@ class Basis(WCxf, NamedInstanceClass):
                              " {}".format(dupes))
         # check for LaTeX errors
         # string with all tex values
-        alltex = '${}$'.format('$,\n$'.join([d.get('tex', '~')
-                                            for c in self.sectors.values()
-                                            for d in c.values()
-                                            if d is not None]))
-        res = _testtex(alltex)
-        if not res['success']:
-            raise ValueError("Validation of basis {}/{}: "
-                             .format(self.eft, self.basis)
-                             + "LaTeX compilation errors encountered:\n"
-                             + "{}".format(res['log']))
+        if not skip_tex:
+            alltex = '${}$'.format('$,\n$'.join([d.get('tex', '~')
+                                                for c in self.sectors.values()
+                                                for d in c.values()
+                                                if d is not None]))
+            try:
+                res = _testtex(alltex)
+            except FileNotFoundError:
+                raise FileNotFoundError('latex executable not found. Cannot check tex code. To skip this check, use validate(skip_tex=True)')
+            if not res['success']:
+                raise ValueError("Validation of basis {}/{}: "
+                                .format(self.eft, self.basis)
+                                + "LaTeX compilation errors encountered:\n"
+                                + "{}".format(res['log']))
 
     def __repr__(self):
         return f"wcxf.Basis('{self.eft}', '{self.basis}', {{...}})"

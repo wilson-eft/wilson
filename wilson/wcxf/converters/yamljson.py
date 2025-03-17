@@ -14,8 +14,7 @@ def convert_json(stream_in, stream_out):
 
 def convert_yaml(stream_in, stream_out):
     try:
-        return wcxf.classes._json_to_yaml(stream_in, stream_out,
-                                          default_flow_style=False)
+        return wcxf.classes._json_to_yaml(stream_in, stream_out, default_flow_style=False, sort_keys=False, width=9999)
     except json.decoder.JSONDecodeError:
         logging.error("Input file cannot be parsed as JSON.")
         return 1
