@@ -20,6 +20,27 @@ smeftutil = EFTutil(
         1: ['Gu', 'Gd', 'Ge'],
     },
 )
+
+nusmeftutil = EFTutil(
+    'nuSMEFT',
+    'Warsaw',
+    dim4_keys_shape = {
+       'g': 1,
+       'gp': 1,
+       'gs': 1,
+       'Lambda': 1,
+       'm2': 1,
+       'Gu': (3, 3),
+       'Gd': (3, 3),
+       'Ge': (3, 3),
+       'Gn': (3, 3),
+    },
+    dim4_symm_keys =  {
+        0: ['g', 'gp', 'gs', 'Lambda', 'm2'],
+        1: ['Gu', 'Gd', 'Ge','Gn'],
+    },
+) 
+
 wetutil = EFTutil(
     'WET',
     'JMS',
