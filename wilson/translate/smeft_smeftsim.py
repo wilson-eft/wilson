@@ -13,6 +13,18 @@ name_mapping = {
     'cHD': 'cHDD',
     'cHWtilB': 'cHWBtil'
 }
+sectors_dBdL0 = [
+    'dB=de=dmu=dtau=0',
+    'mue',
+    'taue',
+    'mutau',
+    'muemue',
+    'etauemu',
+    'muemutau',
+    'tauetaue',
+    'tauetaumu',
+    'taumutaumu',
+]
 
 warsaw_up = wcxf.Basis['SMEFT', 'Warsaw up']
 smeftsim_general = wcxf.Basis['SMEFT', 'SMEFTsim_general']
@@ -36,34 +48,36 @@ def warsaw_up_to_SMEFTsim_general(C, parameters=None, sectors=None):
     """Translate from the Warsaw up basis to the SMEFTsim_general basis.
     """
     wc_out = {}
-    for wc_name_in in warsaw_up.sectors['dB=dL=0'].keys():
-        wc_name_out = wc_name_warsaw_to_SMEFTsim(wc_name_in)
-        fac = 1/multiplicities.get(wc_name_out, 1)
-        if warsaw_up.sectors['dB=dL=0'][wc_name_in].get('real'):
-            if 'Re'.join(wc_name_out) in all_wcs_smeftsim_general:
-                wc_out['Re'.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
+    for sector in sectors_dBdL0:
+        for wc_name_in in warsaw_up.sectors[sector].keys():
+            wc_name_out = wc_name_warsaw_to_SMEFTsim(wc_name_in)
+            fac = 1/multiplicities.get(wc_name_out, 1)
+            if warsaw_up.sectors[sector][wc_name_in].get('real'):
+                if 'Re'.join(wc_name_out) in all_wcs_smeftsim_general:
+                    wc_out['Re'.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
+                else:
+                    wc_out[''.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
             else:
-                wc_out[''.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
-        else:
-            wc_out['Re'.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
-            wc_out['Im'.join(wc_name_out)] = C.get(wc_name_in, 0).imag * 1e6 * fac
+                wc_out['Re'.join(wc_name_out)] = C.get(wc_name_in, 0).real * 1e6 * fac
+                wc_out['Im'.join(wc_name_out)] = C.get(wc_name_in, 0).imag * 1e6 * fac
     return wc_out
 
 def SMEFTsim_general_to_warsaw_up(C, parameters=None, sectors=None):
     """Translate from the SMEFTsim_general basis to the Warsaw up basis.
     """
     wc_out = {}
-    for wc_name_out in warsaw_up.sectors['dB=dL=0'].keys():
-        wc_name_in = wc_name_warsaw_to_SMEFTsim(wc_name_out)
-        fac = multiplicities.get(wc_name_in, 1)
-        if warsaw_up.sectors['dB=dL=0'][wc_name_out].get('real'):
-            if 'Re'.join(wc_name_in) in all_wcs_smeftsim_general:
-                wc_out[wc_name_out] = C.get('Re'.join(wc_name_in), 0) / 1e6 * fac
+    for sector in sectors_dBdL0:
+        for wc_name_out in warsaw_up.sectors[sector].keys():
+            wc_name_in = wc_name_warsaw_to_SMEFTsim(wc_name_out)
+            fac = multiplicities.get(wc_name_in, 1)
+            if warsaw_up.sectors[sector][wc_name_out].get('real'):
+                if 'Re'.join(wc_name_in) in all_wcs_smeftsim_general:
+                    wc_out[wc_name_out] = C.get('Re'.join(wc_name_in), 0) / 1e6 * fac
+                else:
+                    wc_out[wc_name_out] = C.get(''.join(wc_name_in), 0) / 1e6 * fac
             else:
-                wc_out[wc_name_out] = C.get(''.join(wc_name_in), 0) / 1e6 * fac
-        else:
-            wc_out[wc_name_out] = (
-                C.get('Re'.join(wc_name_in), 0) / 1e6 * fac
-                + 1j * C.get('Im'.join(wc_name_in), 0) / 1e6 * fac
-            )
+                wc_out[wc_name_out] = (
+                    C.get('Re'.join(wc_name_in), 0) / 1e6 * fac
+                    + 1j * C.get('Im'.join(wc_name_in), 0) / 1e6 * fac
+                )
     return wc_out
