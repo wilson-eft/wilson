@@ -15,7 +15,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
           matrix:
-            python-version: [3.9, '3.10', '3.11', '3.12', '3.13']
+            python-version: ['3.10', '3.11', '3.12', '3.13']
         steps:
             - name: Checkout git repository
               uses: actions/checkout@v3
@@ -60,7 +60,7 @@ jobs:
             - name: Set up Python (single version for deployment)
               uses: actions/setup-python@v4
               with:
-                python-version: '3.10'  # Use one version for deployment
+                python-version: '3.13'  # Use one version for deployment
 
             - name: Install dependencies
               shell: bash
@@ -109,6 +109,3 @@ jobs:
 
             - name: Upload to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
-              with:
-                user:     ${{ secrets.TWINE_USERNAME }}
-                password: ${{ secrets.TWINE_PASSWORD }}
