@@ -1153,26 +1153,47 @@ def beta(C, HIGHSCALE=1, newphys=True):
       + my_einsum("prsv,vt", C["lq3"], Gammaq)
 
     #order
-    Beta["ee"] = -1/3*gp**2*my_einsum("st,pr", C["phie"], I3) \
-      + 2/3*gp**2*(my_einsum("wwpr,st", C["le"], I3) \
-      - my_einsum("wwpr,st", C["qe"], I3) \
-      - 2*my_einsum("prww,st", C["eu"], I3) \
-      + my_einsum("prww,st", C["ed"], I3) \
-      + 4*my_einsum("prww,st", C["ee"], I3)) \
-      + my_einsum("pr,st", Ge.conj().T @ Ge, C["phie"]) \
-      - my_einsum("wr,vp,vwst", Ge, np.conj(Ge), C["le"]) \
+    Beta["ee"] = \
+      -1/6*gp**2*my_einsum("st,pr", C["phie"], I3) \
+      -1/6*gp**2*my_einsum("sr,pt", C["phie"], I3) \
+      + 2/3*gp**2*(
+      + 1/2*my_einsum("wwpr,st", C["le"], I3) \
+      + 1/2*my_einsum("wwpt,sr", C["le"], I3) \
+      - 1/2*my_einsum("wwpr,st", C["qe"], I3) \
+      - 1/2*my_einsum("wwpt,sr", C["qe"], I3) \
+      - my_einsum("prww,st", C["eu"], I3) \
+      - my_einsum("ptww,sr", C["eu"], I3) \
+      + 1/2*my_einsum("prww,st", C["ed"], I3) \
+      + 1/2*my_einsum("ptww,sr", C["ed"], I3) \
+      + 2*my_einsum("prww,st", C["ee"], I3) \
+      + 2*my_einsum("ptww,sr", C["ee"], I3)) \
+      + 1/2*my_einsum("pr,st", Ge.conj().T @ Ge, C["phie"]) \
+      + 1/2*my_einsum("pt,sr", Ge.conj().T @ Ge, C["phie"]) \
+      - 1/2*my_einsum("wr,vp,vwst", Ge, np.conj(Ge), C["le"]) \
+      - 1/2*my_einsum("wt,vp,vwsr", Ge, np.conj(Ge), C["le"]) \
       + my_einsum("pv,vrst", Gammae, C["ee"]) \
-      + my_einsum("pvst,vr", C["ee"], Gammae) \
-      - 1/3*gp**2*my_einsum("pr,st", C["phie"], I3) \
-      + 2/3*gp**2*(my_einsum("wwst,pr", C["le"], I3) \
-      - my_einsum("wwst,pr", C["qe"], I3) \
-      - 2*my_einsum("stww,pr", C["eu"], I3) \
-      + my_einsum("stww,pr", C["ed"], I3) \
-      + 4*my_einsum("wwst,pr", C["ee"], I3)) \
-      + my_einsum("st,pr", Ge.conj().T @ Ge, C["phie"]) \
-      - my_einsum("wt,vs,vwpr", Ge, np.conj(Ge), C["le"]) \
+      + 1/2*my_einsum("pvst,vr", C["ee"], Gammae) \
+      + 1/2*my_einsum("pvsr,vt", C["ee"], Gammae) \
+      - 1/6*gp**2*my_einsum("pr,st", C["phie"], I3) \
+      - 1/6*gp**2*my_einsum("pt,sr", C["phie"], I3) \
+      + 2/3*gp**2*(
+      + 1/2*my_einsum("wwst,pr", C["le"], I3) \
+      + 1/2*my_einsum("wwsr,pt", C["le"], I3) \
+      - 1/2*my_einsum("wwst,pr", C["qe"], I3) \
+      - 1/2*my_einsum("wwsr,pt", C["qe"], I3) \
+      - my_einsum("stww,pr", C["eu"], I3) \
+      - my_einsum("srww,pt", C["eu"], I3) \
+      + 1/2*my_einsum("stww,pr", C["ed"], I3) \
+      + 1/2*my_einsum("srww,pt", C["ed"], I3) \
+      + 2*my_einsum("wwst,pr", C["ee"], I3) \
+      + 2*my_einsum("wwsr,pt", C["ee"], I3)) \
+      + 1/2*my_einsum("st,pr", Ge.conj().T @ Ge, C["phie"]) \
+      + 1/2*my_einsum("sr,pt", Ge.conj().T @ Ge, C["phie"]) \
+      - 1/2*my_einsum("wt,vs,vwpr", Ge, np.conj(Ge), C["le"]) \
+      - 1/2*my_einsum("wr,vs,vwpt", Ge, np.conj(Ge), C["le"]) \
       + my_einsum("sv,vtpr", Gammae, C["ee"]) \
-      + my_einsum("svpr,vt", C["ee"], Gammae) \
+      + 1/2*my_einsum("svpt,vr", C["ee"], Gammae) \
+      + 1/2*my_einsum("svpr,vt", C["ee"], Gammae) \
       + 12*gp**2*my_einsum("prst", C["ee"])
 
     #order
