@@ -188,3 +188,13 @@ def smpar(C):
     sm['m_mu'] = Me[1]
     sm['m_tau'] = Me[2]
     return  {k: v.real for k, v in sm.items()}
+
+#TODO 
+def nusmeftpar(scale, C, basis):
+    c=smeftpar(scale, C, basis)
+    GF = p['GF']
+    vb = sqrt(1 / sqrt(2) / GF)
+    v = vb
+    c['Gn'] =  np.zeros((3,3))#C['nphi'] * (v**2) / 2
+    return c
+

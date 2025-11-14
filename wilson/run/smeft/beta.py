@@ -36,17 +36,30 @@ def _cached_einsum(indices, *args):
 
 def beta(C, HIGHSCALE=1, newphys=True):
     """Return the beta functions of all SM parameters and SMEFT Wilson
-    coefficients."""
+    coefficients as a dictionary."""
 
+    HIGHSCALE=1
     g = C["g"]
     gp = C["gp"]
     gs = C["gs"]
     m2 = C["m2"]
     Lambda = C["Lambda"]
+
     Gu = C["Gu"]
     Gd = C["Gd"]
     Ge = C["Ge"]
 
+    #we are adding manually the SM parameters to C_in while using the EFTevolve class, so we can comment the lines below and can use the lines above. 
+
+    #g = 0#C["g"]
+    #gp = 0#C["gp"]
+    #gs = 0#C["gs"]
+    #m2 = 0#C["m2"]
+    #Lambda = 0#C["Lambda"]
+
+    #Gu = np.zeros((3,3))*1j#C["Gu"]
+    #Gd = np.zeros((3,3))*1j#C["Gu"]
+    #Ge = np.zeros((3,3))*1j#C["Gu"]
 
     Eta1 = (3*np.trace(C["uphi"] @ Gu.conj().T) \
       + 3*np.trace(C["dphi"] @ Gd.conj().T) \
@@ -92,7 +105,8 @@ def beta(C, HIGHSCALE=1, newphys=True):
     Gammal = 1/2*Ge @ Ge.conj().T
     Gammae = Ge.conj().T @ Ge
 
-    Beta = OrderedDict()
+#order is taken care of later in EFTevolve class
+    Beta = {} #OrderedDict()
 
     Beta["g"] = -19/6*g**3 - 8*g*m2/HIGHSCALE**2*C["phiW"]
 
@@ -118,7 +132,7 @@ def beta(C, HIGHSCALE=1, newphys=True):
 
     Beta["m2"] = m2*(6*Lambda - 9/2*g**2 - 3/2*gp**2 \
       + 2*GammaH + 4*m2/HIGHSCALE**2*(C["phiD"] \
-      - 2*C["phiBox"]))
+      - 2*C["phiBox"]))  
 
     Beta["Gu"] = 3/2*(Gu @ Gu.conj().T @ Gu - Gd @ Gd.conj().T @ Gu) \
       + (GammaH - 9/4*g**2 - 17/12*gp**2 - 8*gs**2)*Gu \
@@ -134,6 +148,7 @@ def beta(C, HIGHSCALE=1, newphys=True):
       + 3*my_einsum("rspt,pt", C["quqd1"], np.conj(Gd)) \
       + 1/2*(my_einsum("psrt,pt", C["quqd1"], np.conj(Gd)) \
       + 4/3*my_einsum("psrt,pt", C["quqd8"], np.conj(Gd))))
+    
 
     Beta["Gd"] = 3/2*(Gd @ Gd.conj().T @ Gd - Gu @ Gu.conj().T @ Gd) \
       + (GammaH - 9/4*g**2 - 5/12*gp**2 - 8*gs**2)*Gd \
@@ -1815,8 +1830,11 @@ def beta(C, HIGHSCALE=1, newphys=True):
 
     return Beta
 
+#Commenting this function here, as we are puting it in EFTevolve class
+'''
 def beta_array(C, HIGHSCALE=1, *args, **kwargs):
     """Return the beta functions of all SM parameters and SMEFT Wilson
     coefficients as a 1D numpy array."""
     beta_odict = beta(C, HIGHSCALE, *args, **kwargs)
     return np.hstack([np.asarray(b).ravel() for b in beta_odict.values()])
+'''
