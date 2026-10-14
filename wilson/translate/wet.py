@@ -1226,7 +1226,7 @@ def _Fierz_to_EOS_V(Fsbuu,Fsbdd,Fsbcc,Fsbss,Fsbbb,parameters):
         - Fsbdd['Fsbdd4'] / 180 + Fsbss['Fsbss1'] / 54
         - Fsbss['Fsbss3'] / 60 - Fsbss['Fsbss4'] / 180
         + 5 * Fsbuu['Fsbuu1'] / 216 - Fsbuu['Fsbuu2'] / 216
-        - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180,
+        - Fsbuu['Fsbuu3'] / 60 - Fsbuu['Fsbuu4'] / 180
     )
     c6 = (
         + Fsbbb['Fsbbb1'] / 36 - Fsbbb['Fsbbb4'] / 30
