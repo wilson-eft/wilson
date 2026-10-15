@@ -24,7 +24,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -42,7 +42,7 @@ jobs:
     name: Build distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -72,7 +72,7 @@ jobs:
           venv/bin/python -c "import wilson; print(wilson.__version__)"
           venv/bin/wcxf --help
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
@@ -85,7 +85,7 @@ jobs:
     permissions:
       id-token: write  # required for PyPI trusted publishing
     steps:
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
