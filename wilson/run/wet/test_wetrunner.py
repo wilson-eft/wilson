@@ -71,6 +71,28 @@ class TestEvolutionMatrices(unittest.TestCase):
                                           np.linalg.inv(rge.getUs(c, 1/0.123, *args),),
                                           err_msg=f"Failed for {c}")
 
+    def test_Ue_expm(self):
+        # compare QED evolution matrices with the upper right block of the
+        # matrix exponential exp([[X, gamma_e^T], [0, X + 1]] log(eta_s)),
+        # X = gamma_s^T / (2 beta_0). The f=3 classes 'sd' and 'dF0' have
+        # eigenvalue differences close to 1 (numerically delicate).
+        from scipy.linalg import expm
+        for f, classes in [(5, ['I', 'sb', 'dF0', 'mue']), (3, ['sd', 'dF0'])]:
+            masses = (0.0022, 0.0047, 0.095, 1.28, 4.18, 0.000511, 0.106, 1.777)
+            alpha_s, alpha_e, eta_s = 0.2, 1 / 128, 0.6
+            b0s = 11 - 2 * f / 3
+            for c in classes:
+                perm = rge.get_permissible_wcs(c, f)
+                sel = (lambda M: M) if perm == 'all' else (lambda M: M[perm][:, perm])
+                X = sel(getattr(rge.adm, 'adm_s_' + c)(f, *masses)).T / (2 * b0s)
+                E = sel(getattr(rge.adm, 'adm_e_' + c)(f, *masses)).T
+                n = len(X)
+                B = np.block([[X, E], [np.zeros((n, n)), X + np.eye(n)]])
+                Ue_ref = alpha_e / (2 * b0s * alpha_s) * expm(B * np.log(eta_s))[:n, n:]
+                Ue = rge.getUe(c, eta_s, f, alpha_s, alpha_e, *masses)
+                npt.assert_allclose(Ue, Ue_ref, rtol=0, atol=1e-10 * np.max(np.abs(Ue_ref)),
+                                    err_msg=f"Failed for {c}, f={f}")
+
 
 class TestClassWET4(unittest.TestCase):
 

@@ -72,12 +72,15 @@ def getUe(classname, eta_s, f, alpha_s, alpha_e, m_u, m_d, m_s, m_c, m_b, m_e, m
     b0s = 11 - 2 * f / 3
     a = w / (2 * b0s)
     K = np.linalg.inv(v) @ A.T @ v
-    for i in range(K.shape[0]):
-        for j in range(K.shape[1]):
-            if a[i] - a[j] != 1:
-                K[i, j] *= (eta_s**(a[j] + 1) - eta_s**a[i]) / (a[i] - a[j] - 1)
-            else:
-                K[i, j] *= eta_s**a[i] * log(1 / eta_s)
+    # K[i, j] *= (eta_s**(a[j] + 1) - eta_s**a[i]) / (a[i] - a[j] - 1),
+    # written as -eta_s**a[i] * log(eta_s) * (exp(x) - 1) / x with
+    # x = (a[j] + 1 - a[i]) * log(eta_s), which is numerically stable for
+    # a[i] - a[j] close to 1 (limit eta_s**a[i] * log(1 / eta_s) for x = 0)
+    log_eta = log(eta_s)
+    x = (a[None, :] + 1 - a[:, None]) * log_eta
+    x_safe = np.where(x == 0, 1, x)  # arbitrary finite fill (NaN warns in complex division), result replaced below
+    expm1_x_over_x = np.where(x == 0, 1, np.expm1(x_safe) / x_safe)
+    K = K * (-eta_s**a[:, None] * log_eta * expm1_x_over_x)
     return -alpha_e / (2 * b0s * alpha_s) * v @ K @ np.linalg.inv(v)
 
 
