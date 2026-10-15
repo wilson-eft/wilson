@@ -78,7 +78,7 @@ def getUe(classname, eta_s, f, alpha_s, alpha_e, m_u, m_d, m_s, m_c, m_b, m_e, m
     # a[i] - a[j] close to 1 (limit eta_s**a[i] * log(1 / eta_s) for x = 0)
     log_eta = log(eta_s)
     x = (a[None, :] + 1 - a[:, None]) * log_eta
-    x_safe = np.where(x == 0, 1, x)
+    x_safe = np.where(x == 0, 1, x)  # arbitrary finite fill (NaN warns in complex division), result replaced below
     expm1_x_over_x = np.where(x == 0, 1, np.expm1(x_safe) / x_safe)
     K = K * (-eta_s**a[:, None] * log_eta * expm1_x_over_x)
     return -alpha_e / (2 * b0s * alpha_s) * v @ K @ np.linalg.inv(v)
