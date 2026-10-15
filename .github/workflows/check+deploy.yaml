@@ -1,111 +1,93 @@
-on:
-    push:
-        branches: [ master ]
-
-    pull_request:
-
-    release:
-        types: [ published ]
-
 name: Check & Deploy
 
+on:
+  push:
+    branches: [master]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-    test:
-        name: Run Tests
-        runs-on: ubuntu-latest
-        strategy:
-          matrix:
-            python-version: ['3.10', '3.11', '3.12', '3.13']
-        steps:
-            - name: Checkout git repository
-              uses: actions/checkout@v3
-              with:
-                submodules: true
-                path: _src/
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
 
-            - name: Set up Python
-              uses: actions/setup-python@v4
-              with:
-                python-version: ${{ matrix.python-version }}
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ matrix.python-version }}
 
-            - name: Install dependencies
-              shell: bash
-              run: |
-                pushd _src
-                python3 -m pip install --upgrade pytest
-                python3 -m pip install .
-                popd
+      - name: Install LaTeX
+        run: sudo apt-get update && sudo apt-get install -y texlive-latex-base texlive-fonts-recommended
 
-            - name: Install LaTeX
-              run: sudo apt-get update && sudo apt-get install -y texlive-latex-base texlive-fonts-recommended
+      - name: Run tests
+        run: uv run --group dev pytest
 
-            - name: Run tests
-              shell: bash
-              run: |
-                pushd _src
-                python3 -m pytest
-                popd
-    deploy:
-        name: Build & Deploy
-        needs: test  # Ensure tests pass before deployment
-        runs-on: ubuntu-latest
-        if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/v')
-        steps:
-            - name: Checkout git repository
-              uses: actions/checkout@v3
-              with:
-                submodules: true
-                path: _src/
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
 
-            - name: Set up Python (single version for deployment)
-              uses: actions/setup-python@v4
-              with:
-                python-version: '3.13'  # Use one version for deployment
+      - uses: astral-sh/setup-uv@v7
 
-            - name: Install dependencies
-              shell: bash
-              run: |
-                pushd _src
-                python3 -m pip install --upgrade pip setuptools wheel build
-                python3 -m pip install .
-                popd
+      - name: Verify release version matches source code version
+        if: github.event_name == 'release'
+        run: |
+          TAG_VERSION=${GITHUB_REF_NAME#v}
+          SRC_VERSION=$(uv run --no-project python -c "exec(open('wilson/_version.py').read()); print(__version__)")
+          if [[ "${TAG_VERSION}" != "${SRC_VERSION}" ]]; then
+            echo "tag/release version (${TAG_VERSION}) and source code version (${SRC_VERSION}) disagree, exiting"
+            exit 1
+          fi
 
-            - name: Verify release version matches source code version
-              shell: bash
-              run: |
-                pushd _src
-                export TAG_VERSION=${GITHUB_REF##refs/tags/v}
-                export SRC_VERSION=$(python3 -c "from wilson._version import __version__; print(__version__)")
-                if [[ ${TAG_VERSION} != ${SRC_VERSION} ]] ; then
-                  echo "tag/release version and source code version disagree, exiting"
-                  exit 1
-                fi
-                popd
+      - name: Build sdist and wheel
+        run: uv build
 
-            - name: Build distribution
-              shell: bash
-              run: |
-                mkdir dist
-                pushd _src
-                python3 -m build --outdir ../dist
-                popd
+      - name: Verify package metadata
+        run: uvx twine check --strict dist/*
 
-            - name: Verify package metadata
-              shell: bash
-              run: |
-                python3 -m pip install twine
-                python3 -m twine check dist/*
+      - name: Test installing the wheel
+        run: |
+          uv venv "$RUNNER_TEMP/venv"
+          uv pip install --python "$RUNNER_TEMP/venv" dist/wilson-*.whl
+          cd "$RUNNER_TEMP"
+          venv/bin/python -c "import wilson; print(wilson.__version__)"
+          venv/bin/wcxf --help
 
-            - name: Test installing the wheel
-              shell: bash
-              run: |
-                python3 -m pip install dist/wilson-*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
 
-            - name: Upload build as artifact
-              uses: actions/upload-artifact@v4
-              with:
-                name: wilson-dist-${{ github.sha }}
-                path: dist
+  deploy:
+    name: Publish to PyPI
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      id-token: write  # required for PyPI trusted publishing
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: dist
+          path: dist
 
-            - name: Upload to PyPI
-              uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
