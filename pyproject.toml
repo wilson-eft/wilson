@@ -1,3 +1,77 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "wilson"
+dynamic = ["version"]
+description = "Toolkit for effective field theories beyond the Standard Model"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Jason Aebischer", email = "jason.aebischer@tum.de" },
+    { name = "David M. Straub", email = "straub@protonmail.com" },
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.16.5",
+    "scipy>=1.0",
+    "pandas",
+    "pylha>=0.2",
+    "pyyaml",
+    "ckmutil>=1.2.0",
+    "rundec>=0.5",
+    "voluptuous",
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://wilson-eft.github.io"
+Source = "https://github.com/wilson-eft/wilson"
+Issues = "https://github.com/wilson-eft/wilson/issues"
+
+[project.scripts]
+wcxf = "wilson.wcxf.cli:wcxf_cli"
+wcxf2eos = "wilson.wcxf.cli:eos"
+wcxf2dsixtools = "wilson.wcxf.cli:wcxf2dsixtools"
+dsixtools2wcxf = "wilson.wcxf.cli:dsixtools2wcxf"
+wcxf2smeftsim = "wilson.wcxf.cli:smeftsim"
+
+[dependency-groups]
+dev = ["pytest>=7"]
+
+[tool.setuptools.dynamic]
+version = { attr = "wilson._version.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["wilson*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+wilson = [
+    "run/smeft/tests/data/*.*",
+    "data/tests/*.*",
+    "data/*.*",
+    "wcxf/data/*.yml",
+    "wcxf/data/*.yaml",
+    "wcxf/data/*.json",
+    "wcxf/bases/*.json",
+    "wcxf/bases/child/*.json",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["wilson"]

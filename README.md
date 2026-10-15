@@ -7,7 +7,7 @@ wilson is a Python package for the running and matching of Wilson coefficients o
 
 ## Installation
 
-The package requires Python version 3.5 or above. It can be installed with
+The package requires Python 3.11 or above. It can be installed with
 
 ```bash
 python3 -m pip install wilson
