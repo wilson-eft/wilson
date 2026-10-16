@@ -28,7 +28,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -46,7 +46,7 @@ jobs:
         with:
           submodules: true
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10.3.0
 
       - name: Verify release version matches source code version
         if: github.event_name == 'release'
