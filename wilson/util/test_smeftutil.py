@@ -8,6 +8,7 @@ from wilson.run.smeft.tests import test_beta
 from wilson.test_wilson import get_random_wc
 from wilson import wcxf
 from numbers import Number
+from itertools import product
 
 C = test_beta.C.copy()
 for i in C:
@@ -79,6 +80,27 @@ class TestSymm(unittest.TestCase):
         self.assertEqual(wc.dict.keys(), d.keys())
         for k, v in wc.dict.items():
             self.assertAlmostEqual(v, d[k], msg=f"Failed for {k}")
+
+    def test_qqql_wcxf_symmetry(self):
+        # Check the non-redundant -> redundant conversion for every independent
+        # coefficient, including complex values and the all-ones case of #129.
+        keys = [k for k in wcxf.Basis['SMEFT', 'Warsaw'].all_wcs
+                if k.startswith('qqql_')]
+        inputs = [{k: 1 + 2j} for k in keys] + [dict.fromkeys(keys, 1)]
+        for coefficients in inputs:
+            with self.subTest(coefficients=coefficients):
+                arrays = smeftutil.wcxf2arrays_symmetrized(coefficients)
+                tensor = arrays['qqql']
+                # Explicit indices avoid confusing a permutation with its
+                # inverse when translating Eq. (13) of arXiv:1405.0486.
+                for p, r, s, t in product(range(3), repeat=4):
+                    self.assertAlmostEqual(
+                        tensor[p, r, s, t] + tensor[r, p, s, t],
+                        tensor[s, p, r, t] + tensor[s, r, p, t])
+                recovered = smeftutil.arrays2wcxf_nonred(arrays)
+                for key in keys:
+                    self.assertAlmostEqual(recovered.get(key, 0),
+                                           coefficients.get(key, 0))
 
     def test_wcxf2array_incomplete(self):
         wc = wcxf.WC('SMEFT', 'Warsaw', 160, {'G': 1e-10})

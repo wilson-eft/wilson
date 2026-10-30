@@ -779,9 +779,13 @@ class EFTutil:
     def symmetrize_8(b):
         """Symmetrize class-8 coefficients.
 
-        Note that this function does not correctly take into account the
-        translation between a basis where Wilson coefficients are symmetrized
-        like the operators and the non-redundant WCxf basis!
+        The result satisfies C_prst + C_rpst = C_sprt + C_srpt, as in
+        Eqs. (10) and (13) of arXiv:1405.0486. In NumPy, C_sprt is
+        represented by C.transpose(1, 2, 0, 3), not (2, 0, 1, 3).
+
+        This fills redundant entries from the independent entries of b.
+        For non-redundant WCxf coefficients, use symmetrize_nonred instead:
+        it applies scale_8 before filling the redundant entries.
         """
         a = np.array(b, copy=True, dtype=complex)
         a[1, 0, 0, 0] = a[0, 0, 1, 0]
